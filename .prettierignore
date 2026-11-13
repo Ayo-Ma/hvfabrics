@@ -1,0 +1,5 @@
+assets/
+**/build/
+**/.react-router/
+pnpm-lock.yaml
+*.md

@@ -1,0 +1,76 @@
+{
+  "count": 58,
+  "viewBox": "0 0 24 24",
+  "batches": {
+    "batch-01": [
+      "search",
+      "bag",
+      "user",
+      "menu",
+      "close",
+      "chevron-left",
+      "chevron-right",
+      "chevron-down",
+      "plus",
+      "minus"
+    ],
+    "batch-02": [
+      "check",
+      "filter",
+      "sort",
+      "truck",
+      "return",
+      "lock",
+      "ruler",
+      "print",
+      "bell",
+      "bell-dot"
+    ],
+    "batch-03": [
+      "chart",
+      "box",
+      "tag",
+      "map-pin",
+      "whatsapp",
+      "instagram",
+      "tiktok",
+      "external-link",
+      "arrow-right",
+      "arrow-up-right"
+    ],
+    "batch-04": [
+      "heart",
+      "heart-filled",
+      "scissors",
+      "camera",
+      "image-plus",
+      "edit",
+      "trash",
+      "drag-handle",
+      "eye",
+      "eye-off"
+    ],
+    "batch-05": [
+      "home",
+      "settings",
+      "users",
+      "logout",
+      "alert-triangle",
+      "info",
+      "copy",
+      "share",
+      "star",
+      "star-filled"
+    ],
+    "batch-06": [
+      "phone",
+      "mail",
+      "globe",
+      "credit-card",
+      "wifi-off",
+      "zoom-in",
+      "grid",
+      "list"
+    ]
+  }
+}
