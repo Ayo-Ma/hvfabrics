@@ -148,7 +148,9 @@ Write each value into this checklist as you go (keep the copy with secrets in yo
    cd workers/api
    npx firebase-tools login
    npx firebase-tools deploy --only firestore --project <project id>
+   cd ..\..
    ```
+   The last line takes you back to the project folder. The next commands start from there.
    The indexes take a few minutes to build. **Firestore → Indexes** shows them turning *Enabled*.
 5. **Create her login and give it owner access.**
    - In **Authentication → Users → Add user**, enter her email and a temporary password.
