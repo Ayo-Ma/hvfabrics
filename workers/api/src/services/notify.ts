@@ -34,7 +34,8 @@ export class ResendNotifier implements Notifier {
     private readonly apiKey: string,
     private readonly from: string,
     private readonly storefrontOrigin: string,
-    private readonly fetchImpl: typeof fetch = fetch,
+    // Wrapped: on Workers, calling a stored `fetch` as a method throws "Illegal invocation".
+    private readonly fetchImpl: typeof fetch = (...args: Parameters<typeof fetch>) => fetch(...args),
   ) {}
 
   private async send(to: string[], subject: string, html: string) {

@@ -53,7 +53,8 @@ export class GoogleAuth {
 
   constructor(
     private readonly sa: ServiceAccount,
-    private readonly fetchImpl: typeof fetch = fetch,
+    // Wrapped: on Workers, calling a stored `fetch` as a method throws "Illegal invocation".
+    private readonly fetchImpl: typeof fetch = (...args: Parameters<typeof fetch>) => fetch(...args),
   ) {}
 
   async accessToken(): Promise<string> {
