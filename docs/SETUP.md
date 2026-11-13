@@ -42,7 +42,11 @@ Write each value into this checklist as you go (keep the copy with secrets in yo
 5. **Register the dashboard as a web app.** Click the **⚙ gear → Project settings → General → Your apps**, then the **`</>` (Web)** icon.
    - Nickname: `HV dashboard`. Leave Firebase Hosting unticked (Cloudflare hosts it).
    - Copy the five values from the `firebaseConfig` it shows: `apiKey`, `authDomain`, `projectId`, `messagingSenderId`, `appId`. These are public.
-6. **Create the Web Push key** (for order alerts on her phone). **Project settings → Cloud Messaging**.
+6. **Create the Web Push key** (for order alerts on her phone). **⚙ gear next to Project Overview → Project settings**, then the **Cloud Messaging** *tab* along the top of that page.
+   - It's a tab, not an item in the left menu. On a narrow window it may be behind the tabs' "More" arrow.
+   - Direct link: `https://console.firebase.google.com/project/<project id>/settings/cloudmessaging`
+   - No "Web configuration" section? Register the web app first (step 5).
+   - The left-menu **Messaging** item is for marketing campaigns. You don't need it.
    - Scroll to **Web configuration → Web Push certificates → Generate key pair**.
    - Copy the long key. This is the **VAPID key**.
    - On the same page, check that **Firebase Cloud Messaging API (V1)** says *Enabled*. If it doesn't, click the ⋮ menu beside it and enable it in Google Cloud.
