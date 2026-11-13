@@ -1,0 +1,282 @@
+@import "tailwindcss";
+@import "@hv/ui/tokens.css";
+
+/*
+ * Dashboard roles — "Achromatic ledger" (design-taste-frontend app sheet, seed 2114315845),
+ * mapped onto the Harries Vogue brand:
+ *   ground  = brand off-white #FAFAF7 (the face taken from the brand), cards white,
+ *   chrome  = ink and greys only,
+ *   accent  = Harries Yellow, on two things only: the current period in the money chart
+ *             (edged in ink so it holds 3:1 on white) and the one primary button per screen
+ *             (black text; CLAUDE.md brand rule). Never yellow text on a light ground.
+ * Greys that carry words reach 4.5:1 on white and on the ground.
+ */
+@theme {
+  --color-ground: #fafaf7;
+  --color-surface: #ffffff;
+  --color-raised: #f4f4f1;
+  --color-active: #ebebe6;
+  --color-line: #e6e6e1;
+  --color-rule: #efefeb;
+  --color-control: #cfcfc9;
+  --color-text: #0a0a0a;
+  --color-muted: #55554f;
+  --color-faint: #66665f;
+  --color-bar: #2a2a27;
+  --color-grid: #e8e8e3;
+
+  --color-pos: #1f7a4d;
+  --color-pos-bg: #dcf5e6;
+  --color-pos-ink: #0b3b22;
+  --color-neg: #b42318;
+  --color-neg-bg: #fdebe9;
+  --color-neg-ink: #7a1a12;
+  --color-warn-bg: #fff8e1;
+  --color-warn-line: #f1d98a;
+  --color-warn-ink: #7a4b00;
+
+  --radius-card: 8px;
+  --radius-control: 6px;
+  --radius-chip: 4px;
+}
+
+@layer base {
+  /* The root stays at 16px so rem spacing holds (16px phone gutters); text is 14px from body down. */
+  html,
+  body {
+    background: var(--color-ground);
+    color: var(--color-text);
+  }
+  body {
+    font-size: 14px;
+    line-height: 20px;
+  }
+  body {
+    min-height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1 {
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-weight: 700;
+  }
+  /* Figures: Plus Jakarta Sans digits with tabular widths (PLAN.md), so columns line up. */
+  .num {
+    font-family: var(--font-numeric);
+    font-variant-numeric: tabular-nums;
+  }
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  .panel {
+    min-width: 0; /* grid children may shrink below their longest line, so rows truncate instead of overflowing */
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+  .field {
+    height: 40px;
+    width: 100%;
+    border: 1px solid var(--color-control);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    padding: 0 12px;
+  }
+  textarea.field {
+    height: auto;
+    padding: 10px 12px;
+    line-height: 20px;
+  }
+  .field::placeholder {
+    color: var(--color-faint);
+  }
+  .field:hover {
+    border-color: #a9a9a3;
+  }
+  .label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .hint {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--color-muted);
+    margin-top: 6px;
+  }
+}
+
+/* Bar chart tooltip-free hover: the column under the finger/cursor darkens. */
+.bars rect[data-current="false"]:hover {
+  fill: var(--color-text);
+}
+
+/* Toast */
+@keyframes toast-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+.toast {
+  animation: toast-in var(--duration-base) var(--ease-out);
+}
+
+/* ---------- Print: only the sheet, in black on white ---------- */
+
+#print-root {
+  display: none;
+}
+
+@media print {
+  html[data-printing] #root {
+    display: none !important;
+  }
+  html[data-printing] #print-root {
+    display: block;
+  }
+  html[data-printing],
+  html[data-printing] body {
+    background: #fff !important;
+    color: #000;
+  }
+}
+
+/* Sheet styles live outside @media print so the slip can be measured off-screen at its printed size. */
+.print-sheet {
+  font-family: var(--font-sans);
+  color: #000;
+}
+.print-logo {
+  display: block;
+}
+.print-logo svg {
+  width: 100%;
+  height: auto;
+  fill: #000;
+}
+.print-muted {
+  color: #333;
+}
+.print-strong {
+  font-weight: 700;
+}
+.print-slip {
+  width: 74mm;
+  font-size: 11pt;
+  line-height: 1.35;
+}
+.print-slip section {
+  border-top: 1px dashed #000;
+  border-bottom: 1px dashed #000;
+  padding: 2mm 0;
+  margin: 2mm 0;
+}
+.print-number {
+  font-size: 20pt;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  margin-top: 3mm;
+}
+.print-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2mm;
+}
+.print-lines .num {
+  white-space: nowrap;
+}
+.print-lines li,
+.print-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 3mm;
+  padding: 1mm 0;
+}
+.print-box {
+  display: inline-block;
+  width: 3mm;
+  height: 3mm;
+  border: 1px solid #000;
+  vertical-align: -0.3mm;
+}
+.print-from {
+  margin-top: 3mm;
+  font-size: 9pt;
+}
+.print-a4 {
+  font-size: 10.5pt;
+  line-height: 1.45;
+}
+.print-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10mm;
+  padding-bottom: 8mm;
+  border-bottom: 1px solid #000;
+}
+.print-head-meta {
+  text-align: right;
+}
+.print-title {
+  font-size: 16pt;
+  font-weight: 900;
+}
+.print-parties {
+  display: flex;
+  justify-content: space-between;
+  gap: 10mm;
+  margin: 8mm 0;
+}
+.print-items {
+  width: 100%;
+  border-collapse: collapse;
+}
+.print-items th {
+  text-align: left;
+  font-weight: 500;
+  color: #333;
+  padding: 2mm 0;
+  border-bottom: 1px solid #000;
+}
+.print-items td {
+  padding: 2.5mm 0;
+  border-bottom: 1px solid #ccc;
+  vertical-align: top;
+}
+.print-items .num {
+  text-align: right;
+  padding-left: 6mm;
+}
+.print-items tfoot td {
+  border-bottom: 0;
+  padding: 1.5mm 0;
+}
+.print-total td {
+  font-weight: 900;
+  font-size: 12pt;
+  border-top: 1px solid #000 !important;
+  padding-top: 3mm !important;
+}

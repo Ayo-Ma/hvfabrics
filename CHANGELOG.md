@@ -19,3 +19,11 @@
   tracking, analytics events, 5-minute expiry cron, Resend emails. Firestore REST store with service-account auth and
   retried transactions; in-memory store for local dev. Firestore security rules and index. 21 tests.
 - Storefront now reads the catalogue and runs checkout through the API when `API_URL` is set.
+- Dashboard (`apps/dashboard`, React + Vite PWA): sign-in (Firebase Auth; dev roles locally), Today (money in today / this
+  week / this month in her time zone, orders to pack, cutting list, running low), orders board New → Packed → Sent with undo,
+  order page with call / WhatsApp / email, one-tap 80 mm slip and A4 invoice, products list and phone-first editor with
+  in-browser photo resizing (400/800/1200/2000, AVIF + WebP) uploaded to R2, stock screen, order alerts on this phone with a
+  test alert. Installable, works on a weak connection.
+- API: `/admin/*` (Firebase ID-token check with admin claim and role, CORS locked to the dashboard), products and stock
+  writes that respect shoppers' holds, board moves, takings, R2 photo upload with type and size checks, image serving,
+  FCM push per paid order, dev-only sample orders. `scripts/set-admin.mjs` grants dashboard access. 34 API tests, 57 core tests.

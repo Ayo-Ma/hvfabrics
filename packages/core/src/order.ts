@@ -1,5 +1,5 @@
 import { add, multiply, sum, type Currency, type Money } from "./money";
-import type { BagLine, DeliveryZone, OrderItem, OrderStatus } from "./schemas";
+import type { BagLine, DeliveryZone, OrderItem, OrderStatus, Unit } from "./schemas";
 
 /** Everything needed to price one variant, as read inside the checkout transaction. */
 export interface PricingVariant {
@@ -7,6 +7,7 @@ export interface PricingVariant {
   productId: string;
   title: string;
   variantLabel: string;
+  unit?: Unit;
   price: Money;
 }
 
@@ -33,6 +34,7 @@ export function priceOrder(
       variantId: v.id,
       title: v.title,
       variantLabel: v.variantLabel,
+      ...(v.unit ? { unit: v.unit } : {}),
       qty: l.qty,
       unitPrice: v.price,
     };
@@ -55,16 +57,55 @@ export function newOrderNumber(random: (n: number) => Uint8Array = (n) => crypto
   return `HV-${out}`;
 }
 
-/** Allowed status moves. Dashboard and Worker both check against this. */
+/**
+ * Allowed status moves. Dashboard and Worker both check against this.
+ * One step back (packed → paid, shipped → packed) is allowed so a mis-tap on the
+ * orders board can be undone. Cancelling a paid order needs a refund, so the
+ * dashboard doesn't offer it in Phase 1.
+ */
 const TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
   pending: ["paid", "cancelled"],
   paid: ["packed", "cancelled"],
-  packed: ["shipped", "cancelled"],
-  shipped: ["delivered"],
-  delivered: [],
+  packed: ["shipped", "paid", "cancelled"],
+  shipped: ["delivered", "packed"],
+  delivered: ["shipped"],
   cancelled: [],
 };
 
 export function canTransition(from: OrderStatus, to: OrderStatus): boolean {
   return TRANSITIONS[from].includes(to);
+}
+
+const STAMP: Partial<Record<OrderStatus, "packedAt" | "shippedAt" | "deliveredAt">> = {
+  packed: "packedAt",
+  shipped: "shippedAt",
+  delivered: "deliveredAt",
+};
+
+const FORWARD: OrderStatus[] = ["pending", "paid", "packed", "shipped", "delivered"];
+
+/**
+ * A move on the orders board (New → Packed → Sent → Delivered, or one step back).
+ * Payment states (pending, paid from pending, cancelled) belong to the Worker and are refused here.
+ * Moving forward stamps the time; stepping back clears the stamp of the step undone.
+ */
+export function moveOrder<O extends { status: OrderStatus; packedAt?: string; shippedAt?: string; deliveredAt?: string }>(
+  order: O,
+  to: OrderStatus,
+  at: string,
+): O {
+  const back = FORWARD.indexOf(to) < FORWARD.indexOf(order.status);
+  if (to === "pending" || to === "cancelled" || order.status === "pending" || order.status === "cancelled") {
+    throw new RangeError("Payment states are set by the Worker, not the board");
+  }
+  if (!canTransition(order.status, to)) throw new RangeError(`Can't move an order from ${order.status} to ${to}`);
+  const next = { ...order, status: to };
+  if (back) {
+    const undone = STAMP[order.status];
+    if (undone) delete next[undone];
+  } else {
+    const stamp = STAMP[to];
+    if (stamp) next[stamp] = at;
+  }
+  return next;
 }

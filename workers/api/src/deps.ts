@@ -1,6 +1,8 @@
 import type { PaystackClient } from "@hv/core";
 import type { Store } from "./store/types";
+import type { AdminVerifier } from "./auth/firebase";
 import type { Notifier } from "./services/notify";
+import type { Pusher } from "./services/push";
 
 /** The subset of KV the Worker uses (so tests can pass a Map-backed fake). */
 export interface KvLike {
@@ -17,6 +19,12 @@ export interface EventsLike {
   writeDataPoint(p: { blobs?: string[]; doubles?: number[]; indexes?: string[] }): void;
 }
 
+/** The subset of an R2 bucket the Worker uses. */
+export interface BucketLike {
+  put(key: string, value: Uint8Array, opts: { httpMetadata: { contentType: string; cacheControl?: string } }): Promise<unknown>;
+  get(key: string): Promise<{ body: ReadableStream; httpEtag: string; httpMetadata?: { contentType?: string; cacheControl?: string } } | null>;
+}
+
 export interface Deps {
   store: Store;
   kv: KvLike;
@@ -24,6 +32,13 @@ export interface Deps {
   paystack: Pick<PaystackClient, "initialize" | "verify"> | null;
   paystackSecret: string | null;
   notify: Notifier;
+  /** Null until the Firebase service account is set: no push alerts. */
+  push: Pusher | null;
+  /** Product photos (R2). Null when the binding is missing. */
+  images: BucketLike | null;
+  /** Checks dashboard sign-ins. */
+  admin: AdminVerifier;
+  dashboardOrigin: string;
   checkoutLimiter?: LimiterLike;
   searchLimiter?: LimiterLike;
   events?: EventsLike;

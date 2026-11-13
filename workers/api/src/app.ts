@@ -2,6 +2,7 @@ import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { WebhookEventSchema, verifyWebhookSignature } from "@hv/core";
 import { z } from "zod";
+import { adminApp } from "./admin";
 import type { Deps } from "./deps";
 import { catalogueJson, rebuildCatalogue, searchIndexJson } from "./services/catalogue";
 import { CheckoutRequestSchema, confirmPayment, startCheckout, toPublicOrder } from "./services/orders";
@@ -42,7 +43,39 @@ export function createApp(depsFor: (c: Context) => Deps) {
     return cors({ origin: deps.storefrontOrigin, allowMethods: ["GET"] })(c, next);
   });
 
+  app.use("/admin/*", async (c, next) => {
+    const deps = depsFor(c);
+    return cors({
+      origin: deps.dashboardOrigin,
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      allowHeaders: ["Authorization", "Content-Type"],
+      maxAge: 600,
+    })(c, next);
+  });
+  app.route("/admin", adminApp(depsFor));
+
   app.get("/health", (c) => c.json({ ok: true }));
+
+  /* ---------- Product photos from R2 (immutable: a new upload gets a new id) ---------- */
+
+  app.get("/images/products/:id/:file", async (c) => {
+    const { images } = depsFor(c);
+    const id = c.req.param("id");
+    const file = c.req.param("file");
+    if (!images || !/^[0-9a-f-]{36}$/.test(id) || !/^(400|800|1200|2000)\.(avif|webp)$/.test(file)) {
+      return c.json({ message: "Not found" }, 404);
+    }
+    const obj = await images.get(`products/${id}/${file}`);
+    if (!obj) return c.json({ message: "Not found" }, 404);
+    return new Response(obj.body, {
+      headers: {
+        "Content-Type": obj.httpMetadata?.contentType ?? "application/octet-stream",
+        "Cache-Control": "public, max-age=31536000, immutable",
+        ETag: obj.httpEtag,
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  });
 
   /* ---------- Catalogue (read by the storefront, cached at the edge) ---------- */
 

@@ -1,0 +1,7 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // The dashboard is static files on Cloudflare (PLAN.md); every route falls back to index.html.
+  "name": "hv-dashboard",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./dist", "not_found_handling": "single-page-application" }
+}

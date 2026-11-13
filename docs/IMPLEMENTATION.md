@@ -36,7 +36,7 @@ Status: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked (needs in
 | 1.6 | Paystack initialise transaction (amount in kobo, order id as reference) | 🟡 — done; needs Paystack test keys to run live |
 | 1.7 | Paystack webhook: HMAC SHA-512 signature check, re-verify, one Firestore transaction, idempotent | 🟡 — signature + re-verify + amount check + idempotent, all tested; needs keys to run live |
 | 1.8 | Cron every 5 minutes: release expired reservations, cancel stale unpaid orders | ✅ — cron */5; also honours late payments and flags stock shortfalls |
-| 1.9 | Confirmation email (Resend) + push and email alert to her | 🟡 — Resend emails to customer and owner; push arrives with the dashboard (1.27) |
+| 1.9 | Confirmation email (Resend) + push and email alert to her | 🟡 — email and FCM push both wired and tested with mocks; live once Resend and Firebase keys exist |
 | 1.10 | Analytics events to Workers Analytics Engine | ✅ — POST /events → Workers Analytics Engine with Cloudflare country/city |
 
 ### Storefront (`apps/storefront`)
@@ -58,13 +58,13 @@ Status: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked (needs in
 
 | # | Step | Status |
 | --- | --- | --- |
-| 1.21 | Vite + React PWA, installable, Firebase Auth login with admin claim | ⬜ |
-| 1.22 | Today screen: money in today, this week, this month | ⬜ |
-| 1.23 | Products: add or edit from her phone, photos resized in the browser (400/800/1200/2000, AVIF + WebP) to R2 | ⬜ |
-| 1.24 | Stock levels and low-stock flags | ⬜ |
-| 1.25 | Orders board: New → Packed → Sent | ⬜ |
-| 1.26 | One-tap print: A4 invoice and 80 mm thermal slip | ⬜ |
-| 1.27 | Push notification per paid order | ⬜ |
+| 1.21 | Vite + React PWA, installable, Firebase Auth login with admin claim | 🟡 — PWA, manifest, service worker, Firebase sign-in and Worker-side ID-token check (admin claim + role) built and tested; dev roles until the Firebase project exists |
+| 1.22 | Today screen: money in today, this week, this month | ✅ — computed in her time zone; plus orders to pack, cutting list, running low |
+| 1.23 | Products: add or edit from her phone, photos resized in the browser (400/800/1200/2000, AVIF + WebP) to R2 | 🟡 — verified end to end in headless Chrome against local R2 (photo → saved product in ~13 s); needs the real R2 bucket |
+| 1.24 | Stock levels and low-stock flags | ✅ — stock screen saves per row; can't go below stock held by shoppers paying |
+| 1.25 | Orders board: New → Packed → Sent | ✅ — with undo, search, live refresh every 30 s |
+| 1.26 | One-tap print: A4 invoice and 80 mm thermal slip | 🟡 — both render correctly to PDF; needs a test on her actual thermal printer |
+| 1.27 | Push notification per paid order | 🟡 — FCM HTTP v1 send, token registration, test alert; needs Firebase project + Web Push key to verify the 10-second target |
 
 ### Phase 1 quality gate
 
@@ -106,6 +106,15 @@ Small choices PLAN.md doesn't cover. Anything bigger goes to Malik first.
 | 2026-11-13 | Payment arriving after the 15-minute hold expired: take the stock if it's still there; otherwise mark paid and flag `paid_after_expiry_stock_short` for her to contact the customer | **Malik to confirm** — the alternative is an automatic refund |
 | 2026-11-13 | Local dev without Firebase uses an in-memory store seeded with placeholders; production refuses it | Build and test before accounts exist |
 | 2026-11-13 | Checkout callback: API appends `/<order number>`, Paystack appends `?reference=` | Confirmation page can verify by reference |
+| 2026-11-13 | Dashboard reads and writes through the API Worker, never Firestore from the browser | One code path for stock rules; works with the dev store; Firestore rules stay closed |
+| 2026-11-13 | Roles: packer = orders + printing; owner and manager = everything else (products, stock, money in) | **Malik to confirm** |
+| 2026-11-13 | Orders board allows one step back (Packed → New, Sent → Packed) for mis-taps; no cancel of paid orders | A paid cancel needs a refund policy — **Malik to confirm** |
+| 2026-11-13 | Order timestamps `packedAt`, `shippedAt`, `deliveredAt` and item `unit` added to the order schema | Board times and the cutting list ("8 yards") |
+| 2026-11-13 | Weeks start on Monday for "this week" | Nigerian business convention |
+| 2026-11-13 | Dashboard design: "achromatic ledger" app style (design-taste-frontend, seed 2114315845), icon rail / phone bottom bar; yellow only on today's money and the one primary button | App-screen rules + brand rule (yellow primary buttons) |
+| 2026-11-13 | Push is data-only FCM drawn by our own service worker | Same look on every browser; tap opens the order |
+| 2026-11-13 | Photos encoded with the browser's own encoder when it has one, else @jsquash (WASM, lazy) | AVIF encoding isn't built into most browsers |
+| 2026-11-13 | Dashboard dev port 5180 (5174 was taken by another local project) | — |
 
 ## Blocked: needed from Malik and her
 

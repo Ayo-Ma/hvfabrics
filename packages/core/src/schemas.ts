@@ -109,6 +109,8 @@ export const OrderItemSchema = z.object({
   variantId: id,
   title: z.string(),
   variantLabel: z.string(),
+  /** How it's sold, so the cutting list can say "5 yards". Absent on orders made before 2026-11-13. */
+  unit: UnitSchema.optional(),
   qty: z.number().int().positive(),
   unitPrice: MoneySchema,
 });
@@ -130,6 +132,9 @@ export const OrderSchema = z.object({
   source: z.string().optional(),
   createdAt: isoDate,
   paidAt: isoDate.optional(),
+  packedAt: isoDate.optional(),
+  shippedAt: isoDate.optional(),
+  deliveredAt: isoDate.optional(),
   cancelledAt: isoDate.optional(),
   /** Needs her attention, e.g. "paid_after_expiry_stock_short" (payment arrived after the hold expired and stock ran out). */
   flags: z.array(z.string()).optional(),

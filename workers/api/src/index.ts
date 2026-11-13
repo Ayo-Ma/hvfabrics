@@ -1,8 +1,10 @@
 import { PaystackClient } from "@hv/core";
 import { seedEntries, seedSettings } from "@hv/core/seed";
 import { createApp, runScheduled } from "./app";
+import { DevVerifier, FirebaseVerifier, type AdminVerifier } from "./auth/firebase";
 import type { Deps } from "./deps";
 import { LogNotifier, ResendNotifier } from "./services/notify";
+import { FcmPusher } from "./services/push";
 import { FirestoreStore } from "./store/firestore";
 import { GoogleAuth, ServiceAccountSchema } from "./store/google-auth";
 import { MemoryStore } from "./store/memory";
@@ -19,26 +21,35 @@ type WorkerEnv = Env & Secrets;
 
 // Per-isolate singletons: the dev store must survive between requests; the Google token is cached.
 let memoryStore: MemoryStore | undefined;
-let firestore: { key: string; store: FirestoreStore } | undefined;
+let firebase: { key: string; store: FirestoreStore; push: FcmPusher; verifier: FirebaseVerifier } | undefined;
+const devVerifier = new DevVerifier();
 
-function storeFor(env: WorkerEnv): { store: Store; placeholder: boolean } {
+function backendFor(env: WorkerEnv): { store: Store; placeholder: boolean; push: FcmPusher | null; admin: AdminVerifier } {
   if (env.FIREBASE_SERVICE_ACCOUNT) {
     const key = env.FIREBASE_SERVICE_ACCOUNT;
-    if (!firestore || firestore.key !== key) {
+    if (!firebase || firebase.key !== key) {
       const sa = ServiceAccountSchema.parse(JSON.parse(key));
-      firestore = { key, store: new FirestoreStore(env.FIREBASE_PROJECT_ID || sa.project_id, new GoogleAuth(sa)) };
+      const projectId = env.FIREBASE_PROJECT_ID || sa.project_id;
+      const auth = new GoogleAuth(sa);
+      firebase = {
+        key,
+        store: new FirestoreStore(projectId, auth),
+        push: new FcmPusher(projectId, auth),
+        verifier: new FirebaseVerifier(projectId),
+      };
     }
-    return { store: firestore.store, placeholder: false };
+    return { store: firebase.store, placeholder: false, push: firebase.push, admin: firebase.verifier };
   }
   if (env.ENVIRONMENT === "production") {
     throw new Error("FIREBASE_SERVICE_ACCOUNT is required in production; refusing to use placeholder data.");
   }
+  // Placeholder data only: dev sign-in tokens are accepted here and nowhere else.
   memoryStore ??= new MemoryStore(seedEntries, seedSettings);
-  return { store: memoryStore, placeholder: true };
+  return { store: memoryStore, placeholder: true, push: null, admin: devVerifier };
 }
 
 function depsFrom(env: WorkerEnv, ctx: { waitUntil(p: Promise<unknown>): void }): Deps {
-  const { store, placeholder } = storeFor(env);
+  const { store, placeholder, push, admin } = backendFor(env);
   const log = (msg: string, extra?: Record<string, unknown>) => console.log(JSON.stringify({ msg, ...extra }));
   return {
     store,
@@ -48,6 +59,10 @@ function depsFrom(env: WorkerEnv, ctx: { waitUntil(p: Promise<unknown>): void })
     notify: env.RESEND_API_KEY
       ? new ResendNotifier(env.RESEND_API_KEY, env.EMAIL_FROM, env.STOREFRONT_ORIGIN)
       : new LogNotifier(log),
+    push,
+    images: env.IMAGES ?? null,
+    admin,
+    dashboardOrigin: env.DASHBOARD_ORIGIN,
     checkoutLimiter: env.CHECKOUT_LIMITER,
     searchLimiter: env.SEARCH_LIMITER,
     events: env.EVENTS,

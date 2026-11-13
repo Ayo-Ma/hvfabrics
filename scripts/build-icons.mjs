@@ -1,3 +1,4 @@
+/* global console */
 // Generates React icon components from assets/icons/*.svg into packages/ui/src/icons/index.tsx.
 // Run: corepack pnpm icons   (re-run whenever Malik adds or changes an icon)
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";

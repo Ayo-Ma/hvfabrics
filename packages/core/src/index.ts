@@ -5,3 +5,4 @@ export * from "./catalogue";
 export * from "./search";
 export * from "./paystack";
 export * from "./order";
+export * from "./admin";

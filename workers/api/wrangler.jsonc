@@ -12,10 +12,14 @@
     "ENVIRONMENT": "development",
     // Only this origin may receive Paystack's redirect back (prevents open redirects).
     "STOREFRONT_ORIGIN": "http://localhost:5173",
+    // The dashboard PWA; the only origin allowed to call /admin/*.
+    "DASHBOARD_ORIGIN": "http://localhost:5180",
     // Sender for transactional email (Resend). Must be a verified domain before launch.
     "EMAIL_FROM": "Harries Vogue <orders@example.com>"
   },
   // Built catalogue JSON, read by the storefront. Create with: wrangler kv namespace create CATALOGUE
+  // Product photos, uploaded from the dashboard. Create with: wrangler r2 bucket create hv-images
+  "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "hv-images" }],
   "kv_namespaces": [{ "binding": "CATALOGUE", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }],
   "ratelimits": [
     { "name": "CHECKOUT_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },

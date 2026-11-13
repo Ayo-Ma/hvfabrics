@@ -14,6 +14,7 @@ import {
 import { z } from "zod";
 import type { Deps } from "../deps";
 import { rebuildLater } from "./catalogue";
+import { orderPaidPush } from "./push";
 
 export const CheckoutRequestSchema = CheckoutInputSchema.extend({ callbackBase: z.url() });
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
@@ -71,6 +72,7 @@ export async function startCheckout(
             ...(f.variant.options.size ? { size: f.variant.options.size } : {}),
             unit: f.variant.options.unit,
           }),
+          unit: f.variant.options.unit,
           price: f.variant.price,
         },
       ]),
@@ -156,12 +158,7 @@ export async function confirmPayment(deps: Deps, reference: string): Promise<Ord
     rebuildLater(deps, "paid");
     const paid = result.order;
     deps.events?.writeDataPoint({ blobs: ["purchase", paid.number, paid.country ?? "", paid.city ?? ""], doubles: [paid.totals.total.amount], indexes: ["purchase"] });
-    deps.waitUntil(
-      deps.store
-        .getSettings()
-        .then((s) => deps.notify.orderPaid(paid, s))
-        .catch((e: unknown) => deps.log("order notification failed", { order: paid.number, error: String(e) })),
-    );
+    deps.waitUntil(alertOwner(deps, paid).catch((e: unknown) => deps.log("order alert failed", { order: paid.number, error: String(e) })));
   }
   return result.order;
 }
@@ -187,4 +184,20 @@ export function toPublicOrder(o: Order): PublicOrder {
     totals: o.totals,
     deliveryZone: o.delivery.zone,
   };
+}
+
+/**
+ * PLAN.md step 5: push to her phone and email her and the customer. Push goes first and
+ * doesn't wait for email. Devices that unsubscribed are dropped from the list.
+ */
+export async function alertOwner(deps: Deps, order: Order): Promise<void> {
+  const settings = await deps.store.getSettings();
+  const push = deps.push
+    ? deps.push.send(settings.notificationTargets.pushTokens, orderPaidPush(order)).then(async (r) => {
+        if (r.dead.length) await deps.store.removePushTokens(r.dead);
+      })
+    : Promise.resolve();
+  const results = await Promise.allSettled([push, deps.notify.orderPaid(order, settings)]);
+  const failed = results.flatMap((r) => (r.status === "rejected" ? [String(r.reason)] : []));
+  if (failed.length) throw new Error(failed.join("; "));
 }

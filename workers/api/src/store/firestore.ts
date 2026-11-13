@@ -8,13 +8,27 @@ import {
   type BagLine,
   type Customer,
   type Order,
+  type OrderStatus,
   type Product,
+  type ProductInput,
+  type Settings,
+  type StockPatch,
   type Variant,
 } from "@hv/core";
 import { decodeFields, encodeFields, encodeValue, type FsFields } from "./firestore-codec";
 import type { GoogleAuth } from "./google-auth";
-import { planCancel, planPayment, planReservation, variantIdsOf } from "./logic";
-import { customerId, type CreateOrderResult, type MarkPaidResult, type Store, type VariantWithProduct } from "./types";
+import { planCancel, planMove, planPayment, planProductSave, planReservation, planStock, variantIdsOf, withPushToken } from "./logic";
+import {
+  customerId,
+  type CreateOrderResult,
+  type Entry,
+  type MarkPaidResult,
+  type MoveResult,
+  type SaveProductResult,
+  type StockResult,
+  type Store,
+  type VariantWithProduct,
+} from "./types";
 
 /**
  * Firestore over its REST API (PLAN.md: Workers call Firestore's REST API with a
@@ -30,7 +44,7 @@ interface FsDoc {
   fields?: FsFields;
 }
 
-type Write = { update: { name: string; fields: FsFields } };
+type Write = { update: { name: string; fields: FsFields } } | { delete: string };
 
 class TxConflict extends Error {}
 
@@ -84,7 +98,7 @@ export class FirestoreStore implements Store {
   }
 
   private async runQuery(structuredQuery: unknown, parent = ""): Promise<FsDoc[]> {
-    const url = `${this.base}${parent ? `/${parent}` : ""}:runQuery`;
+    const url = `${this.base}${parent ? `/${parent.split("/").map(encodeURIComponent).join("/")}` : ""}:runQuery`;
     const rows = await this.call<{ document?: FsDoc }[]>(url, { structuredQuery });
     return rows.flatMap((r) => (r.document ? [r.document] : []));
   }
@@ -277,5 +291,149 @@ export class FirestoreStore implements Store {
     const name = this.name(`customers/${id}`);
     const raw = (await this.batchGet([name])).get(name);
     return raw ? CustomerSchema.parse(raw) : null;
+  }
+
+  /* ---------------- Dashboard ---------------- */
+
+  private entriesFrom(productDocs: FsDoc[], variantDocs: FsDoc[]): Entry[] {
+    const byProduct = new Map<string, Variant[]>();
+    for (const d of variantDocs) {
+      const v = VariantSchema.parse(decodeFields(d.fields ?? {}));
+      const pid = productIdOfVariant(v.id);
+      byProduct.set(pid, [...(byProduct.get(pid) ?? []), v]);
+    }
+    return productDocs.map((d) => {
+      const product = ProductSchema.parse(decodeFields(d.fields ?? {}));
+      return { product, variants: byProduct.get(product.id) ?? [] };
+    });
+  }
+
+  async listAllEntries(): Promise<Entry[]> {
+    const [productDocs, variantDocs] = await Promise.all([
+      this.runQuery({ from: [{ collectionId: "products" }] }),
+      this.runQuery({ from: [{ collectionId: "variants", allDescendants: true }] }),
+    ]);
+    return this.entriesFrom(productDocs, variantDocs);
+  }
+
+  private async variantNames(productId: string): Promise<string[]> {
+    const docs = await this.runQuery({ from: [{ collectionId: "variants" }], select: { fields: [] } }, `products/${productId}`);
+    return docs.map((d) => d.name);
+  }
+
+  async getEntry(productId: string): Promise<Entry | null> {
+    const name = this.name(`products/${productId}`);
+    const [docs, variantDocs] = await Promise.all([
+      this.batchGet([name]),
+      this.runQuery({ from: [{ collectionId: "variants" }] }, `products/${productId}`),
+    ]);
+    const raw = docs.get(name);
+    if (!raw) return null;
+    return this.entriesFrom([{ name, fields: encodeFields(raw) }], variantDocs)[0] ?? null;
+  }
+
+  async saveProduct(productId: string, input: ProductInput, now: string, mode: "create" | "update"): Promise<SaveProductResult> {
+    const [slugDocs, existingVariantNames] = await Promise.all([
+      this.runQuery({
+        from: [{ collectionId: "products" }],
+        where: { fieldFilter: { field: { fieldPath: "slug" }, op: "EQUAL", value: encodeValue(input.slug) } },
+        limit: 2,
+      }),
+      this.variantNames(productId),
+    ]);
+    const slugOwner = slugDocs.map((d) => String(decodeFields(d.fields ?? {}).id)).find((id) => id !== productId) ?? null;
+    const productName = this.name(`products/${productId}`);
+
+    return this.transact<SaveProductResult>(async (read) => {
+      const docs = await read([productName, ...existingVariantNames]);
+      const pRaw = docs.get(productName);
+      const existing: Entry | null = pRaw
+        ? {
+            product: ProductSchema.parse(pRaw),
+            variants: existingVariantNames.flatMap((n) => {
+              const v = docs.get(n);
+              return v ? [VariantSchema.parse(v)] : [];
+            }),
+          }
+        : null;
+      const plan = planProductSave(productId, input, existing, slugOwner, now, mode);
+      if (!plan.ok) return { result: plan, writes: [] };
+      return {
+        result: { ok: true, entry: plan.entry },
+        writes: [
+          this.write(`products/${productId}`, plan.entry.product),
+          ...plan.entry.variants.map((v) => this.variantWrite(v)),
+          ...plan.deleted.map((id): Write => ({ delete: this.variantDoc(id) })),
+        ],
+      };
+    });
+  }
+
+  async setStock(variantId: string, patch: StockPatch): Promise<StockResult> {
+    return this.transact<StockResult>(async (read) => {
+      const name = this.variantDoc(variantId);
+      const raw = (await read([name])).get(name);
+      const plan = planStock(raw ? VariantSchema.parse(raw) : undefined, patch);
+      return { result: plan, writes: plan.ok ? [this.variantWrite(plan.variant)] : [] };
+    });
+  }
+
+  /** Needs the composite index (status ASC, paidAt DESC) in firestore.indexes.json. */
+  async listOrders(statuses: readonly OrderStatus[], limit: number): Promise<Order[]> {
+    const docs = await this.runQuery({
+      from: [{ collectionId: "orders" }],
+      where: {
+        fieldFilter: {
+          field: { fieldPath: "status" },
+          op: "IN",
+          value: { arrayValue: { values: statuses.map((st) => encodeValue(st)) } },
+        },
+      },
+      orderBy: [{ field: { fieldPath: "paidAt" }, direction: "DESCENDING" }],
+      limit,
+    });
+    return docs.map((d) => OrderSchema.parse(decodeFields(d.fields ?? {})));
+  }
+
+  async listPaidSince(since: string, limit: number): Promise<Order[]> {
+    const docs = await this.runQuery({
+      from: [{ collectionId: "orders" }],
+      where: { fieldFilter: { field: { fieldPath: "paidAt" }, op: "GREATER_THAN_OR_EQUAL", value: encodeValue(since) } },
+      orderBy: [{ field: { fieldPath: "paidAt" }, direction: "DESCENDING" }],
+      limit,
+    });
+    return docs.map((d) => OrderSchema.parse(decodeFields(d.fields ?? {})));
+  }
+
+  async moveOrder(orderId: string, to: OrderStatus, at: string): Promise<MoveResult> {
+    return this.transact<MoveResult>(async (read) => {
+      const name = this.name(`orders/${orderId}`);
+      const raw = (await read([name])).get(name);
+      const plan = planMove(raw ? OrderSchema.parse(raw) : null, to, at);
+      return { result: plan, writes: plan.ok ? [this.write(`orders/${orderId}`, plan.order)] : [] };
+    });
+  }
+
+  private async updateSettings(change: (s: Settings) => void): Promise<void> {
+    const name = this.name("settings/store");
+    await this.transact<void>(async (read) => {
+      const raw = (await read([name])).get(name);
+      if (!raw) throw new Error("settings/store is missing in Firestore");
+      const settings = SettingsSchema.parse(raw);
+      change(settings);
+      return { result: undefined, writes: [this.write("settings/store", settings)] };
+    });
+  }
+
+  async addPushToken(token: string): Promise<void> {
+    await this.updateSettings((s) => {
+      s.notificationTargets.pushTokens = withPushToken(s.notificationTargets.pushTokens, token);
+    });
+  }
+
+  async removePushTokens(tokens: readonly string[]): Promise<void> {
+    await this.updateSettings((s) => {
+      s.notificationTargets.pushTokens = s.notificationTargets.pushTokens.filter((t) => !tokens.includes(t));
+    });
   }
 }

@@ -12,7 +12,8 @@ export const ServiceAccountSchema = z.object({
 });
 export type ServiceAccount = z.infer<typeof ServiceAccountSchema>;
 
-const SCOPE = "https://www.googleapis.com/auth/datastore";
+/** Firestore for the store, FCM for push alerts to her phone. */
+export const DEFAULT_SCOPES = ["https://www.googleapis.com/auth/datastore", "https://www.googleapis.com/auth/firebase.messaging"];
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 
 function b64url(data: ArrayBuffer | Uint8Array | string): string {
@@ -30,10 +31,10 @@ function pemToPkcs8(pem: string): ArrayBuffer {
   return out.buffer;
 }
 
-export async function signJwt(sa: ServiceAccount, nowSeconds: number): Promise<string> {
+export async function signJwt(sa: ServiceAccount, nowSeconds: number, scopes: readonly string[] = DEFAULT_SCOPES): Promise<string> {
   const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
   const claims = b64url(
-    JSON.stringify({ iss: sa.client_email, scope: SCOPE, aud: TOKEN_URL, iat: nowSeconds, exp: nowSeconds + 3600 }),
+    JSON.stringify({ iss: sa.client_email, scope: scopes.join(" "), aud: TOKEN_URL, iat: nowSeconds, exp: nowSeconds + 3600 }),
   );
   const key = await crypto.subtle.importKey(
     "pkcs8",

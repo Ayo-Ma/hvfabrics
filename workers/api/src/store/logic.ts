@@ -7,11 +7,16 @@ import {
   validateBag,
   type BagLine,
   type BagProblem,
+  moveOrder,
   type Customer,
   type Order,
+  type OrderStatus,
+  type Product,
+  type ProductInput,
+  type StockPatch,
   type Variant,
 } from "@hv/core";
-import { customerId, type VariantWithProduct } from "./types";
+import { customerId, MAX_PUSH_TOKENS, type Entry, type MoveResult, type SaveProductResult, type StockResult, type VariantWithProduct } from "./types";
 
 /**
  * Pure state transitions shared by every Store implementation, so the in-memory
@@ -113,4 +118,85 @@ export function planCancel(
 /** Multiple lines of one order can touch the same variant only once after merging, but guard anyway. */
 export function variantIdsOf(order: Order): string[] {
   return [...new Set(order.items.map((i) => i.variantId))];
+}
+
+/* ---------------- Dashboard ---------------- */
+
+export type ProductPlan =
+  | Exclude<SaveProductResult, { ok: true }>
+  | { ok: true; entry: Entry; deleted: string[] };
+
+/** Builds the product and variants to write, keeping shoppers' holds intact. */
+export function planProductSave(
+  productId: string,
+  input: ProductInput,
+  existing: Entry | null,
+  slugTakenBy: string | null,
+  now: string,
+  mode: "create" | "update",
+): ProductPlan {
+  if (mode === "create" && existing) return { ok: false, reason: "exists" };
+  if (mode === "update" && !existing) return { ok: false, reason: "not_found" };
+  if (slugTakenBy && slugTakenBy !== productId) return { ok: false, reason: "slug_taken" };
+
+  const before = new Map((existing?.variants ?? []).map((v) => [v.id, v]));
+  const variants: Variant[] = [];
+  for (const v of input.variants) {
+    const id = `${productId}--${v.key}`;
+    const held = before.get(id)?.reserved ?? 0;
+    if (v.stock < held) return { ok: false, reason: "held", variantId: id, held };
+    variants.push({
+      id,
+      sku: v.sku,
+      options: {
+        unit: v.options.unit,
+        ...(v.options.colour ? { colour: v.options.colour } : {}),
+        ...(v.options.size ? { size: v.options.size } : {}),
+      },
+      price: v.price,
+      stock: v.stock,
+      reserved: held,
+      lowStockAt: v.lowStockAt,
+    });
+  }
+  const kept = new Set(variants.map((v) => v.id));
+  const deleted: string[] = [];
+  for (const [id, v] of before) {
+    if (kept.has(id)) continue;
+    if (v.reserved > 0) return { ok: false, reason: "held", variantId: id, held: v.reserved };
+    deleted.push(id);
+  }
+  const { variants: _inputVariants, ...fields } = input;
+  const product: Product = {
+    id: productId,
+    ...fields,
+    createdAt: existing?.product.createdAt ?? now,
+    updatedAt: now,
+  };
+  return { ok: true, entry: { product, variants }, deleted };
+}
+
+export function planStock(v: Variant | undefined, patch: StockPatch): StockResult {
+  if (!v) return { ok: false, reason: "not_found" };
+  const next = { ...v, ...(patch.stock !== undefined ? { stock: patch.stock } : {}), ...(patch.lowStockAt !== undefined ? { lowStockAt: patch.lowStockAt } : {}) };
+  if (next.stock < next.reserved) return { ok: false, reason: "held", variantId: v.id, held: v.reserved };
+  return { ok: true, variant: next };
+}
+
+export function planMove(order: Order | null, to: OrderStatus, at: string): MoveResult {
+  if (!order) return { ok: false, reason: "not_found" };
+  try {
+    return { ok: true, order: moveOrder(order, to, at) };
+  } catch (e) {
+    return { ok: false, reason: "refused", message: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export function withPushToken(tokens: readonly string[], token: string): string[] {
+  return [...tokens.filter((t) => t !== token), token].slice(-MAX_PUSH_TOKENS);
+}
+
+/** Most recent payment first; orders without a payment time fall back to when they were made. */
+export function byPaidDesc(a: Order, b: Order): number {
+  return (b.paidAt ?? b.createdAt).localeCompare(a.paidAt ?? a.createdAt);
 }

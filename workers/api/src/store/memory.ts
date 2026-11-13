@@ -1,6 +1,16 @@
-import type { BagLine, Customer, Order, Product, Settings, Variant } from "@hv/core";
-import { planCancel, planPayment, planReservation, variantIdsOf } from "./logic";
-import { customerId, type CreateOrderResult, type MarkPaidResult, type Store, type VariantWithProduct } from "./types";
+import type { BagLine, Customer, Order, OrderStatus, Product, ProductInput, Settings, StockPatch, Variant } from "@hv/core";
+import { byPaidDesc, planCancel, planMove, planPayment, planProductSave, planReservation, planStock, variantIdsOf, withPushToken } from "./logic";
+import {
+  customerId,
+  type CreateOrderResult,
+  type Entry,
+  type MarkPaidResult,
+  type MoveResult,
+  type SaveProductResult,
+  type StockResult,
+  type Store,
+  type VariantWithProduct,
+} from "./types";
 
 /**
  * In-memory store for local development and tests. JavaScript runs one task at a time,
@@ -13,11 +23,10 @@ export class MemoryStore implements Store {
   private variants = new Map<string, { productId: string; variant: Variant }>();
   private orders = new Map<string, Order>();
   private customers = new Map<string, Customer>();
+  private settings: Settings;
 
-  constructor(
-    entries: { product: Product; variants: Variant[] }[],
-    private settings: Settings,
-  ) {
+  constructor(entries: { product: Product; variants: Variant[] }[], settings: Settings) {
+    this.settings = structuredClone(settings);
     for (const { product, variants } of entries) {
       this.products.set(product.id, structuredClone(product));
       for (const v of variants) this.variants.set(v.id, { productId: product.id, variant: structuredClone(v) });
@@ -25,10 +34,7 @@ export class MemoryStore implements Store {
   }
 
   async listCatalogueEntries() {
-    return [...this.products.values()].map((product) => ({
-      product: structuredClone(product),
-      variants: [...this.variants.values()].filter((v) => v.productId === product.id).map((v) => structuredClone(v.variant)),
-    }));
+    return this.listAllEntries();
   }
 
   async getSettings() {
@@ -104,6 +110,74 @@ export class MemoryStore implements Store {
   async getCustomer(id: string) {
     const c = this.customers.get(id);
     return c ? structuredClone(c) : null;
+  }
+
+  /* ---------------- Dashboard ---------------- */
+
+  async listAllEntries(): Promise<Entry[]> {
+    return [...this.products.keys()].map((id) => this.entry(id)!);
+  }
+
+  async getEntry(productId: string): Promise<Entry | null> {
+    return this.entry(productId);
+  }
+
+  async saveProduct(productId: string, input: ProductInput, now: string, mode: "create" | "update"): Promise<SaveProductResult> {
+    const slugOwner = [...this.products.values()].find((p) => p.slug === input.slug)?.id ?? null;
+    const plan = planProductSave(productId, input, this.entry(productId), slugOwner, now, mode);
+    if (!plan.ok) return plan;
+    this.products.set(productId, structuredClone(plan.entry.product));
+    for (const id of plan.deleted) this.variants.delete(id);
+    for (const v of plan.entry.variants) this.variants.set(v.id, { productId, variant: structuredClone(v) });
+    return { ok: true, entry: structuredClone(plan.entry) };
+  }
+
+  async setStock(variantId: string, patch: StockPatch): Promise<StockResult> {
+    const rec = this.variants.get(variantId);
+    const plan = planStock(rec?.variant, patch);
+    if (plan.ok) rec!.variant = structuredClone(plan.variant);
+    return plan;
+  }
+
+  async listOrders(statuses: readonly OrderStatus[], limit: number): Promise<Order[]> {
+    return [...this.orders.values()]
+      .filter((o) => statuses.includes(o.status))
+      .sort(byPaidDesc)
+      .slice(0, limit)
+      .map((o) => structuredClone(o));
+  }
+
+  async listPaidSince(since: string, limit: number): Promise<Order[]> {
+    return [...this.orders.values()]
+      .filter((o) => o.paidAt !== undefined && o.paidAt >= since)
+      .sort(byPaidDesc)
+      .slice(0, limit)
+      .map((o) => structuredClone(o));
+  }
+
+  async moveOrder(orderId: string, to: OrderStatus, at: string): Promise<MoveResult> {
+    const plan = planMove(this.orders.get(orderId) ?? null, to, at);
+    if (plan.ok) this.orders.set(orderId, structuredClone(plan.order));
+    return plan;
+  }
+
+  async addPushToken(token: string): Promise<void> {
+    const t = this.settings.notificationTargets;
+    t.pushTokens = withPushToken(t.pushTokens, token);
+  }
+
+  async removePushTokens(tokens: readonly string[]): Promise<void> {
+    const t = this.settings.notificationTargets;
+    t.pushTokens = t.pushTokens.filter((x) => !tokens.includes(x));
+  }
+
+  private entry(productId: string): Entry | null {
+    const product = this.products.get(productId);
+    if (!product) return null;
+    return {
+      product: structuredClone(product),
+      variants: [...this.variants.values()].filter((v) => v.productId === productId).map((v) => structuredClone(v.variant)),
+    };
   }
 
   /** Test helper: current stock of a variant. */

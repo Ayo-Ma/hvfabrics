@@ -2,7 +2,8 @@ import { createHmac } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Order, Product, Settings, Variant } from "@hv/core";
 import { createApp, runScheduled } from "./app";
-import type { Deps, KvLike } from "./deps";
+import { DevVerifier } from "./auth/firebase";
+import type { BucketLike, Deps, KvLike } from "./deps";
 import { MemoryStore } from "./store/memory";
 import { SHORTFALL_FLAG } from "./store/logic";
 
@@ -44,6 +45,17 @@ const settings: Settings = {
   notificationTargets: { emails: ["owner@example.com"], pushTokens: [] },
 };
 
+class FakeBucket implements BucketLike {
+  data = new Map<string, { bytes: Uint8Array; type: string }>();
+  async put(k: string, v: Uint8Array, o: { httpMetadata: { contentType: string } }) {
+    this.data.set(k, { bytes: v, type: o.httpMetadata.contentType });
+  }
+  async get(k: string) {
+    const o = this.data.get(k);
+    return o ? { body: new Response(o.bytes).body!, httpEtag: "etag", httpMetadata: { contentType: o.type } } : null;
+  }
+}
+
 class FakeKv implements KvLike {
   data = new Map<string, string>();
   async get(k: string) {
@@ -81,6 +93,10 @@ function setup(opts: { paystack?: boolean; verifyAmount?: (ref: string) => numbe
     })),
   };
   const notify = { orderPaid: vi.fn(async () => undefined) };
+  const push = {
+    send: vi.fn(async (tokens: readonly string[], _m: unknown) => ({ sent: tokens.length, dead: tokens.filter((t) => t.startsWith("dead")) })),
+  };
+  const images = new FakeBucket();
   const pending: Promise<unknown>[] = [];
   let now = T0;
   const deps: Deps = {
@@ -89,6 +105,10 @@ function setup(opts: { paystack?: boolean; verifyAmount?: (ref: string) => numbe
     paystack: opts.paystack === false ? null : paystack,
     paystackSecret: SECRET,
     notify,
+    push,
+    images,
+    admin: new DevVerifier(),
+    dashboardOrigin: "https://admin.example",
     storefrontOrigin: ORIGIN,
     placeholderData: false,
     now: () => now,
@@ -102,6 +122,8 @@ function setup(opts: { paystack?: boolean; verifyAmount?: (ref: string) => numbe
     deps,
     paystack,
     notify,
+    push,
+    images,
     settle: () => Promise.all(pending),
     setNow: (d: Date) => (now = d),
   };
@@ -311,5 +333,168 @@ describe("catalogue and order lookup", () => {
     expect((await t.app.request(`/orders/${orderNumber}?email=someone@else.com`)).status).toBe(404);
     expect((await t.app.request(`/orders/${orderNumber}?reference=wrong`)).status).toBe(404);
     expect((await t.app.request(`/orders/HV-NOPE22?email=ada@example.com`)).status).toBe(404);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Dashboard API                                                       */
+/* ------------------------------------------------------------------ */
+
+const as = (role: "owner" | "manager" | "packer") => ({ Authorization: `Bearer dev:${role}` });
+const jsonHeaders = (role: "owner" | "manager" | "packer") => ({ ...as(role), "Content-Type": "application/json" });
+
+async function paidOrder(t: ReturnType<typeof setup>, qty = 2) {
+  const { orderNumber } = (await (await checkout(t.app, [{ variantId: "lace--gold", qty }])).json()) as { orderNumber: string };
+  const order = (await t.store.getOrderByNumber(orderNumber))!;
+  await webhook(t.app, order.id);
+  await t.settle();
+  return (await t.store.getOrder(order.id))!;
+}
+
+const productBody = (over: Record<string, unknown> = {}) => ({
+  slug: "emerald-lace",
+  line: "fabric",
+  title: "Emerald lace",
+  description: "",
+  images: [],
+  attributes: {},
+  status: "live",
+  variants: [
+    { key: "v1", sku: "EL-1", options: { unit: "yard", colour: "Emerald" }, price: { amount: 1_200_000, currency: "NGN" }, stock: 12, lowStockAt: 3 },
+  ],
+  ...over,
+});
+
+describe("dashboard access", () => {
+  it("needs a sign-in and the right role", async () => {
+    const t = setup();
+    expect((await t.app.request("/admin/me")).status).toBe(401);
+    expect((await t.app.request("/admin/me", { headers: { Authorization: "Bearer dev:hacker" } })).status).toBe(401);
+    const me = (await (await t.app.request("/admin/me", { headers: as("packer") })).json()) as { role: string; can: Record<string, boolean> };
+    expect(me).toMatchObject({ role: "packer", can: { orders: true, products: false, takings: false } });
+    expect((await t.app.request("/admin/products", { headers: as("packer") })).status).toBe(403);
+    expect((await t.app.request("/admin/takings?since=2026-11-01T00:00:00Z", { headers: as("packer") })).status).toBe(403);
+    expect((await t.app.request("/admin/orders", { headers: as("packer") })).status).toBe(200);
+  });
+
+  it("only lets the dashboard origin call it from a browser", async () => {
+    const t = setup();
+    const pre = await t.app.request("/admin/orders", {
+      method: "OPTIONS",
+      headers: { Origin: "https://admin.example", "Access-Control-Request-Method": "GET", "Access-Control-Request-Headers": "authorization" },
+    });
+    expect(pre.headers.get("access-control-allow-origin")).toBe("https://admin.example");
+    const evil = await t.app.request("/admin/orders", { headers: { ...as("owner"), Origin: "https://evil.example" } });
+    expect(evil.headers.get("access-control-allow-origin")).not.toBe("https://evil.example");
+  });
+});
+
+describe("orders board", () => {
+  it("lists paid orders as New and moves them New → Packed → Sent, refusing skips", async () => {
+    const t = setup();
+    const order = await paidOrder(t);
+    const board = (await (await t.app.request("/admin/orders", { headers: as("packer") })).json()) as { orders: { id: string; status: string }[] };
+    expect(board.orders.map((o) => [o.id, o.status])).toEqual([[order.id, "paid"]]);
+
+    const move = (to: string) =>
+      t.app.request(`/admin/orders/${order.id}/move`, { method: "POST", headers: jsonHeaders("packer"), body: JSON.stringify({ to }) });
+    expect((await move("shipped")).status).toBe(409);
+    expect((await move("cancelled")).status).toBe(400);
+    const packed = (await (await move("packed")).json()) as { status: string; packedAt: string };
+    expect(packed).toMatchObject({ status: "packed", packedAt: T0.toISOString() });
+    expect(((await (await move("shipped")).json()) as { status: string }).status).toBe("shipped");
+    const missing = await t.app.request(`/admin/orders/nope/move`, { method: "POST", headers: jsonHeaders("packer"), body: JSON.stringify({ to: "packed" }) });
+    expect(missing.status).toBe(404);
+  });
+
+  it("returns paid orders for money in, never pending ones", async () => {
+    const t = setup();
+    const paid = await paidOrder(t);
+    await checkout(t.app, [{ variantId: "lace--gold", qty: 1 }]); // pending, unpaid
+    const res = await t.app.request("/admin/takings?since=2026-11-01T00:00:00Z", { headers: as("owner") });
+    const body = (await res.json()) as { orders: { id: string }[] };
+    expect(body.orders.map((o) => o.id)).toEqual([paid.id]);
+    expect((await t.app.request("/admin/takings?since=yesterday", { headers: as("owner") })).status).toBe(400);
+  });
+});
+
+describe("products and stock", () => {
+  it("creates a product, publishes it to the catalogue and refuses a second one on the same address", async () => {
+    const t = setup();
+    const res = await t.app.request("/admin/products", { method: "POST", headers: jsonHeaders("manager"), body: JSON.stringify(productBody()) });
+    expect(res.status).toBe(201);
+    const entry = (await res.json()) as { product: { id: string }; variants: { id: string; reserved: number }[] };
+    expect(entry.product.id).toBe("emerald-lace");
+    expect(entry.variants).toEqual([expect.objectContaining({ id: "emerald-lace--v1", reserved: 0 })]);
+    await t.settle();
+    const cat = JSON.parse((await t.deps.kv.get("catalogue:v1"))!) as { products: { id: string }[] };
+    expect(cat.products.map((p) => p.id)).toContain("emerald-lace");
+
+    const again = await t.app.request("/admin/products", {
+      method: "POST",
+      headers: jsonHeaders("manager"),
+      body: JSON.stringify(productBody({ title: "Another" })),
+    });
+    expect(again.status).toBe(409);
+    const empty = await t.app.request("/admin/products", { method: "POST", headers: jsonHeaders("manager"), body: JSON.stringify(productBody({ variants: [] })) });
+    expect(empty.status).toBe(400);
+  });
+
+  it("keeps shoppers' holds: stock can't drop below what's held, and a held variant can't be removed", async () => {
+    const t = setup();
+    await checkout(t.app, [{ variantId: "lace--gold", qty: 4 }]); // holds 4 of 10
+    const patch = (stock: number) =>
+      t.app.request("/admin/variants/lace--gold", { method: "PATCH", headers: jsonHeaders("owner"), body: JSON.stringify({ stock }) });
+    const refused = await patch(3);
+    expect(refused.status).toBe(409);
+    expect(((await refused.json()) as { held: number }).held).toBe(4);
+    expect((await (await patch(7)).json()) as { stock: number; reserved: number }).toMatchObject({ stock: 7, reserved: 4 });
+
+    const lace = (await (await t.app.request("/admin/products/lace", { headers: as("owner") })).json()) as { product: Record<string, unknown> };
+    const { id: _id, createdAt: _c, updatedAt: _u, ...fields } = lace.product;
+    const without = {
+      ...fields,
+      variants: [{ key: "silver", sku: "S", options: { unit: "yard" }, price: { amount: 100, currency: "NGN" }, stock: 1, lowStockAt: 0 }],
+    };
+    const removeHeld = await t.app.request("/admin/products/lace", { method: "PUT", headers: jsonHeaders("owner"), body: JSON.stringify(without) });
+    expect(removeHeld.status).toBe(409);
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 7, reserved: 4 });
+  });
+
+  it("accepts only real AVIF/WebP photos at the agreed sizes, and serves them back", async () => {
+    const t = setup();
+    const id = "0b9f2c4e-1d2a-4c3b-9e8f-7a6b5c4d3e2f";
+    const enc = (x: string) => [...new TextEncoder().encode(x)];
+    const webp = new Uint8Array([...enc("RIFF"), 0, 0, 0, 0, ...enc("WEBPVP8 "), 1, 2, 3]);
+    const put = (file: string, body: Uint8Array, type: string) =>
+      t.app.request(`/admin/images/${id}/${file}`, { method: "PUT", headers: { ...as("manager"), "Content-Type": type }, body });
+    expect((await put("800.webp", new Uint8Array(16), "image/webp")).status).toBe(415);
+    expect((await put("800.webp", webp, "image/avif")).status).toBe(415);
+    expect((await put("900.webp", webp, "image/webp")).status).toBe(400);
+    expect((await put("800.webp", webp, "image/webp")).status).toBe(201);
+    const back = await t.app.request(`/images/products/${id}/800.webp`);
+    expect(back.status).toBe(200);
+    expect(back.headers.get("content-type")).toBe("image/webp");
+    expect(back.headers.get("cache-control")).toContain("immutable");
+  });
+});
+
+describe("push alerts", () => {
+  it("pushes every paid order to her registered phones and drops dead ones", async () => {
+    const t = setup();
+    for (const token of ["phone-token-aaaaaaaaaaaaaaaa", "dead-token-bbbbbbbbbbbbbbbbbb"]) {
+      await t.app.request("/admin/push/tokens", { method: "POST", headers: jsonHeaders("owner"), body: JSON.stringify({ token }) });
+    }
+    const order = await paidOrder(t);
+    expect(t.push.send).toHaveBeenCalledWith(
+      ["phone-token-aaaaaaaaaaaaaaaa", "dead-token-bbbbbbbbbbbbbbbbbb"],
+      expect.objectContaining({ title: expect.stringContaining(order.number), url: `/orders/${order.id}` }),
+    );
+    expect((await t.store.getSettings()).notificationTargets.pushTokens).toEqual(["phone-token-aaaaaaaaaaaaaaaa"]);
+  });
+
+  it("hides the sample-order seeder outside placeholder mode", async () => {
+    const t = setup();
+    expect((await t.app.request("/admin/dev/sample-orders", { method: "POST", headers: as("owner") })).status).toBe(404);
   });
 });
