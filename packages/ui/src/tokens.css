@@ -1,0 +1,186 @@
+/*
+ * Harries Vogue design tokens — the single source for colour, type, spacing, radii and motion.
+ * Import after `@import "tailwindcss";` so the @theme block becomes Tailwind utilities
+ * (bg-ink, text-paper, font-display, text-display-xl, duration-base, …).
+ */
+
+/* ---------- Fonts (self-hosted, subsetted woff2) ---------- */
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../../../assets/fonts/satoshi/satoshi-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("../../../assets/fonts/satoshi/satoshi-black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("../../../assets/fonts/poppins/poppins-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("../../../assets/fonts/poppins/poppins-medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("../../../assets/fonts/poppins/poppins-semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+/* Neither Satoshi nor Poppins has ₦ (U+20A6). Borrow it from Plus Jakarta Sans for both families. */
+@font-face {
+  font-family: "Poppins";
+  src: url("../../../assets/fonts/plus-jakarta-sans/pjs-naira.woff2") format("woff2");
+  font-weight: 400 700;
+  unicode-range: U+20A6;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("../../../assets/fonts/plus-jakarta-sans/pjs-naira.woff2") format("woff2");
+  font-weight: 700 900;
+  unicode-range: U+20A6;
+  font-display: swap;
+}
+/* Dashboard numeric cells, if Poppins figures don't align (PLAN.md). */
+@font-face {
+  font-family: "HV Numeric";
+  src: url("../../../assets/fonts/plus-jakarta-sans/pjs-numeric.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* ---------- Theme ---------- */
+
+@theme {
+  /* Brand */
+  --color-ink: #0a0a0a;
+  --color-paper: #fafaf7;
+  --color-yellow: #fdce02;
+  --color-yellow-press: #e9bc00;
+
+  /* Neutral greys (interface) */
+  --color-grey-50: #f4f4f1;
+  --color-grey-100: #e9e9e5;
+  --color-grey-200: #d6d6d1;
+  --color-grey-300: #b8b8b2;
+  --color-grey-400: #8f8f89;
+  --color-grey-500: #6b6b66;
+  --color-grey-600: #52524e;
+  --color-grey-700: #3a3a37;
+  --color-grey-800: #242422;
+  --color-grey-900: #161615;
+
+  /* Status (interface only, never decorative) */
+  --color-success: #1f7a4d;
+  --color-danger: #b42318;
+  --color-warning: #8a5a00;
+
+  /* Type */
+  --font-display: "Satoshi", "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-numeric: "HV Numeric", "Poppins", ui-sans-serif, system-ui, sans-serif;
+
+  /* Scale: 12, 14, 16, 18, 24, 32, 48, 64, 96 px — larger steps are fluid. */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.55;
+  --text-xl: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --text-xl--line-height: 1.3;
+  --text-2xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --text-2xl--line-height: 1.2;
+  --text-3xl: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+  --text-3xl--line-height: 1.08;
+  --text-4xl: clamp(2.5rem, 1.6rem + 3.6vw, 4rem);
+  --text-4xl--line-height: 1.02;
+  --text-5xl: clamp(3rem, 1.5rem + 6vw, 6rem);
+  --text-5xl--line-height: 0.98;
+
+  --tracking-display: -0.03em;
+  --tracking-heading: -0.02em;
+  --tracking-label: 0.08em;
+
+  /* Radii — tailored, not bubbly */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+
+  /* Layout */
+  --container-page: 80rem;
+  --spacing-gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
+}
+
+/* ---------- Base ---------- */
+
+@layer base {
+  html {
+    color: var(--color-ink);
+    background: var(--color-paper);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-yellow);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px var(--color-ink);
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background: var(--color-yellow);
+    color: var(--color-ink);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: var(--tracking-heading);
+    text-wrap: balance;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

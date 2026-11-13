@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hv-storefront",
+  "main": "./workers/app.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "upload_source_maps": true,
+  "vars": {
+    // "development" serves the placeholder seed catalogue; "production" refuses to.
+    "ENVIRONMENT": "development",
+    // Base URL of the API Worker (catalogue, checkout). Empty = not connected yet.
+    "API_URL": "",
+    // Public R2 domain for product images. Empty = placeholders only.
+    "IMAGE_BASE": ""
+  }
+}

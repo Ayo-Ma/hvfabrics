@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" fill="none" aria-labelledby="title desc" role="img">
+  <title id="title">A thread snagged beneath the sewing machine</title>
+  <desc id="desc">A tailor's sewing machine with a gently tangled thread and a yellow hand wheel.</desc>
+  <!-- Single separately themeable accent path -->
+  <path d="M173 91a17 17 0 1 0 34 0 17 17 0 1 0-34 0Z" fill="var(--hv-yellow, #FDCE02)"/>
+  <g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- foot and base -->
+    <path d="M23 186h192c5 0 8 4 8 8s-3 7-8 7H25c-5 0-8-3-8-7s2-8 6-8Z"/>
+    <path d="M44 178h142c9 0 13 3 16 8M43 178V158"/>
+    <!-- sculpted machine body, short arm and head -->
+    <path d="M43 158V102c0-13 11-23 24-23h75c9 0 15 5 19 12l9 16h13v64c0 4-4 7-8 7h-32v-46H95v46H64"/>
+    <path d="M43 111h106c7 0 13-3 16-8"/>
+    <path d="M143 132v-15c0-4-3-7-7-7H98"/>
+    <path d="M75 103h18M109 102h19"/>
+    <!-- machine head details -->
+    <path d="M57 97c2-5 6-8 11-8h70"/>
+    <path d="M58 147v31M47 178h28"/>
+    <!-- hand wheel, accent remains only filled shape -->
+    <circle cx="190" cy="91" r="17"/>
+    <circle cx="190" cy="91" r="7"/>
+    <path d="M190 84v14M183 91h14"/>
+    <!-- needle bar and needle -->
+    <path d="M91 132v23M97 132v21"/>
+    <path d="M94 153v19l-3 7M94 153h5"/>
+    <path d="M88 165h14M96 180h33"/>
+    <!-- thread leading from spool down to the snag -->
+    <path d="M110 76v-14M101 63h19M106 63v-9h9v9"/>
+    <path d="M110 76c-5-9-13-7-13 1 0 9 12 10 12 19 0 9-8 15-8 26 0 10-6 15-7 28"/>
+    <!-- tangled thread under needle; light knot, no warning symbol -->
+    <path d="M94 179c1 7 15 5 18-1 4-7-9-13-15-7-6 7 0 15 10 16 11 2 18-4 17-11-2-10-19-11-23 0-4 11 13 19 26 13 8-4 9-13 3-16"/>
+    <path d="M130 173c9-7 16-7 20-3"/>
+    <!-- subtle work surface details -->
+    <path d="M33 208h60M172 208h30"/>
+  </g>
+</svg>
