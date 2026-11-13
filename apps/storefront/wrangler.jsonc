@@ -18,10 +18,12 @@
   "env": {
     "production": {
       "name": "hv-storefront",
+      // Direct line to the API Worker (Worker-to-Worker over workers.dev is blocked by Cloudflare).
+      "services": [{ "binding": "API", "service": "hv-api" }],
       "vars": {
         "ENVIRONMENT": "production",
-        "API_URL": "REPLACE_WITH_API_URL",
-        "IMAGE_BASE": "REPLACE_WITH_API_URL/images"
+        "API_URL": "https://hv-api.harriesvogueglobal.workers.dev",
+        "IMAGE_BASE": "https://hv-api.harriesvogueglobal.workers.dev/images"
       }
     }
   }

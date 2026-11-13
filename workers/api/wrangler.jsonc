@@ -71,16 +71,13 @@
 			"name": "hv-api",
 			"vars": {
 				"ENVIRONMENT": "production",
-				"STOREFRONT_ORIGIN": " https://hv-storefront.harriesvogueglobal.workers.dev",
+				"STOREFRONT_ORIGIN": "https://hv-storefront.harriesvogueglobal.workers.dev",
 				"DASHBOARD_ORIGIN": "https://hv-dashboard.harriesvogueglobal.workers.dev",
 				"EMAIL_FROM": "Harries Vogue <onboarding@resend.dev>"
 			},
-			"r2_buckets": [
-				{
-					"binding": "IMAGES",
-					"bucket_name": "hv-images"
-				}
-			],
+			// Photo storage is off until R2 is enabled (needs a card on the Cloudflare account).
+			// To turn it on: enable R2, run `wrangler r2 bucket create hv-images`, uncomment, redeploy.
+			// "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "hv-images" }],
 			"kv_namespaces": [
 				{
 					"binding": "CATALOGUE",
@@ -105,12 +102,8 @@
 					}
 				}
 			],
-			"analytics_engine_datasets": [
-				{
-					"binding": "EVENTS",
-					"dataset": "hv_events"
-				}
-			]
+			// Visit statistics are off until Analytics Engine is enabled (Cloudflare → Workers & Pages → Analytics Engine).
+			// "analytics_engine_datasets": [{ "binding": "EVENTS", "dataset": "hv_events" }]
 		}
 	}
 }

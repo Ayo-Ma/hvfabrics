@@ -1,3 +1,4 @@
+import { apiFetch } from "./api-fetch.server";
 import type { BagProblem, CheckoutInput, Money, OrderStatus } from "@hv/core";
 
 /**
@@ -33,7 +34,7 @@ export async function startCheckout(env: Env, input: CheckoutInput, callbackBase
       message: "Payments aren't connected yet. This preview can't take orders until Paystack is set up.",
     };
   }
-  const res = await fetch(`${env.API_URL}/checkout`, {
+  const res = await apiFetch(env, "/checkout", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...input, callbackBase }),
@@ -64,7 +65,7 @@ export async function lookupOrder(
 ): Promise<PublicOrder | null> {
   if (!apiConnected(env)) return null;
   const qs = new URLSearchParams("email" in by ? { email: by.email } : { reference: by.reference });
-  const res = await fetch(`${env.API_URL}/orders/${encodeURIComponent(number)}?${qs}`);
+  const res = await apiFetch(env, `/orders/${encodeURIComponent(number)}?${qs}`);
   if (res.status === 404) return null;
   if (!res.ok) throw new Response("Order lookup unavailable", { status: 503 });
   return (await res.json()) as PublicOrder;

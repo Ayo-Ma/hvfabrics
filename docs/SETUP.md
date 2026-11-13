@@ -234,6 +234,18 @@ Write each value into this checklist as you go (keep the copy with secrets in yo
 
 ## Going live later (not yet)
 
+- **Photo storage (R2), off since the first deploy because the card wasn't accepted.**
+  1. Add a working card in Cloudflare → R2.
+  2. Run `corepack pnpm exec wrangler r2 bucket create hv-images` from `workers/api`.
+  3. Uncomment the `r2_buckets` line under `env.production` in `workers/api/wrangler.jsonc`.
+  4. Redeploy the API.
+  5. Re-add any photos uploaded before then.
+- **Visit statistics (Analytics Engine), also off.**
+  1. Cloudflare → Workers & Pages → Analytics Engine → enable.
+  2. Uncomment `analytics_engine_datasets` under `env.production`.
+  3. Redeploy the API.
+- The storefront reaches the API through a **service binding** (`services` in `apps/storefront/wrangler.jsonc`), because Cloudflare blocks one Worker from fetching another over workers.dev. Keep it when adding a custom domain.
+
 - **Paystack:** finish business verification, switch to **Live mode**, and replace both keys (`wrangler secret put … --env production`) with the live ones. Set the **Live Webhook URL** to the same `/paystack/webhook` address.
 - **Real content:** replace the `[TBC]` delivery zones, fees and policies; add real products and photos.
 - **Domain:** add the domain in Cloudflare and attach it to the storefront and dashboard Workers. Then update `STOREFRONT_ORIGIN`, `DASHBOARD_ORIGIN`, `API_URL`, the Paystack webhook, Firebase's authorized domains and Resend.

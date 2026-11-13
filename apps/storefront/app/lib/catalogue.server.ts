@@ -1,5 +1,6 @@
 import type { Catalogue, CatalogueProduct, Line, Settings } from "@hv/core";
 import { seedCatalogue, seedSettings } from "@hv/core/seed";
+import { apiFetch } from "./api-fetch.server";
 
 /**
  * The storefront never reads Firestore. It reads the catalogue JSON that the API Worker
@@ -14,7 +15,7 @@ function apiConnected(env: Env): boolean {
 }
 
 async function fromApi<T>(env: Env, path: string): Promise<T> {
-  const res = await fetch(`${env.API_URL}${path}`, { cf: { cacheTtl: 30, cacheEverything: true } });
+  const res = await apiFetch(env, path, { cf: { cacheTtl: 30, cacheEverything: true } });
   if (!res.ok) throw new Response("Catalogue unavailable", { status: 503 });
   return (await res.json()) as T;
 }

@@ -25,7 +25,8 @@ export async function loader({ context }: Route.LoaderArgs) {
 type FieldErrors = Partial<Record<"name" | "email" | "phone" | "zoneId" | "address" | "city" | "state" | "items", string>>;
 
 export async function action({ request, context }: Route.ActionArgs) {
-  const form = await request.formData();
+  // A request with no form body (bots, a broken client) gets the normal "check your details" answer, not a crash.
+  const form = await request.formData().catch(() => new FormData());
   let rawItems: unknown;
   try {
     rawItems = JSON.parse(String(form.get("items") ?? "[]"));
