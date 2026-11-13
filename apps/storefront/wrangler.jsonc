@@ -10,9 +10,9 @@
     // "development" serves the placeholder seed catalogue; "production" refuses to.
     "ENVIRONMENT": "development",
     // Base URL of the API Worker (catalogue, checkout). Empty = not connected yet.
-    "API_URL": "",
+    "API_URL": "https://hv-api.harriesvogueglobal.workers.dev",
     // Public R2 domain for product images. Empty = placeholders only.
-    "IMAGE_BASE": ""
+    "IMAGE_BASE": "https://hv-api.harriesvogueglobal.workers.dev/images"
   },
   // Production: build and deploy with CLOUDFLARE_ENV=production (docs/SETUP.md).
   "env": {

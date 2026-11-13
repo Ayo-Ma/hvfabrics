@@ -1,49 +1,116 @@
 {
-  "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "hv-api",
-  "main": "./src/index.ts",
-  "compatibility_date": "2026-10-01",
-  "compatibility_flags": ["nodejs_compat"],
-  "observability": { "enabled": true },
-  // Release expired stock holds and cancel unpaid orders (PLAN.md checkout step 6).
-  "triggers": { "crons": ["*/5 * * * *"] },
-  "vars": {
-    // "development" with no Firebase secrets = in-memory store seeded with placeholder products.
-    "ENVIRONMENT": "development",
-    // Only this origin may receive Paystack's redirect back (prevents open redirects).
-    "STOREFRONT_ORIGIN": "http://localhost:5173",
-    // The dashboard PWA; the only origin allowed to call /admin/*.
-    "DASHBOARD_ORIGIN": "http://localhost:5180",
-    // Sender for transactional email (Resend). Must be a verified domain before launch.
-    "EMAIL_FROM": "Harries Vogue <orders@example.com>"
-  },
-  // Built catalogue JSON, read by the storefront. Create with: wrangler kv namespace create CATALOGUE
-  // Product photos, uploaded from the dashboard. Create with: wrangler r2 bucket create hv-images
-  "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "hv-images" }],
-  "kv_namespaces": [{ "binding": "CATALOGUE", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }],
-  "ratelimits": [
-    { "name": "CHECKOUT_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
-    { "name": "SEARCH_LIMITER", "namespace_id": "1002", "simple": { "limit": 120, "period": 60 } }
-  ],
-  "analytics_engine_datasets": [{ "binding": "EVENTS", "dataset": "hv_events" }],
-  // Production: deploy with `corepack pnpm exec wrangler deploy --env production` (docs/SETUP.md).
-  // Bindings aren't inherited by environments, so they are repeated here.
-  "env": {
-    "production": {
-      "name": "hv-api",
-      "vars": {
-        "ENVIRONMENT": "production",
-        "STOREFRONT_ORIGIN": "REPLACE_WITH_STOREFRONT_URL",
-        "DASHBOARD_ORIGIN": "REPLACE_WITH_DASHBOARD_URL",
-        "EMAIL_FROM": "Harries Vogue <onboarding@resend.dev>"
-      },
-      "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "hv-images" }],
-      "kv_namespaces": [{ "binding": "CATALOGUE", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }],
-      "ratelimits": [
-        { "name": "CHECKOUT_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
-        { "name": "SEARCH_LIMITER", "namespace_id": "1002", "simple": { "limit": 120, "period": 60 } }
-      ],
-      "analytics_engine_datasets": [{ "binding": "EVENTS", "dataset": "hv_events" }]
-    }
-  }
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "hv-api",
+	"main": "./src/index.ts",
+	"compatibility_date": "2026-10-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"observability": {
+		"enabled": true
+	},
+	// Release expired stock holds and cancel unpaid orders (PLAN.md checkout step 6).
+	"triggers": {
+		"crons": [
+			"*/5 * * * *"
+		]
+	},
+	"vars": {
+		// "development" with no Firebase secrets = in-memory store seeded with placeholder products.
+		"ENVIRONMENT": "development",
+		// Only this origin may receive Paystack's redirect back (prevents open redirects).
+		"STOREFRONT_ORIGIN": "http://localhost:5173",
+		// The dashboard PWA; the only origin allowed to call /admin/*.
+		"DASHBOARD_ORIGIN": "http://localhost:5180",
+		// Sender for transactional email (Resend). Must be a verified domain before launch.
+		"EMAIL_FROM": "Harries Vogue <orders@example.com>"
+	},
+	// Built catalogue JSON, read by the storefront. Create with: wrangler kv namespace create CATALOGUE
+	// Product photos, uploaded from the dashboard. Create with: wrangler r2 bucket create hv-images
+	"r2_buckets": [
+		{
+			"binding": "IMAGES",
+			"bucket_name": "hv-images"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "CATALOGUE",
+			"id": "231ac665ff404338a796ede6768ad2be",
+			"remote": true
+		}
+	],
+	"ratelimits": [
+		{
+			"name": "CHECKOUT_LIMITER",
+			"namespace_id": "1001",
+			"simple": {
+				"limit": 10,
+				"period": 60
+			}
+		},
+		{
+			"name": "SEARCH_LIMITER",
+			"namespace_id": "1002",
+			"simple": {
+				"limit": 120,
+				"period": 60
+			}
+		}
+	],
+	"analytics_engine_datasets": [
+		{
+			"binding": "EVENTS",
+			"dataset": "hv_events"
+		}
+	],
+	// Production: deploy with `corepack pnpm exec wrangler deploy --env production` (docs/SETUP.md).
+	// Bindings aren't inherited by environments, so they are repeated here.
+	"env": {
+		"production": {
+			"name": "hv-api",
+			"vars": {
+				"ENVIRONMENT": "production",
+				"STOREFRONT_ORIGIN": " https://hv-storefront.harriesvogueglobal.workers.dev",
+				"DASHBOARD_ORIGIN": "https://hv-dashboard.harriesvogueglobal.workers.dev",
+				"EMAIL_FROM": "Harries Vogue <onboarding@resend.dev>"
+			},
+			"r2_buckets": [
+				{
+					"binding": "IMAGES",
+					"bucket_name": "hv-images"
+				}
+			],
+			"kv_namespaces": [
+				{
+					"binding": "CATALOGUE",
+					"id": "231ac665ff404338a796ede6768ad2be"
+				}
+			],
+			"ratelimits": [
+				{
+					"name": "CHECKOUT_LIMITER",
+					"namespace_id": "1001",
+					"simple": {
+						"limit": 10,
+						"period": 60
+					}
+				},
+				{
+					"name": "SEARCH_LIMITER",
+					"namespace_id": "1002",
+					"simple": {
+						"limit": 120,
+						"period": 60
+					}
+				}
+			],
+			"analytics_engine_datasets": [
+				{
+					"binding": "EVENTS",
+					"dataset": "hv_events"
+				}
+			]
+		}
+	}
 }

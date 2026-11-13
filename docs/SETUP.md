@@ -10,6 +10,7 @@ Allow about 2 hours. Everything here is free except Cloudflare R2, which needs a
 - **Make a secrets folder outside this project and outside OneDrive**, for example `C:\Users\USER\hv-secrets\`. OneDrive copies everything in the project folder to the cloud, and the repo must never hold a key.
 - **Never paste a secret into a chat, an email or a commit.** Secrets are anything starting `sk_`, the Firebase service-account file, and the Resend key. You type them into the terminal yourself (steps below). Public values are fine to share: the Firebase web config, the project id and your workers.dev name.
 - All commands run from the project folder in a terminal: `c:\Users\USER\OneDrive\Documents\web\hv fabrics website`.
+- **If a path has spaces, wrap it in double quotes**, for example `"C:/Users/USER/hv fabrics keys and rules/firebase-service-account.json"`. Otherwise the terminal splits it and the script prints its "Usage:" line.
 
 Write each value into this checklist as you go (keep the copy with secrets in your secrets folder, not here):
 
