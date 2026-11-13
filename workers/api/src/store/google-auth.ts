@@ -1,0 +1,72 @@
+import { z } from "zod";
+
+/**
+ * OAuth access token for a Google service account, using only WebCrypto
+ * (the Firebase Admin SDK doesn't run on Workers — PLAN.md).
+ */
+
+export const ServiceAccountSchema = z.object({
+  project_id: z.string(),
+  client_email: z.email(),
+  private_key: z.string().includes("PRIVATE KEY"),
+});
+export type ServiceAccount = z.infer<typeof ServiceAccountSchema>;
+
+const SCOPE = "https://www.googleapis.com/auth/datastore";
+const TOKEN_URL = "https://oauth2.googleapis.com/token";
+
+function b64url(data: ArrayBuffer | Uint8Array | string): string {
+  const bytes = typeof data === "string" ? new TextEncoder().encode(data) : new Uint8Array(data);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function pemToPkcs8(pem: string): ArrayBuffer {
+  const body = pem.replace(/-----(BEGIN|END) PRIVATE KEY-----/g, "").replace(/\\n|\s/g, "");
+  const bin = atob(body);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out.buffer;
+}
+
+export async function signJwt(sa: ServiceAccount, nowSeconds: number): Promise<string> {
+  const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const claims = b64url(
+    JSON.stringify({ iss: sa.client_email, scope: SCOPE, aud: TOKEN_URL, iat: nowSeconds, exp: nowSeconds + 3600 }),
+  );
+  const key = await crypto.subtle.importKey(
+    "pkcs8",
+    pemToPkcs8(sa.private_key),
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, new TextEncoder().encode(`${header}.${claims}`));
+  return `${header}.${claims}.${b64url(sig)}`;
+}
+
+/** Caches the token per isolate until a minute before it expires. */
+export class GoogleAuth {
+  private token: { value: string; expiresAt: number } | null = null;
+
+  constructor(
+    private readonly sa: ServiceAccount,
+    private readonly fetchImpl: typeof fetch = fetch,
+  ) {}
+
+  async accessToken(): Promise<string> {
+    const now = Math.floor(Date.now() / 1000);
+    if (this.token && this.token.expiresAt - 60 > now) return this.token.value;
+    const assertion = await signJwt(this.sa, now);
+    const res = await this.fetchImpl(TOKEN_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }),
+    });
+    if (!res.ok) throw new Error(`Google token exchange failed: ${res.status} ${await res.text()}`);
+    const body = z.object({ access_token: z.string(), expires_in: z.number() }).parse(await res.json());
+    this.token = { value: body.access_token, expiresAt: now + body.expires_in };
+    return body.access_token;
+  }
+}

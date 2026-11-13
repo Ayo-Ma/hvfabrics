@@ -1,11 +1,12 @@
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteLoaderData } from "react-router";
 import satoshiBlack from "../../../assets/fonts/satoshi/satoshi-black.woff2?url";
-import poppinsRegular from "../../../assets/fonts/poppins/poppins-regular.woff2?url";
-import poppinsMedium from "../../../assets/fonts/poppins/poppins-medium.woff2?url";
+import satoshiRegular from "../../../assets/fonts/satoshi/satoshi-regular.woff2?url";
+import satoshiMedium from "../../../assets/fonts/satoshi/satoshi-medium.woff2?url";
 import notFoundArt from "@hv/ui/illustrations/404.webp";
 import errorArt from "@hv/ui/illustrations/error.svg";
 import type { Route } from "./+types/root";
 import { BagProvider } from "./lib/bag";
+import { getCatalogue } from "./lib/catalogue.server";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { BagDrawer } from "./components/BagDrawer";
@@ -16,19 +17,21 @@ import "./app.css";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preload", href: satoshiBlack, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
-  { rel: "preload", href: poppinsRegular, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
-  { rel: "preload", href: poppinsMedium, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
+  { rel: "preload", href: satoshiRegular, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
+  { rel: "preload", href: satoshiMedium, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
   { rel: "icon", href: "/favicon.ico", sizes: "32x32" },
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
   { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
   { rel: "manifest", href: "/manifest.webmanifest" },
 ];
 
-export function loader({ context }: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env;
+  // Show the banner whenever the catalogue holds placeholder products, wherever it came from.
+  const catalogue = await getCatalogue(env).catch(() => null);
   return {
     imageBase: env.IMAGE_BASE,
-    sampleData: !env.API_URL && env.ENVIRONMENT !== "production",
+    sampleData: Boolean(catalogue?.products.some((p) => p.placeholder)),
   };
 }
 

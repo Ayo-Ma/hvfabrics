@@ -1,0 +1,43 @@
+rules_version = '2';
+// PLAN.md: no public access. The storefront never reads Firestore; the API Worker uses a
+// service account (which bypasses rules). Dashboard users need the admin claim and a role.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+    function role() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role;
+    }
+    match /products/{productId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin() && role() in ['owner', 'manager'];
+      match /variants/{variantId} {
+        allow read: if isAdmin();
+        allow write: if isAdmin() && role() in ['owner', 'manager'];
+      }
+    }
+    match /orders/{orderId} {
+      allow read: if isAdmin();
+      // Status moves only (packed, shipped…); payment fields are written by the Worker.
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+    }
+    match /customers/{customerId} {
+      allow read: if isAdmin() && role() in ['owner', 'manager'];
+    }
+    match /dailyStats/{date} {
+      allow read: if isAdmin() && role() in ['owner', 'manager'];
+    }
+    match /settings/{doc} {
+      allow read: if isAdmin();
+      allow write: if isAdmin() && role() == 'owner';
+    }
+    match /admins/{uid} {
+      allow read: if isAdmin() && request.auth.uid == uid;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

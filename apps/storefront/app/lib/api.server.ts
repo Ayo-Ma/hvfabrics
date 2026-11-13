@@ -48,6 +48,12 @@ export async function startCheckout(env: Env, input: CheckoutInput, callbackBase
   if (res.status === 400) {
     return { ok: false, kind: "invalid", message: String(body?.message ?? "Please check your details.") };
   }
+  if (res.status === 503 && typeof body?.message === "string") {
+    return { ok: false, kind: "unavailable", message: body.message };
+  }
+  if (res.status === 429) {
+    return { ok: false, kind: "unavailable", message: "Too many attempts. Please wait a minute and try again." };
+  }
   return { ok: false, kind: "unavailable", message: "We couldn't start the payment. Nothing was charged. Please try again." };
 }
 

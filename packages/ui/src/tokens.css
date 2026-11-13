@@ -21,42 +21,28 @@
   font-display: swap;
 }
 @font-face {
-  font-family: "Poppins";
-  src: url("../../../assets/fonts/poppins/poppins-regular.woff2") format("woff2");
+  font-family: "Satoshi";
+  src: url("../../../assets/fonts/satoshi/satoshi-regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Poppins";
-  src: url("../../../assets/fonts/poppins/poppins-medium.woff2") format("woff2");
+  font-family: "Satoshi";
+  src: url("../../../assets/fonts/satoshi/satoshi-medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
-@font-face {
-  font-family: "Poppins";
-  src: url("../../../assets/fonts/poppins/poppins-semibold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-/* Neither Satoshi nor Poppins has ₦ (U+20A6). Borrow it from Plus Jakarta Sans for both families. */
-@font-face {
-  font-family: "Poppins";
-  src: url("../../../assets/fonts/plus-jakarta-sans/pjs-naira.woff2") format("woff2");
-  font-weight: 400 700;
-  unicode-range: U+20A6;
-  font-display: swap;
-}
+/* Satoshi has no ₦ (U+20A6). Borrow it from Plus Jakarta Sans. */
 @font-face {
   font-family: "Satoshi";
   src: url("../../../assets/fonts/plus-jakarta-sans/pjs-naira.woff2") format("woff2");
-  font-weight: 700 900;
+  font-weight: 400 900;
   unicode-range: U+20A6;
   font-display: swap;
 }
-/* Dashboard numeric cells, if Poppins figures don't align (PLAN.md). */
+/* Dashboard numeric cells with tabular figures (PLAN.md). */
 @font-face {
   font-family: "HV Numeric";
   src: url("../../../assets/fonts/plus-jakarta-sans/pjs-numeric.woff2") format("woff2");
@@ -91,9 +77,9 @@
   --color-warning: #8a5a00;
 
   /* Type */
-  --font-display: "Satoshi", "Poppins", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Poppins", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-  --font-numeric: "HV Numeric", "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Satoshi", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-numeric: "HV Numeric", "Satoshi", ui-sans-serif, system-ui, sans-serif;
 
   /* Scale: 12, 14, 16, 18, 24, 32, 48, 64, 96 px — larger steps are fluid. */
   --text-xs: 0.75rem;

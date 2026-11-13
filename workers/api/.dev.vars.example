@@ -1,0 +1,7 @@
+# Copy to .dev.vars (never commit it). Leave Firebase empty to use the in-memory dev store.
+PAYSTACK_SECRET_KEY=sk_test_xxx
+PAYSTACK_PUBLIC_KEY=pk_test_xxx
+FIREBASE_PROJECT_ID=
+# The whole service-account JSON on one line
+FIREBASE_SERVICE_ACCOUNT=
+RESEND_API_KEY=

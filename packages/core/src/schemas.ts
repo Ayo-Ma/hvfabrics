@@ -63,8 +63,24 @@ export type Product = z.infer<typeof ProductSchema>;
 export const UnitSchema = z.enum(["yard", "bundle", "piece"]);
 export type Unit = z.infer<typeof UnitSchema>;
 
+/**
+ * Variant ids are `<productId>--<key>`, so the server can find the Firestore path
+ * products/{productId}/variants/{variantId} from a bag line alone.
+ */
+export const variantIdSchema = z
+  .string()
+  .min(4)
+  .max(160)
+  .regex(/^[A-Za-z0-9_-]+--[A-Za-z0-9_-]+$/, "variant id must be <productId>--<key>");
+
+export function productIdOfVariant(variantId: string): string {
+  const i = variantId.lastIndexOf("--");
+  if (i <= 0) throw new RangeError(`Malformed variant id ${variantId}`);
+  return variantId.slice(0, i);
+}
+
 export const VariantSchema = z.object({
-  id,
+  id: variantIdSchema,
   sku: z.string().min(1).max(64),
   options: z.object({
     colour: z.string().max(60).optional(),
@@ -114,6 +130,9 @@ export const OrderSchema = z.object({
   source: z.string().optional(),
   createdAt: isoDate,
   paidAt: isoDate.optional(),
+  cancelledAt: isoDate.optional(),
+  /** Needs her attention, e.g. "paid_after_expiry_stock_short" (payment arrived after the hold expired and stock ran out). */
+  flags: z.array(z.string()).optional(),
 });
 export type Order = z.infer<typeof OrderSchema>;
 
@@ -175,7 +194,7 @@ const phone = z
   .pipe(z.string().regex(/^(\+\d{8,15}|0\d{10})$/, "Enter a valid phone number"));
 
 export const BagLineSchema = z.object({
-  variantId: id,
+  variantId: variantIdSchema,
   qty: z.number().int().min(1).max(100),
 });
 export type BagLine = z.infer<typeof BagLineSchema>;

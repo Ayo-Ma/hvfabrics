@@ -53,7 +53,7 @@ export const seedEntries: { product: Product; variants: Variant[]; placeholder: 
       updatedAt: created,
     },
     variants: s.variants.map((v, j) => ({
-      id: `${id}-v${j + 1}`,
+      id: `${id}--v${j + 1}`,
       sku: `${id.toUpperCase()}-${j + 1}`,
       options: { unit: s.unit, ...(v.colour ? { colour: v.colour } : {}), ...(v.size ? { size: v.size } : {}) },
       price: { amount: v.price, currency: "NGN" },

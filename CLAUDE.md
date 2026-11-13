@@ -29,7 +29,7 @@ pnpm workspaces + Turborepo. Run pnpm via `corepack pnpm …` (pnpm is not insta
 
 ## Brand
 - Black `#0A0A0A`, Off-white `#FAFAF7`, Harries Yellow `#FDCE02` (accent only: primary buttons with black text, focus rings, tags). Never yellow text on a light background.
-- Satoshi (Bold, Black) for display, tracking −2% to −3%. Poppins (400/500/600) for body and UI. Logo is the only serif element.
+- Satoshi only (decided 2026-11-13; Poppins dropped): Black/Bold for headings with tracking −2% to −3%, Regular/Medium for body and UI. Logo is the only serif element.
 - Header uses `assets/brand/logo/hv-lockup-horizontal.svg`.
 
 ## Secrets

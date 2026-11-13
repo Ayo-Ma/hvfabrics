@@ -5,16 +5,16 @@ import { seedCatalogue } from "./seed";
 
 const zone: DeliveryZone = { id: "lagos", name: "Lagos", fee: { amount: 300_000, currency: "NGN" }, eta: "1–2 days" };
 const variants = new Map<string, PricingVariant>([
-  ["lace-5", { id: "lace-5", productId: "lace", title: "Lace", variantLabel: "Gold", price: { amount: 1_000_000, currency: "NGN" } }],
-  ["bra-m", { id: "bra-m", productId: "bra", title: "Bra", variantLabel: "M", price: { amount: 1_250_050, currency: "NGN" } }],
+  ["lace--5", { id: "lace--5", productId: "lace", title: "Lace", variantLabel: "Gold", price: { amount: 1_000_000, currency: "NGN" } }],
+  ["bra--m", { id: "bra--m", productId: "bra", title: "Bra", variantLabel: "M", price: { amount: 1_250_050, currency: "NGN" } }],
 ]);
 
 describe("priceOrder", () => {
   it("prices lines on the server and adds delivery", () => {
     const r = priceOrder(
       [
-        { variantId: "lace-5", qty: 5 },
-        { variantId: "bra-m", qty: 2 },
+        { variantId: "lace--5", qty: 5 },
+        { variantId: "bra--m", qty: 2 },
       ],
       variants,
       zone,
@@ -30,7 +30,7 @@ describe("priceOrder", () => {
     expect(() => priceOrder([], variants, zone)).toThrow(RangeError);
     expect(() => priceOrder([{ variantId: "x", qty: 1 }], variants, zone)).toThrow(RangeError);
     const usdZone = { ...zone, fee: { amount: 0, currency: "USD" as const } };
-    expect(() => priceOrder([{ variantId: "lace-5", qty: 1 }], variants, usdZone)).toThrow(TypeError);
+    expect(() => priceOrder([{ variantId: "lace--5", qty: 1 }], variants, usdZone)).toThrow(TypeError);
   });
 });
 
@@ -59,7 +59,7 @@ describe("canTransition", () => {
 
 describe("CheckoutInputSchema", () => {
   const valid = {
-    items: [{ variantId: "lace-5", qty: 5 }],
+    items: [{ variantId: "lace--5", qty: 5 }],
     customer: { name: "Ada", email: "ada@example.com", phone: "0803 123 4567" },
     delivery: { zoneId: "lagos", address: "12 Example Street", city: "Ikeja", state: "Lagos" },
   };
@@ -69,7 +69,7 @@ describe("CheckoutInputSchema", () => {
   });
   it("rejects bad input", () => {
     expect(CheckoutInputSchema.safeParse({ ...valid, items: [] }).success).toBe(false);
-    expect(CheckoutInputSchema.safeParse({ ...valid, items: [{ variantId: "a", qty: 0 }] }).success).toBe(false);
+    expect(CheckoutInputSchema.safeParse({ ...valid, items: [{ variantId: "a--1", qty: 0 }] }).success).toBe(false);
     expect(CheckoutInputSchema.safeParse({ ...valid, customer: { ...valid.customer, phone: "123" } }).success).toBe(false);
     expect(CheckoutInputSchema.safeParse({ ...valid, customer: { ...valid.customer, email: "x" } }).success).toBe(false);
   });
