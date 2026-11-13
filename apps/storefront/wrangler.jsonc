@@ -13,5 +13,16 @@
     "API_URL": "",
     // Public R2 domain for product images. Empty = placeholders only.
     "IMAGE_BASE": ""
+  },
+  // Production: build and deploy with CLOUDFLARE_ENV=production (docs/SETUP.md).
+  "env": {
+    "production": {
+      "name": "hv-storefront",
+      "vars": {
+        "ENVIRONMENT": "production",
+        "API_URL": "REPLACE_WITH_API_URL",
+        "IMAGE_BASE": "REPLACE_WITH_API_URL/images"
+      }
+    }
   }
 }
