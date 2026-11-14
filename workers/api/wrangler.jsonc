@@ -75,9 +75,8 @@
 				"DASHBOARD_ORIGIN": "https://hv-dashboard.harriesvogueglobal.workers.dev",
 				"EMAIL_FROM": "Harries Vogue <onboarding@resend.dev>"
 			},
-			// Photo storage is off until R2 is enabled (needs a card on the Cloudflare account).
-			// To turn it on: enable R2, run `wrangler r2 bucket create hv-images`, uncomment, redeploy.
-			// "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "hv-images" }],
+			// Product photos, uploaded from the dashboard.
+			"r2_buckets": [{ "binding": "IMAGES", "bucket_name": "hv-images" }],
 			"kv_namespaces": [
 				{
 					"binding": "CATALOGUE",

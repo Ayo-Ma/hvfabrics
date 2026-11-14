@@ -234,12 +234,6 @@ Write each value into this checklist as you go (keep the copy with secrets in yo
 
 ## Going live later (not yet)
 
-- **Photo storage (R2), off since the first deploy because the card wasn't accepted.**
-  1. Add a working card in Cloudflare → R2.
-  2. Run `corepack pnpm exec wrangler r2 bucket create hv-images` from `workers/api`.
-  3. Uncomment the `r2_buckets` line under `env.production` in `workers/api/wrangler.jsonc`.
-  4. Redeploy the API.
-  5. Re-add any photos uploaded before then.
 - **Visit statistics (Analytics Engine), also off.**
   1. Cloudflare → Workers & Pages → Analytics Engine → enable.
   2. Uncomment `analytics_engine_datasets` under `env.production`.
