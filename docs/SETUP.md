@@ -234,7 +234,7 @@ Write each value into this checklist as you go (keep the copy with secrets in yo
 
 ## Going live later (not yet)
 
-- **Visit statistics (Analytics Engine), also off.**
+- **Visit statistics (Analytics Engine), off since the first deploy.**
   1. Cloudflare → Workers & Pages → Analytics Engine → enable.
   2. Uncomment `analytics_engine_datasets` under `env.production`.
   3. Redeploy the API.
