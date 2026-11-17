@@ -1,0 +1,3 @@
+# End-to-end tests only. Fake values: no real keys, no Firebase (in-memory store with sample products).
+PAYSTACK_SECRET_KEY=sk_test_e2e_not_a_real_key
+PAYSTACK_API_BASE=http://localhost:8799

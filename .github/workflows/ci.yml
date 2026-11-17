@@ -1,0 +1,67 @@
+# Phase 1 quality gate (PLAN.md "Quality checks"), on every push and pull request.
+# Needs no secrets: end-to-end tests run against a local stack with the in-memory store and a
+# Paystack stand-in (qa/fake-paystack.mjs). Nothing here touches the real Firebase or Paystack.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Types, lint, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - run: corepack pnpm -r typecheck
+      - run: corepack pnpm exec eslint .
+      - run: corepack pnpm --filter @hv/core test
+      - run: corepack pnpm --filter @hv/api test
+
+  e2e:
+    name: End-to-end and accessibility (Playwright + axe)
+    runs-on: ubuntu-latest
+    needs: checks
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - run: corepack pnpm --filter @hv/qa exec playwright install --with-deps chromium
+      # The storefront's local settings file is git-ignored; CI writes the one it needs.
+      - run: echo "API_URL=http://localhost:8787" > apps/storefront/.dev.vars
+      - run: corepack pnpm --filter @hv/qa e2e
+        env:
+          CI: "1"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: qa/playwright-report
+          retention-days: 14
+
+  lighthouse:
+    name: Lighthouse on the live shop (manual)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - run: corepack pnpm --filter @hv/qa lighthouse

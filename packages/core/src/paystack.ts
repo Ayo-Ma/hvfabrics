@@ -87,10 +87,12 @@ export class PaystackClient {
     private readonly secretKey: string,
     // Wrapped: on Workers, calling a stored `fetch` as a method throws "Illegal invocation".
     private readonly fetchImpl: typeof fetch = (...args: Parameters<typeof fetch>) => fetch(...args),
+    /** Only the end-to-end tests point this elsewhere (a local stand-in); production always uses Paystack. */
+    private readonly baseUrl: string = API,
   ) {}
 
   private async call<T>(path: string, init: RequestInit, schema: z.ZodType<T>): Promise<T> {
-    const res = await this.fetchImpl(`${API}${path}`, {
+    const res = await this.fetchImpl(`${this.baseUrl}${path}`, {
       ...init,
       headers: {
         Authorization: `Bearer ${this.secretKey}`,

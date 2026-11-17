@@ -12,7 +12,8 @@
     // Base URL of the API Worker (catalogue, checkout). Empty = not connected yet.
     "API_URL": "https://hv-api.harriesvogueglobal.workers.dev",
     // Public R2 domain for product images. Empty = placeholders only.
-    "IMAGE_BASE": "https://hv-api.harriesvogueglobal.workers.dev/images"
+    // Photos come through the shop's own address (workers/app.ts), so phones skip a second connection.
+        "IMAGE_BASE": "/images"
   },
   // Production: build and deploy with CLOUDFLARE_ENV=production (docs/SETUP.md).
   "env": {
@@ -23,7 +24,8 @@
       "vars": {
         "ENVIRONMENT": "production",
         "API_URL": "https://hv-api.harriesvogueglobal.workers.dev",
-        "IMAGE_BASE": "https://hv-api.harriesvogueglobal.workers.dev/images"
+        // Photos come through the shop's own address (workers/app.ts), so phones skip a second connection.
+        "IMAGE_BASE": "/images"
       }
     }
   }

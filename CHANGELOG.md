@@ -27,3 +27,10 @@
 - API: `/admin/*` (Firebase ID-token check with admin claim and role, CORS locked to the dashboard), products and stock
   writes that respect shoppers' holds, board moves, takings, R2 photo upload with type and size checks, image serving,
   FCM push per paid order, dev-only sample orders. `scripts/set-admin.mjs` grants dashboard access. 34 API tests, 57 core tests.
+- First production deploy on Cloudflare (workers.dev): API, storefront, dashboard. Storefront reaches the API over a
+  service binding; photos from R2 served through the shop's own address with edge caching.
+- Quality gate: Playwright end-to-end (browse → 5 yards → pay → confirmation → dashboard → stock down; sold-out can't be
+  bought), axe on 18 screens with zero serious/critical issues, Lighthouse budget passing on the live site
+  (LCP 2.15–2.31 s, CLS 0, TBT 0 ms, home JS 169 KB), 20-buyer race on the real Firestore (exactly 5 sold).
+  CI workflow for every push. Fixes from the gate: keyboard access to the product gallery, home headline no longer
+  hidden by the entrance animation, catalogue cached per Worker isolate, "Illegal invocation" on Workers.

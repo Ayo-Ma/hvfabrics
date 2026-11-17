@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.34.9",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
@@ -11,7 +13,9 @@
     "lint": "eslint .",
     "test": "turbo run test",
     "icons": "node scripts/build-icons.mjs",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "e2e": "corepack pnpm --filter @hv/qa e2e",
+    "lighthouse": "corepack pnpm --filter @hv/qa lighthouse"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

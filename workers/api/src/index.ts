@@ -16,6 +16,8 @@ interface Secrets {
   FIREBASE_PROJECT_ID?: string;
   FIREBASE_SERVICE_ACCOUNT?: string;
   RESEND_API_KEY?: string;
+  /** End-to-end tests only: a local Paystack stand-in. Ignored in production. */
+  PAYSTACK_API_BASE?: string;
 }
 type WorkerEnv = Env & Secrets;
 
@@ -48,13 +50,21 @@ function backendFor(env: WorkerEnv): { store: Store; placeholder: boolean; push:
   return { store: memoryStore, placeholder: true, push: null, admin: devVerifier };
 }
 
+function paystackFor(env: WorkerEnv, key: string): PaystackClient {
+  const base = env.PAYSTACK_API_BASE;
+  if (base && env.ENVIRONMENT === "production") {
+    throw new Error("PAYSTACK_API_BASE is for end-to-end tests only; refusing to send payments elsewhere in production.");
+  }
+  return base ? new PaystackClient(key, undefined, base) : new PaystackClient(key);
+}
+
 function depsFrom(env: WorkerEnv, ctx: { waitUntil(p: Promise<unknown>): void }): Deps {
   const { store, placeholder, push, admin } = backendFor(env);
   const log = (msg: string, extra?: Record<string, unknown>) => console.log(JSON.stringify({ msg, ...extra }));
   return {
     store,
     kv: env.CATALOGUE,
-    paystack: env.PAYSTACK_SECRET_KEY ? new PaystackClient(env.PAYSTACK_SECRET_KEY) : null,
+    paystack: env.PAYSTACK_SECRET_KEY ? paystackFor(env, env.PAYSTACK_SECRET_KEY) : null,
     paystackSecret: env.PAYSTACK_SECRET_KEY ?? null,
     notify: env.RESEND_API_KEY
       ? new ResendNotifier(env.RESEND_API_KEY, env.EMAIL_FROM, env.STOREFRONT_ORIGIN)

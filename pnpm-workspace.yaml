@@ -2,6 +2,7 @@ packages:
   - apps/*
   - workers/*
   - packages/*
+  - qa
 onlyBuiltDependencies:
   - esbuild
   - workerd

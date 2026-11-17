@@ -36,21 +36,22 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   const { newIn, fabrics, counts } = loaderData;
   return (
     <>
-      {/* 1. First screen: what this is, then real stock straight away. */}
+      {/* 1. First screen: what this is, then real stock straight away. Painted at once, never held for an
+          entrance animation: the headline is the page's largest paint (LCP), so hiding it until script
+          loads cost ~1.5 s on a 4G phone. Sections further down still rise in. */}
       <section className="bg-ink text-paper" aria-labelledby="home-title">
         <div className="mx-auto max-w-(--container-page) px-(--spacing-gutter) pb-20 pt-12 md:pb-28 md:pt-16">
           <h1
             id="home-title"
-            data-rise
             className="text-[clamp(2.25rem,0.9rem+5.6vw,6rem)] leading-[0.98] tracking-(--tracking-display)"
           >
             Fabrics, lingerie and ready&#8209;to&#8209;wear
           </h1>
           <div className="mt-8 grid gap-10 md:mt-12 md:grid-cols-12 md:items-start">
-            <p className="max-w-xl text-lg text-grey-200 md:col-span-6" data-rise style={{ ["--rise-i" as string]: 1 }}>
+            <p className="max-w-xl text-lg text-grey-200 md:col-span-6">
               From our shop in Abule Egba, Lagos. Choose the yards you need and pay securely with Paystack.
             </p>
-            <div className="md:col-span-5 md:col-start-8" data-rise style={{ ["--rise-i" as string]: 2 }}>
+            <div className="md:col-span-5 md:col-start-8">
               <ul className="text-lg">
                 {LINES.map((line) => (
                   <li key={line}>

@@ -1,0 +1,19 @@
+{
+  "name": "@hv/qa",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "e2e": "playwright test",
+    "a11y": "playwright test tests/a11y.spec.ts",
+    "lighthouse": "node lighthouse.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.19.2",
+    "chrome-launcher": "1.2.2",
+    "lighthouse": "13.6.0",
+    "typescript": "5.9.3"
+  }
+}

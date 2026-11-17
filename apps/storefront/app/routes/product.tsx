@@ -112,7 +112,12 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
       <div className="mt-6 grid gap-10 md:grid-cols-12 md:gap-12">
         {/* Gallery: stacked on desktop, swipeable on phones. */}
         <div className="-mx-(--spacing-gutter) md:col-span-7 md:mx-0">
-          <ul className="flex snap-x snap-mandatory gap-2 overflow-x-auto md:grid md:gap-4 md:overflow-visible">
+          {/* Scrolls sideways on phones: focusable and named so keyboard users can scroll it too (WCAG 2.1.1). */}
+          <ul
+            tabIndex={0}
+            aria-label={`${product.title} photos`}
+            className="flex snap-x snap-mandatory gap-2 overflow-x-auto focus-visible:outline-offset-4 md:grid md:gap-4 md:overflow-visible"
+          >
             {product.images.map((img, i) => (
               <li key={i} className="w-[86%] shrink-0 snap-start first:pl-(--spacing-gutter) md:w-auto md:first:pl-0">
                 <ProductImage

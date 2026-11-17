@@ -1,0 +1,88 @@
+import { expect, test } from "@playwright/test";
+
+/**
+ * PLAN.md Phase 1 acceptance, automated:
+ *  - a customer finds a fabric, chooses 5 yards, pays and sees a confirmation, without help;
+ *  - the paid order appears in her dashboard and moves New → Packed;
+ *  - stock goes down by exactly what was bought;
+ *  - a sold-out variant shows "Sold out" and can't be bought.
+ */
+
+const SHOP = "http://localhost:5173";
+const DASH = "http://localhost:5180";
+const API = "http://localhost:8787";
+
+interface CatVariant {
+  id: string;
+  available: number;
+}
+interface CatProduct {
+  slug: string;
+  title: string;
+  line: string;
+  soldOut: boolean;
+  variants: CatVariant[];
+}
+
+async function catalogue(): Promise<CatProduct[]> {
+  const res = await fetch(`${API}/catalogue`);
+  return ((await res.json()) as { products: CatProduct[] }).products;
+}
+
+test("browse → 5 yards → pay → confirmation → order in the dashboard → stock down", async ({ page }) => {
+  const before = await catalogue();
+  const fabric = before.find((p) => p.line === "fabric" && !p.soldOut && p.variants[0]!.available >= 10)!;
+  expect(fabric, "a fabric with stock in the sample catalogue").toBeTruthy();
+  const variantBefore = fabric.variants[0]!.available;
+
+  // Find it the way a shopper would: the Fabrics page.
+  await page.goto(SHOP);
+  await page.getByRole("link", { name: /^Fabrics/ }).first().click();
+  await expect(page).toHaveURL(/\/fabrics/);
+  await page.getByRole("link", { name: fabric.title }).first().click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(fabric.title);
+
+  // 5 yards is the default on the tape. Adding flies the item to the bag icon; the shopper then opens the bag.
+  await expect(page.getByLabel(/yards?/i).first()).toHaveValue("5");
+  await page.waitForLoadState("networkidle"); // tap after the page is interactive, as a person would
+  await page.getByRole("button", { name: /add to bag/i }).click();
+  await expect(page.getByRole("button", { name: /added to bag/i })).toBeVisible();
+  await page.getByLabel(/^Bag, [1-9]\d* items?$/).click();
+  await page.getByRole("link", { name: "Checkout" }).click();
+  await expect(page.getByRole("heading", { name: "Checkout" })).toBeVisible();
+
+  await page.getByLabel("Full name").fill("QA Shopper");
+  await page.getByLabel("Email").fill("qa.shopper@example.com");
+  await page.getByLabel("Phone").fill("0803 123 4567");
+  await page.locator('input[name="zoneId"]').first().check({ force: true });
+  await page.getByLabel("Street address").fill("12 Test Close");
+  await page.getByLabel("Town or city").fill("Ikeja");
+  await page.getByLabel("State").fill("Lagos");
+  await page.getByRole("button", { name: /^Pay/ }).click();
+
+  // Paystack's part (the local stand-in), then back to the shop.
+  await page.getByRole("button", { name: "Pay (test)" }).click();
+  await expect(page).toHaveURL(/\/order\/HV-[A-Z0-9]{6}/);
+  await expect(page.getByRole("heading", { name: "Order confirmed" })).toBeVisible();
+  const number = /\/order\/(HV-[A-Z0-9]{6})/.exec(page.url())![1]!;
+
+  // Stock: exactly 5 fewer, sold (not just held).
+  await expect.poll(async () => (await catalogue()).find((p) => p.slug === fabric.slug)!.variants[0]!.available).toBe(variantBefore - 5);
+
+  // Her dashboard: the order is in New, and one tap packs it.
+  await page.goto(`${DASH}/orders?devRole=packer`);
+  const card = page.getByRole("listitem").filter({ hasText: number });
+  await expect(card).toBeVisible();
+  await expect(card).toContainText("5 yards");
+  await card.getByRole("button", { name: "Mark packed" }).click();
+  await expect(page.getByText(`${number} moved to Packed`)).toBeVisible();
+});
+
+test("a sold-out variant shows Sold out and can't be bought", async ({ page }) => {
+  const soldOut = (await catalogue()).find((p) => p.soldOut)!;
+  expect(soldOut, "a sold-out product in the sample catalogue").toBeTruthy();
+  await page.goto(`${SHOP}/p/${soldOut.slug}`);
+  const button = page.getByRole("button", { name: "Sold out" });
+  await expect(button).toBeVisible();
+  await expect(button).toBeDisabled();
+});

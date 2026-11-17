@@ -19,7 +19,7 @@ Status: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked (needs in
 | 0.9 | Firebase project, Firestore rules, service account | Firebase console | ✅ — project, rules + indexes deployed, service account in Worker secrets |
 | 0.10 | Cloudflare account: Workers, R2 bucket, domain | Cloudflare dashboard | ✅ — Workers on harriesvogueglobal.workers.dev, KV, R2 `hv-images`; custom domain later |
 | 0.11 | Paystack test-mode keys | Paystack dashboard | ✅ — test keys in Worker secrets |
-| 0.12 | CI: GitHub Actions running types, lint, unit tests | `.github/workflows/ci.yml` | ⬜ |
+| 0.12 | CI: GitHub Actions running types, lint, unit tests | `.github/workflows/ci.yml` | 🟡 — written (types, lint, unit, Playwright + axe; manual Lighthouse job); runs once the repo is pushed to GitHub |
 | 0.13 | Figma components and high-fidelity homepage and product-page mockups | Figma | ⬜ (Malik) |
 
 ## Phase 1 — MVP: she can sell
@@ -70,11 +70,11 @@ Status: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked (needs in
 
 | # | Check | Status |
 | --- | --- | --- |
-| 1.28 | Playwright end-to-end: browse → bag → checkout → paid (Paystack test) → order in dashboard | ⬜ |
-| 1.29 | axe accessibility: zero serious or critical | ⬜ |
-| 1.30 | Lighthouse mobile, throttled 4G: LCP < 2.5 s, CLS < 0.1, INP < 200 ms, home JS < 200 KB | ⬜ |
-| 1.31 | 20 concurrent purchases of the last units leave stock correct | ⬜ |
-| 1.32 | Every acceptance check in PLAN.md "Phase 1 is done when" passes | ⬜ |
+| 1.28 | Playwright end-to-end: browse → bag → checkout → paid (Paystack test) → order in dashboard | ✅ — passes (qa/tests/checkout.spec.ts). Paystack's hosted page is behind a bot check, so the pay step uses a local stand-in that signs the webhook like Paystack; real test mode verified live up to Paystack's page, and by her phone test |
+| 1.29 | axe accessibility: zero serious or critical | ✅ — 18 shop and dashboard screens, WCAG 2.2 AA, zero serious/critical (fixed: product gallery not keyboard-scrollable) |
+| 1.30 | Lighthouse mobile, throttled 4G: LCP < 2.5 s, CLS < 0.1, INP < 200 ms, home JS < 200 KB | ✅ — live site: LCP 2.16 / 2.15 / 2.31 s, CLS 0, TBT 0 ms, home JS 169 KB (qa/lighthouse.mjs, CPU slowdown calibrated per Lighthouse docs). INP confirmed from real visitors after launch |
+| 1.31 | 20 concurrent purchases of the last units leave stock correct | ✅ — against the real Firestore: 5 sold, 15 told sold out, 0 errors, nothing oversold (firestore.live.test.ts, cleans up after itself) |
+| 1.32 | Every acceptance check in PLAN.md "Phase 1 is done when" passes | 🟡 — automated checks pass; waiting on her phone test (push within 10 s, print on her thermal printer, add a product with photos in under 2 minutes) |
 
 Phases 2–5 follow PLAN.md and get their own tables when Phase 1 passes.
 
@@ -115,6 +115,10 @@ Small choices PLAN.md doesn't cover. Anything bigger goes to Malik first.
 | 2026-11-13 | Push is data-only FCM drawn by our own service worker | Same look on every browser; tap opens the order |
 | 2026-11-13 | Photos encoded with the browser's own encoder when it has one, else @jsquash (WASM, lazy) | AVIF encoding isn't built into most browsers |
 | 2026-11-13 | Dashboard dev port 5180 (5174 was taken by another local project) | — |
+| 2026-11-17 | End-to-end pay step uses a local Paystack stand-in (qa/fake-paystack.mjs) | Paystack's hosted checkout is behind a bot check; automating around it isn't appropriate. The stand-in signs webhooks exactly as Paystack does |
+| 2026-11-17 | Lighthouse CPU slowdown calibrated to the machine's benchmark index (Lighthouse docs) | A fixed 4x on a slow laptop simulates a far slower phone than PLAN.md's mid-range Android |
+| 2026-11-17 | First screen of the home page has no entrance animation | The hidden headline was the LCP and waited for script (~0.6 s) |
+| 2026-11-17 | Product photos served from the shop's own address (edge-cached proxy over the service binding) | A second origin cost phones on 4G a new connection before the LCP image |
 
 ## Blocked: needed from Malik and her
 
