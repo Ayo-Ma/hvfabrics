@@ -16,9 +16,9 @@ Status: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked (needs in
 | 0.6 | Core types + zod schemas for every collection in the data model | `packages/core/src/schemas/` | ✅ |
 | 0.7 | Money utils (integer minor units + currency), fully unit-tested | `packages/core/src/money.ts` | ✅ |
 | 0.8 | Seed catalogue for local dev (placeholder products, clearly marked `[TBC]`) | `packages/core/src/seed/` | ✅ |
-| 0.9 | Firebase project, Firestore rules, service account | Firebase console | ⛔ needs account |
-| 0.10 | Cloudflare account: Workers, R2 bucket, domain | Cloudflare dashboard | ⛔ needs account |
-| 0.11 | Paystack test-mode keys | Paystack dashboard | ⛔ needs account |
+| 0.9 | Firebase project, Firestore rules, service account | Firebase console | ✅ — project, rules + indexes deployed, service account in Worker secrets |
+| 0.10 | Cloudflare account: Workers, R2 bucket, domain | Cloudflare dashboard | ✅ — Workers on harriesvogueglobal.workers.dev, KV, R2 `hv-images`; custom domain later |
+| 0.11 | Paystack test-mode keys | Paystack dashboard | ✅ — test keys in Worker secrets |
 | 0.12 | CI: GitHub Actions running types, lint, unit tests | `.github/workflows/ci.yml` | ⬜ |
 | 0.13 | Figma components and high-fidelity homepage and product-page mockups | Figma | ⬜ (Malik) |
 
@@ -29,11 +29,11 @@ Status: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked (needs in
 | # | Step | Status |
 | --- | --- | --- |
 | 1.1 | Worker skeleton (Hono router), zod-validated inputs, rate limiting on checkout and search | ✅ — Hono, zod on every input, Workers rate limiting on checkout/search/events |
-| 1.2 | Firestore REST client with a service-account token (JWT signed in the Worker, cached) | 🟡 — written + unit-tested against mocked REST; needs a real Firebase project to verify live |
+| 1.2 | Firestore REST client with a service-account token (JWT signed in the Worker, cached) | ✅ — live reads and transactional writes against the real project (2026-11-13) |
 | 1.3 | Catalogue build on publish → cached JSON at the edge; local dev serves the seed catalogue | ✅ — built from the store, kept in KV, rebuilt after every stock change |
 | 1.4 | Search index build + browser search with typo tolerance and synonyms | 🟡 — index + typo/synonym search in core; server-side search page live; in-browser index next |
 | 1.5 | Checkout: validate bag against live stock, reserve for 15 minutes, create `pending` order | ✅ — atomic; 20 concurrent buyers for 5 units → exactly 5 succeed (test) |
-| 1.6 | Paystack initialise transaction (amount in kobo, order id as reference) | 🟡 — done; needs Paystack test keys to run live |
+| 1.6 | Paystack initialise transaction (amount in kobo, order id as reference) | ✅ — live test checkout returned a Paystack payment page (HV-H99VBZ) |
 | 1.7 | Paystack webhook: HMAC SHA-512 signature check, re-verify, one Firestore transaction, idempotent | 🟡 — signature + re-verify + amount check + idempotent, all tested; needs keys to run live |
 | 1.8 | Cron every 5 minutes: release expired reservations, cancel stale unpaid orders | ✅ — cron */5; also honours late payments and flags stock shortfalls |
 | 1.9 | Confirmation email (Resend) + push and email alert to her | 🟡 — email and FCM push both wired and tested with mocks; live once Resend and Firebase keys exist |
@@ -50,7 +50,7 @@ Status: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked (needs in
 | 1.15 | Product page: gallery, yard or size picker, live stock, sold-out state, add to bag | ✅ — tape-measure yard picker; stock re-checked on focus and every 60 s |
 | 1.16 | Bag drawer (add-to-bag motion to bag icon), persisted bag | ✅ |
 | 1.17 | One-page guest checkout → Paystack → confirmation page | 🟡 — storefront ↔ API wired and tested locally; needs Paystack keys for a real payment |
-| 1.18 | Order tracking page (order number + email) | 🟡 — page done; needs workers/api |
+| 1.18 | Order tracking page (order number + email) | 🟡 — live; check with a real test order |
 | 1.19 | Empty, error, 404 and offline states using the illustrations | ✅ |
 | 1.20 | SEO: meta, Open Graph, product structured data, sitemap | 🟡 — meta + Product JSON-LD done; sitemap and OG image pending |
 
@@ -60,7 +60,7 @@ Status: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked (needs in
 | --- | --- | --- |
 | 1.21 | Vite + React PWA, installable, Firebase Auth login with admin claim | 🟡 — PWA, manifest, service worker, Firebase sign-in and Worker-side ID-token check (admin claim + role) built and tested; dev roles until the Firebase project exists |
 | 1.22 | Today screen: money in today, this week, this month | ✅ — computed in her time zone; plus orders to pack, cutting list, running low |
-| 1.23 | Products: add or edit from her phone, photos resized in the browser (400/800/1200/2000, AVIF + WebP) to R2 | 🟡 — verified end to end in headless Chrome against local R2 (photo → saved product in ~13 s); needs the real R2 bucket |
+| 1.23 | Products: add or edit from her phone, photos resized in the browser (400/800/1200/2000, AVIF + WebP) to R2 | 🟡 — R2 live and serving; confirm one upload from the live dashboard |
 | 1.24 | Stock levels and low-stock flags | ✅ — stock screen saves per row; can't go below stock held by shoppers paying |
 | 1.25 | Orders board: New → Packed → Sent | ✅ — with undo, search, live refresh every 30 s |
 | 1.26 | One-tap print: A4 invoice and 80 mm thermal slip | 🟡 — both render correctly to PDF; needs a test on her actual thermal printer |
