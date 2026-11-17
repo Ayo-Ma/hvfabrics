@@ -207,6 +207,34 @@ Write each value into this checklist as you go (keep the copy with secrets in yo
 
 ---
 
+## 6b. Automatic deploys (Workers Builds)
+
+After this, pushing to `main` on GitHub deploys automatically, like Vercel. Each Worker rebuilds only when its own files change, and the API's tests run inside its build: a failing test stops the deploy.
+
+For **each** of the three Workers: Cloudflare → **Workers & Pages** → click the Worker → **Settings → Build** → **Connect** → choose GitHub → authorize Cloudflare's GitHub app for `Ayo-Ma/hvfabrics` → fill in:
+
+| Setting | `hv-api` | `hv-storefront` | `hv-dashboard` |
+| --- | --- | --- | --- |
+| Branch | `main` | `main` | `main` |
+| Root directory | `/` (leave empty) | `/` | `/` |
+| Build command | `corepack pnpm install --frozen-lockfile && corepack pnpm --filter @hv/core test && corepack pnpm --filter @hv/api test` | `corepack pnpm install --frozen-lockfile && cd apps/storefront && CLOUDFLARE_ENV=production corepack pnpm exec react-router build` | `corepack pnpm install --frozen-lockfile && cd apps/dashboard && corepack pnpm exec vite build` |
+| Deploy command | `cd workers/api && corepack pnpm exec wrangler deploy --env production` | `cd apps/storefront && corepack pnpm exec wrangler deploy` | `cd apps/dashboard && corepack pnpm exec wrangler deploy` |
+| Build watch paths (include) | `workers/api/*`, `packages/core/*` | `apps/storefront/*`, `packages/*` | `apps/dashboard/*`, `packages/*` |
+| Builds for non-production branches | **Off** (previews would use the live database) | Off | Off |
+
+**`hv-dashboard` only:** under **Build → Variables and secrets**, add these as *build* variables. They are the same public values as in `apps/dashboard/.env.production.local`:
+- `VITE_API_URL` = `https://hv-api.harriesvogueglobal.workers.dev`
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_MESSAGING_SENDER_ID`
+- `VITE_FIREBASE_APP_ID`
+- `VITE_FCM_VAPID_KEY`
+
+The API's secrets (Paystack, Firebase service account, Resend) are already stored on the Worker from step 6.1. Don't add them here.
+
+**Check it works:** make a tiny change (e.g. a comment in `apps/dashboard/src/main.tsx`) and push. In the Worker's **Deployments** tab a build should start and finish green. Only `hv-dashboard` rebuilds; the other two are skipped because their files didn't change.
+
 ## 7. Her phone
 
 1. On her phone, open `https://hv-dashboard.<subdomain>.workers.dev` in **Chrome** (Android) or **Safari** (iPhone). Sign in.
