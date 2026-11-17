@@ -28,6 +28,12 @@ jobs:
       - run: corepack pnpm exec eslint .
       - run: corepack pnpm --filter @hv/core test
       - run: corepack pnpm --filter @hv/api test
+      # No known high or critical vulnerability in anything that ships to shoppers or the dashboard.
+      - name: Dependency audit (shipped code)
+        run: corepack pnpm audit --prod --audit-level=high
+      # Development tools too, at critical level (they run on our machines and in CI).
+      - name: Dependency audit (all, critical)
+        run: corepack pnpm audit --audit-level=critical
 
   e2e:
     name: End-to-end and accessibility (Playwright + axe)

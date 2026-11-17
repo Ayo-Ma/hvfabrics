@@ -1,5 +1,6 @@
 import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
+import { secureHeaders } from "hono/secure-headers";
 import { WebhookEventSchema, verifyWebhookSignature } from "@hv/core";
 import { z } from "zod";
 import { adminApp } from "./admin";
@@ -33,6 +34,20 @@ const EventSchema = z.object({
 
 export function createApp(depsFor: (c: Context) => Deps) {
   const app = new Hono();
+
+  // The API serves JSON and photos, never pages: nothing may run, nothing may frame it,
+  // browsers must use HTTPS. Photos stay loadable cross-origin (dashboard thumbnails).
+  app.use(
+    "*",
+    secureHeaders({
+      strictTransportSecurity: "max-age=31536000; includeSubDomains",
+      xFrameOptions: "DENY",
+      referrerPolicy: "no-referrer",
+      crossOriginResourcePolicy: "cross-origin",
+      crossOriginEmbedderPolicy: false,
+      contentSecurityPolicy: { defaultSrc: ["'none'"], frameAncestors: ["'none'"] },
+    }),
+  );
 
   app.use("/events", async (c, next) => {
     const deps = depsFor(c);

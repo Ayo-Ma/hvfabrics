@@ -37,10 +37,26 @@ async function photo(request: Request, env: Env, ctx: ExecutionContext): Promise
   return res;
 }
 
+/** On every response: HTTPS only, no MIME sniffing, no framing by other sites, no stray browser features. */
+const SECURITY_HEADERS: Record<string, string> = {
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(self \"https://checkout.paystack.com\")",
+  "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+};
+
+function secured(res: Response): Response {
+  const out = new Response(res.body, res);
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!out.headers.has(k)) out.headers.set(k, v);
+  return out;
+}
+
 export default {
-  fetch(request, env, ctx) {
+  async fetch(request, env, ctx) {
     const { pathname } = new URL(request.url);
-    if (request.method === "GET" && PHOTO.test(pathname)) return photo(request, env, ctx);
-    return requestHandler(request, { cloudflare: { env, ctx } });
+    if (request.method === "GET" && PHOTO.test(pathname)) return secured(await photo(request, env, ctx));
+    return secured(await requestHandler(request, { cloudflare: { env, ctx } }));
   },
 } satisfies ExportedHandler<Env>;

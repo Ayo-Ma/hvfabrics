@@ -92,6 +92,10 @@ export async function signIn(email: string, password: string): Promise<string | 
   } catch (e) {
     const code = (e as { code?: string }).code ?? "";
     if (/invalid-credential|wrong-password|user-not-found|invalid-email/.test(code)) return "That email and password don't match.";
+    if (/password-does-not-meet-requirements/.test(code)) {
+      return "Your password needs updating: tap Forgot password and set a new one with at least 12 characters, including a capital letter, a small letter and a number.";
+    }
+    if (/user-disabled/.test(code)) return "This account has been switched off. Ask the owner.";
     if (/too-many-requests/.test(code)) return "Too many tries. Wait a few minutes, or reset your password.";
     if (/network/.test(code)) return "No connection. Check your data or Wi-Fi.";
     return "Couldn't sign in. Please try again.";

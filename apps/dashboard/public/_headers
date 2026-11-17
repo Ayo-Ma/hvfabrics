@@ -1,0 +1,14 @@
+# Security headers for the dashboard (Cloudflare applies this file to every response).
+# The dashboard controls the shop, so it gets the strictest policy:
+#  - nobody can frame it (no clickjacking, no invisible overlays on a lookalike site)
+#  - it may only talk to itself, the shop's API and Firebase sign-in / alerts
+#  - scripts only from its own files; 'wasm-unsafe-eval' is for the in-browser photo encoders
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  X-Robots-Tag: noindex, nofollow
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://hv-api.harriesvogueglobal.workers.dev; font-src 'self' data:; connect-src 'self' https://hv-api.harriesvogueglobal.workers.dev https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com; worker-src 'self' blob:; manifest-src 'self'; frame-src https://harries-vogue.firebaseapp.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests

@@ -498,3 +498,17 @@ describe("push alerts", () => {
     expect((await t.app.request("/admin/dev/sample-orders", { method: "POST", headers: as("owner") })).status).toBe(404);
   });
 });
+
+describe("security headers", () => {
+  it("sends HTTPS-only, no-sniff, no-framing and a deny-all CSP on every response, and keeps photos embeddable", async () => {
+    const t = setup();
+    for (const path of ["/health", "/catalogue", "/admin/me", "/nope"]) {
+      const res = await t.app.request(path);
+      expect(res.headers.get("strict-transport-security")).toContain("max-age=31536000");
+      expect(res.headers.get("x-content-type-options")).toBe("nosniff");
+      expect(res.headers.get("x-frame-options")).toBe("DENY");
+      expect(res.headers.get("content-security-policy")).toContain("frame-ancestors 'none'");
+      expect(res.headers.get("cross-origin-resource-policy")).toBe("cross-origin");
+    }
+  });
+});

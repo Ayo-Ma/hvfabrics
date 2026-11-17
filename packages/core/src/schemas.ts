@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+// No runtime code generation: zod otherwise probes `new Function`, which the shop's
+// Content-Security-Policy (and Cloudflare Workers) forbid. Same results, no eval attempt.
+z.config({ jitless: true });
+
 /** Firestore data model from PLAN.md. Every API input and stored document is validated with these. */
 
 export const LINES = ["fabric", "lingerie", "rtw"] as const;

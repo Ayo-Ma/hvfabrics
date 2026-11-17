@@ -1,3 +1,4 @@
+import { useNonce } from "./lib/nonce";
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteLoaderData } from "react-router";
 import satoshiBlack from "../../../assets/fonts/satoshi/satoshi-black.woff2?url";
 import satoshiRegular from "../../../assets/fonts/satoshi/satoshi-regular.woff2?url";
@@ -37,6 +38,7 @@ export async function loader({ context }: Route.LoaderArgs) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<typeof loader>("root");
+  const nonce = useNonce();
   return (
     <html lang="en-NG">
       <head>
@@ -44,7 +46,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0A0A0A" />
         {/* Lets CSS hide [data-rise] content only when script will reveal it. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js');setTimeout(function(){if(!window.__hvHydrated)document.documentElement.classList.remove('js')},4000)" }} />
+        <script
+          nonce={nonce || undefined}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js');setTimeout(function(){if(!window.__hvHydrated)document.documentElement.classList.remove('js')},4000)" }} />
         <Meta />
         <Links />
       </head>
@@ -62,8 +67,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <Footer />
           <BagDrawer />
         </BagProvider>
-        <ScrollRestoration />
-        <Scripts />
+        <ScrollRestoration nonce={nonce || undefined} />
+        <Scripts nonce={nonce || undefined} />
       </body>
     </html>
   );
