@@ -22,3 +22,8 @@ test-results/
 Thumbs.db
 .taste-skill/
 *.tsbuildinfo
+
+# Kept on this computer only (originals; copies live in assets/brand/logo/source and docs/PLAN.md)
+/logo_black.png
+/logo_yellow.png
+/Harries Vogue*Plan.md
