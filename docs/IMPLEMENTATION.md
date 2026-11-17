@@ -120,6 +120,10 @@ Small choices PLAN.md doesn't cover. Anything bigger goes to Malik first.
 | 2026-11-17 | First screen of the home page has no entrance animation | The hidden headline was the LCP and waited for script (~0.6 s) |
 | 2026-11-17 | Product photos served from the shop's own address (edge-cached proxy over the service binding) | A second origin cost phones on 4G a new connection before the LCP image |
 
+## Before go-live (reminders)
+
+- **Two-step sign-in for the dashboard (authenticator app, 6-digit code).** Requested 2026-11-17 to be raised later. Firebase supports it (TOTP); needs an enrolment screen in Settings and a code step at sign-in.
+
 ## Blocked: needed from Malik and her
 
 1. Firebase project (with owner access for the build), Cloudflare account, Paystack account in test mode.
