@@ -182,6 +182,10 @@ Write each value into this checklist as you go (keep the copy with secrets in yo
    corepack pnpm exec wrangler secret put FIREBASE_PROJECT_ID --env production
    corepack pnpm exec wrangler secret put FIREBASE_SERVICE_ACCOUNT --env production < C:/Users/USER/hv-secrets/firebase-service-account.json
    ```
+   In **PowerShell** the `<` doesn't work; pipe the file instead:
+   ```powershell
+   Get-Content -Raw "C:\Users\USER\hv-secrets\firebase-service-account.json" | corepack pnpm exec wrangler secret put FIREBASE_SERVICE_ACCOUNT --env production
+   ```
 2. **Deploy the API:**
    ```
    corepack pnpm exec wrangler deploy --env production
