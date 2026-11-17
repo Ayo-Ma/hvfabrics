@@ -1,6 +1,6 @@
 # Harries Vogue — rules for Claude Code
 
-Spec: `docs/PLAN.md`. Order of work and status: `docs/IMPLEMENTATION.md`. Read both before changing code.
+Spec: `docs/PLAN.md` (kept on this computer only and git-ignored: the repo is public; a backup is in the secrets folder). Order of work and status: `docs/IMPLEMENTATION.md`. Read both before changing code.
 
 ## How to work
 - Build one phase at a time. Don't start the next phase until every acceptance check of the current one passes.
