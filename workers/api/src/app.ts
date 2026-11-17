@@ -1,7 +1,7 @@
 import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
-import { WebhookEventSchema, verifyWebhookSignature } from "@hv/core";
+import { PaystackError, WebhookEventSchema, verifyWebhookSignature } from "@hv/core";
 import { z } from "zod";
 import { adminApp } from "./admin";
 import type { Deps } from "./deps";
@@ -70,6 +70,29 @@ export function createApp(depsFor: (c: Context) => Deps) {
   app.route("/admin", adminApp(depsFor));
 
   app.get("/health", (c) => c.json({ ok: true }));
+
+  /**
+   * Can the API actually reach what it depends on? Database read + Paystack accepting our key.
+   * Booleans only, nothing about the data or keys. Used by the daily security run, so a wrong
+   * secret is caught within a day, not by a customer's failed checkout. Rate-limited.
+   */
+  app.get("/health/deep", async (c) => {
+    const deps = depsFor(c);
+    if (deps.searchLimiter && !(await deps.searchLimiter.limit({ key: clientKey(c) })).success) return c.json({ message: "Too many requests" }, 429);
+    const database = await deps.store.getSettings().then(
+      () => true,
+      () => false,
+    );
+    // A made-up reference: a valid key gets "not found", an invalid one gets 401 "Invalid key".
+    const payments = deps.paystack
+      ? await deps.paystack.verify("hv-health-check").then(
+          () => true,
+          (e: unknown) => !(e instanceof PaystackError && e.status === 401),
+        )
+      : false;
+    const ok = database && payments;
+    return c.json({ ok, database, payments }, ok ? 200 : 503, { "Cache-Control": "no-store" });
+  });
 
   /* ---------- Product photos from R2 (immutable: a new upload gets a new id) ---------- */
 

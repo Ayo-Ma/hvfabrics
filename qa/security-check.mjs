@@ -118,6 +118,14 @@ for (const [label, url, framing] of [
   check("Database", "Direct internet write refused", w.status === 403 || w.status === 401, `HTTP ${w.status}`);
 }
 
+/* ---------- The API can reach what it depends on (catches a wrong secret within a day) ---------- */
+{
+  const r = await get(`${API}/health/deep`);
+  const body = await r.json().catch(() => ({}));
+  check("Live connections", "API can read the database", body.database === true, `HTTP ${r.status}`);
+  check("Live connections", "Paystack accepts the API's key", body.payments === true, `HTTP ${r.status}`);
+}
+
 /* ---------- Report ---------- */
 let area = "";
 for (const r of results) {

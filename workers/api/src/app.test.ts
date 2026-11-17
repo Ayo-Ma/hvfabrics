@@ -512,3 +512,18 @@ describe("security headers", () => {
     }
   });
 });
+
+describe("deep health check", () => {
+  it("reports database and payments reachable, and 503 when Paystack rejects the key", async () => {
+    const t = setup();
+    const ok = await t.app.request("/health/deep");
+    expect(ok.status).toBe(200);
+    expect(await ok.json()).toEqual({ ok: true, database: true, payments: true });
+
+    const { PaystackError } = await import("@hv/core");
+    t.paystack.verify.mockRejectedValueOnce(new PaystackError("Paystack /transaction/verify: Invalid key", 401));
+    const bad = await t.app.request("/health/deep");
+    expect(bad.status).toBe(503);
+    expect(await bad.json()).toEqual({ ok: false, database: true, payments: false });
+  });
+});

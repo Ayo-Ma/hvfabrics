@@ -31,7 +31,12 @@ function backendFor(env: WorkerEnv): { store: Store; placeholder: boolean; push:
     const key = env.FIREBASE_SERVICE_ACCOUNT;
     if (!firebase || firebase.key !== key) {
       const sa = ServiceAccountSchema.parse(JSON.parse(key));
-      const projectId = env.FIREBASE_PROJECT_ID || sa.project_id;
+      // The key says which project it belongs to; a mistyped FIREBASE_PROJECT_ID can't work with it
+      // (it caused an outage on 2026-11-17), so trust the key and warn about the mismatch.
+      const projectId = sa.project_id;
+      if (env.FIREBASE_PROJECT_ID && env.FIREBASE_PROJECT_ID !== sa.project_id) {
+        console.warn(JSON.stringify({ msg: "FIREBASE_PROJECT_ID doesn't match the service account; using the key's project", key: sa.project_id }));
+      }
       const auth = new GoogleAuth(sa);
       firebase = {
         key,
