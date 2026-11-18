@@ -13,7 +13,7 @@ const styles: Record<Variant, string> = {
 };
 
 const base =
-  "inline-flex min-h-12 items-center justify-center gap-2 px-6 text-base font-semibold transition-[background-color,transform] duration-(--duration-fast) active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-grey-200 disabled:text-grey-500";
+  "inline-flex min-h-12 items-center justify-center gap-2 px-6 text-base font-semibold transition-[background-color,translate,scale] duration-(--duration-base) ease-(--ease-out) hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] disabled:cursor-not-allowed disabled:bg-grey-200 disabled:text-grey-500";
 
 export function Button({
   variant = "primary",

@@ -1,64 +1,56 @@
 import { Link } from "react-router";
 import { LINES } from "@hv/core";
 import { LINE_LABELS, LINE_PATHS } from "~/lib/lines";
+import { Media } from "./Media";
 import { Wordmark } from "./Logo";
 
-/** The footer inverts to paper and closes with the wordmark at full width. */
+/**
+ * The footer is the last photograph: the aso-ebi group at golden hour, darkened evenly so paper
+ * type reads anywhere on it, with the name across the bottom at full width. Without the photograph
+ * it falls back to the ink ground.
+ */
 export function Footer() {
   return (
-    <footer className="bg-paper text-ink">
-      <div className="mx-auto grid max-w-(--container-page) gap-y-10 px-(--spacing-gutter) pb-6 pt-16 md:min-h-[70svh] md:grid-rows-[auto_1fr_auto]">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-8 text-[15px] md:grid-cols-4">
-          <div>
-            <h2 className="font-sans text-[15px] font-semibold tracking-normal">Shop</h2>
-            <ul className="mt-3 space-y-2 text-grey-600">
+    <footer className="relative isolate overflow-hidden bg-ink text-paper">
+      <Media
+        slot="campaign/footer-owambe"
+        alt=""
+        sizes="100vw"
+        ratio="16 / 9"
+        tone="dark"
+        className="absolute inset-0 -z-10 size-full"
+        imgClassName="brightness-[0.62]"
+      />
+      <div className="mx-auto flex min-h-[88svh] max-w-(--container-page) flex-col justify-between gap-16 px-(--spacing-gutter) pb-6 pt-10 md:min-h-svh">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 text-base md:grid-cols-4">
+          <nav aria-labelledby="footer-shop">
+            <h2 id="footer-shop" className="font-sans text-base font-bold tracking-normal">Shop</h2>
+            <ul className="mt-3 space-y-2">
               {LINES.map((l) => (
                 <li key={l}>
-                  <Link className="hover:text-ink" to={LINE_PATHS[l]}>
-                    {LINE_LABELS[l]}
-                  </Link>
+                  <Link className="footer-link" to={LINE_PATHS[l]}>{LINE_LABELS[l]}</Link>
                 </li>
               ))}
-              <li>
-                <Link className="hover:text-ink" to="/search">
-                  Search
-                </Link>
-              </li>
+              <li><Link className="footer-link" to="/search">Search</Link></li>
             </ul>
-          </div>
-          <div>
-            <h2 className="font-sans text-[15px] font-semibold tracking-normal">Orders</h2>
-            <ul className="mt-3 space-y-2 text-grey-600">
-              <li>
-                <Link className="hover:text-ink" to="/track">
-                  Track an order
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-ink" to="/policies/delivery">
-                  Delivery
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-ink" to="/policies/returns">
-                  Returns
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-ink" to="/policies/privacy">
-                  Privacy
-                </Link>
-              </li>
+          </nav>
+          <nav aria-labelledby="footer-orders">
+            <h2 id="footer-orders" className="font-sans text-base font-bold tracking-normal">Orders</h2>
+            <ul className="mt-3 space-y-2">
+              <li><Link className="footer-link" to="/track">Track an order</Link></li>
+              <li><Link className="footer-link" to="/policies/delivery">Delivery</Link></li>
+              <li><Link className="footer-link" to="/policies/returns">Returns</Link></li>
+              <li><Link className="footer-link" to="/policies/privacy">Privacy</Link></li>
             </ul>
+          </nav>
+          <div>
+            <h2 className="font-sans text-base font-bold tracking-normal">Visit the shop</h2>
+            <p className="mt-3">[TBC: shop address, Abule Egba, Lagos]</p>
+            <p className="mt-2">[TBC: opening hours]</p>
           </div>
           <div>
-            <h2 className="font-sans text-[15px] font-semibold tracking-normal">Visit the shop</h2>
-            <p className="mt-3 text-grey-600">[TBC: shop address, Abule Egba, Lagos]</p>
-            <p className="mt-2 text-grey-600">[TBC: opening hours]</p>
-          </div>
-          <div>
-            <h2 className="font-sans text-[15px] font-semibold tracking-normal">Talk to us</h2>
-            <ul className="mt-3 space-y-2 text-grey-600">
+            <h2 className="font-sans text-base font-bold tracking-normal">Talk to us</h2>
+            <ul className="mt-3 space-y-2">
               <li>[TBC: WhatsApp number]</li>
               <li>[TBC: Instagram handle]</li>
               <li>[TBC: email]</li>
@@ -66,12 +58,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div aria-hidden="true" />
-
         <div>
-          <Wordmark className="block w-full [&>svg]:h-auto [&>svg]:w-full" />
-          <p className="mt-5 text-[13px] text-grey-600">
-            © {new Date().getFullYear()} Harries Vogue. Payments are processed securely by Paystack.
+          <Wordmark className="block w-full text-paper [&>svg]:h-auto [&>svg]:w-full" />
+          <p className="mt-5 text-[15px]">
+            © {new Date().getFullYear()} Harries Vogue, Abule Egba, Lagos. Payments are processed securely by Paystack.
           </p>
         </div>
       </div>

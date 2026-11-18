@@ -17,9 +17,9 @@ export function lineFromPath(pathname: string): Line | undefined {
  * [TBC] marks text that needs her wording.
  */
 export const LINE_INTROS: Record<Line, string> = {
-  fabric: "Lace, ankara and sequin fabrics, cut to the yards you need.",
-  lingerie: "[TBC: one line on the lingerie collection]",
-  rtw: "[TBC: one line on the ready-to-wear collection]",
+  fabric: "For the outfit people ask about. Silk, satin, chiffon, lace, ankara and more.",
+  lingerie: "The part nobody sees, and you feel all day. [TBC: owner to confirm]",
+  rtw: "For when the day is close and your tailor is fully booked. [TBC: owner to confirm]",
 };
 
 export { LINE_LABELS };

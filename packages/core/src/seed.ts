@@ -32,6 +32,35 @@ const specs: SeedSpec[] = [
 
 const lineWord: Record<Line, string> = { fabric: "Fabric", lingerie: "Lingerie", rtw: "Ready-to-wear" };
 
+/**
+ * Generated design stand-ins (assets/photography/products, served by the storefront from /media) so
+ * the local preview shows real-looking photographs. Never real stock: the seed is refused in production.
+ */
+const STANDINS: Partial<Record<string, { name: string; describe: string }>> = {
+  "fabric-1": { name: "ivory-french-lace", describe: "ivory French lace" },
+  "fabric-2": { name: "emerald-sequin-lace", describe: "emerald sequin lace" },
+  "fabric-3": { name: "gold-damask", describe: "gold damask" },
+  "fabric-4": { name: "coral-beaded-lace", describe: "coral beaded lace" },
+  "rtw-1": { name: "black-wrap-midi", describe: "black wrap midi dress" },
+  "rtw-2": { name: "ivory-linen-coord", describe: "ivory linen co-ord" },
+};
+const VIEWS = [
+  ["01-front", "front"],
+  ["02-drape", "draped"],
+  ["03-macro", "close-up of the texture"],
+] as const;
+
+function seedImages(line: Line, n: number): Product["images"] {
+  const s = STANDINS[`${line}-${n}`];
+  if (!s) {
+    return [
+      { key: "placeholder/product", alt: `[TBC] ${lineWord[line]} sample ${n}, front`, width: 1600, height: 2000 },
+      { key: "placeholder/product", alt: `[TBC] ${lineWord[line]} sample ${n}, detail`, width: 1600, height: 2000 },
+    ];
+  }
+  return VIEWS.map(([file, view]) => ({ key: `standin/products/${line}/${s.name}/${file}`, alt: `${s.describe}, ${view}`, width: 1122, height: 1402 }));
+}
+
 export const seedEntries: { product: Product; variants: Variant[]; placeholder: true }[] = specs.map((s, i) => {
   const id = `seed-${s.line}-${s.n}`;
   const created = new Date(Date.parse(T) - i * 3_600_000).toISOString().replace(".000", "");
@@ -43,10 +72,7 @@ export const seedEntries: { product: Product; variants: Variant[]; placeholder: 
       line: s.line,
       title: `[TBC] ${lineWord[s.line]} sample ${s.n}`,
       description: "[TBC: product description from Harries Vogue]",
-      images: [
-        { key: "placeholder/product", alt: `[TBC] ${lineWord[s.line]} sample ${s.n}, front`, width: 1600, height: 2000 },
-        { key: "placeholder/product", alt: `[TBC] ${lineWord[s.line]} sample ${s.n}, detail`, width: 1600, height: 2000 },
-      ],
+      images: seedImages(s.line, s.n),
       attributes: s.line === "fabric" ? { fibre: "[TBC]", width: "[TBC]", care: "[TBC: care instructions]" } : { care: "[TBC: care instructions]" },
       status: "live",
       createdAt: created,

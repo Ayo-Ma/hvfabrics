@@ -70,7 +70,7 @@ export function YardTape({
             .map((t) => (
               <span
                 key={t}
-                className="tabular absolute -translate-x-1/2 text-[13px] font-medium text-ink"
+                className="tabular absolute -translate-x-1/2 text-[15px] font-medium text-ink"
                 style={{ left: `${pct(t)}%` }}
               >
                 {t}

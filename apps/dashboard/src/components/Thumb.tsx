@@ -7,7 +7,12 @@ import { IMAGE_BASE } from "../lib/config";
 export function Thumb({ image, size = 48, className }: { image: ProductImage | undefined; size?: number; className?: string }) {
   const box = cx("flex-none overflow-hidden rounded-[6px] bg-raised object-cover", className);
   const h = Math.round(size * 1.25);
-  if (!image || image.key.startsWith("placeholder/")) {
+  const standinBase = import.meta.env.VITE_STANDIN_BASE as string | undefined;
+  if (image?.key.startsWith("standin/") && standinBase) {
+    const src = `${standinBase}/${image.key.slice("standin/".length)}/400.webp`;
+    return <img src={src} alt="" width={size} height={h} loading="lazy" className={box} style={{ width: size, height: h }} />;
+  }
+  if (!image || image.key.startsWith("placeholder/") || image.key.startsWith("standin/")) {
     return <img src={placeholder} alt="" width={size} height={h} className={box} style={{ width: size, height: h }} />;
   }
   const base = `${IMAGE_BASE}/${image.key}`;

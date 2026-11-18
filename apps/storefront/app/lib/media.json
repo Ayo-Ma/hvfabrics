@@ -1,1 +1,359 @@
-{}
+{
+  "campaign/buy-handoff": {
+    "width": 1254,
+    "height": 1254,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "campaign/buy-parcel": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "campaign/footer-owambe": {
+    "width": 1672,
+    "height": 941,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "campaign/line-fabrics": {
+    "width": 1254,
+    "height": 1254,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "campaign/line-rtw": {
+    "width": 1254,
+    "height": 1254,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "campaign/sheet-backdrop": {
+    "width": 1666,
+    "height": 944,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "campaign/stage-01-hero": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "campaign/stage-02-bolt": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "campaign/stage-03-yard": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "campaign/stage-04-cut": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "campaign/stage-05-occasion": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "banners/campaign-eid-desktop": {
+    "width": 2048,
+    "height": 768,
+    "widths": [
+      400,
+      800,
+      1200,
+      2000
+    ]
+  },
+  "banners/campaign-eid-phone": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "banners/campaign-festive-desktop": {
+    "width": 2048,
+    "height": 768,
+    "widths": [
+      400,
+      800,
+      1200,
+      2000
+    ]
+  },
+  "banners/campaign-festive-phone": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "banners/campaign-wedding-desktop": {
+    "width": 2048,
+    "height": 768,
+    "widths": [
+      400,
+      800,
+      1200,
+      2000
+    ]
+  },
+  "banners/campaign-wedding-phone": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "banners/line-fabrics-banner": {
+    "width": 1942,
+    "height": 809,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "banners/line-rtw-banner": {
+    "width": 1942,
+    "height": 809,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "products/fabric/black-swiss-voile/01-front": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/black-swiss-voile/02-drape": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/black-swiss-voile/03-macro": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/coral-beaded-lace/01-front": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/coral-beaded-lace/02-drape": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/coral-beaded-lace/03-macro": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/emerald-sequin-lace/01-front": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/emerald-sequin-lace/02-drape": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/emerald-sequin-lace/03-macro": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/gold-damask/01-front": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/gold-damask/02-drape": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/gold-damask/03-macro": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/indigo-aso-oke/01-front": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/indigo-aso-oke/02-drape": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/indigo-aso-oke/03-macro": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/ivory-french-lace/01-front": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/ivory-french-lace/02-drape": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/fabric/ivory-french-lace/03-macro": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/rtw/black-wrap-midi/01-front": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/rtw/black-wrap-midi/02-drape": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/rtw/black-wrap-midi/03-macro": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/rtw/ivory-linen-coord/01-front": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/rtw/ivory-linen-coord/02-drape": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "products/rtw/ivory-linen-coord/03-macro": {
+    "width": 1122,
+    "height": 1402,
+    "widths": [
+      400,
+      800
+    ]
+  }
+}

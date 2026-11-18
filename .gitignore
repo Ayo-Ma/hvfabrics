@@ -32,3 +32,14 @@ Thumbs.db
 # Client answers stay private (the repo is public).
 /docs/CLIENT_QUESTIONNAIRE.md
 /docs/Harries-Vogue-Questionnaire.docx
+
+# Original generated photographs (82 MB): kept on this computer (OneDrive); the site ships the web sizes in apps/storefront/public/media.
+/assets/photography/**/*.jpg
+/assets/photography/**/*.png
+# Third-party article kept for reference only (not ours to publish).
+/assets/HowtowritecopiesthatSoundLikeYou.md
+# Codex image-generation scratch files.
+/tmp/
+# Codex logs with local paths and session ids.
+/assets/photography/CATALOG.json
+/assets/photography/GENERATION_STATUS.jsonl

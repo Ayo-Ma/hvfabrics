@@ -57,8 +57,9 @@ export function Header() {
             <BagIcon />
             {bag.count > 0 && (
               <span
+                key={bag.count}
                 aria-hidden="true"
-                className="tabular absolute right-0.5 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-yellow px-1 text-xs font-semibold text-ink"
+                className="badge-pop tabular absolute right-0.5 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-yellow px-1 text-xs font-semibold text-ink"
               >
                 {bag.count > 99 ? "99+" : bag.count}
               </span>

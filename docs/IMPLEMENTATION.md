@@ -99,6 +99,7 @@ Small choices PLAN.md doesn't cover. Anything bigger goes to Malik first.
 | 2026-11-12 | Harries Yellow = `#FDCE02` | Sampled from the logo files |
 | 2026-11-13 | Poppins dropped; Satoshi (400/500/700/900) for everything | Client decision |
 | 2026-11-13 | ₦ glyph from a Plus Jakarta Sans subset via `unicode-range` | Satoshi has no ₦ |
+| 2026-11-18 | Headlines in Futura; Jost (SIL OFL) stands in as "HV Display" until a Futura PT web licence is bought | Client decision; Futura is a paid font |
 | 2026-11-13 | Variant unit `piece` added beside yard/bundle | Lingerie and ready-to-wear sell by the item — **Malik to confirm** |
 | 2026-11-13 | Storefront home: "dark room" composition (design-taste-frontend draw, seed 347725934), palette and type kept from the brand | Black brand base; few strong pictures needed while photos are pending |
 | 2026-11-13 | Built catalogue + search index stored in Workers KV | Shoppers never read Firestore (PLAN.md trap 2); KV is free at this volume |

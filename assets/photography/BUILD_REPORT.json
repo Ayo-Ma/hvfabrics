@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-18",
+  "command": "corepack pnpm images",
+  "exitCode": 0,
+  "photographs": 43,
+  "webFilesChecked": 198,
+  "shareSize": [
+    1200,
+    630
+  ],
+  "upscaled": 0,
+  "problems": [],
+  "originalResolutionRequirementMet": false
+}

@@ -9,6 +9,13 @@
 
 ## Phase 1 — MVP (in progress)
 
+- Home redesign (2026-11-18): magazine-cover hero, scrolling story with a fixed photograph stage, season campaign,
+  picture tiles for the three lines, live price sheet, yard-tape slip. Copy rewritten to sell the outcome (docs/VOICE.md).
+- Headlines in Futura via "HV Display" (Jost stands in until a Futura PT web licence is bought).
+- Generated campaign, banner and product stand-in photographs; `corepack pnpm images` builds 400/800/1200/2000 AVIF + WebP
+  into public/media. The local sample catalogue shows the product stand-ins; production never serves them.
+- Micro-interactions: hero line reveal, photo settle, step progress, link and door sweeps, ticking slip totals,
+  fly-to-bag and badge pop, smooth questions; all off under reduced motion.
 - Storefront (React Router 7 on Cloudflare Workers, SSR): home, Fabrics / Lingerie / Ready-to-Wear with in-stock filter and sort,
   product page with the tape-measure yard picker and size picker, bag drawer with add-to-bag motion, one-page checkout with
   server-side validation, order confirmation, order tracking, search with typo tolerance, policies, 404 and error states.

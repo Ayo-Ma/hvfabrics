@@ -1,0 +1,452 @@
+{
+  "standard": "Camera and rendering\n\nShot on a medium-format digital camera (Hasselblad X2D 100C or Fujifilm GFX100 II) or full-frame (Sony A1), with a real lens named in each prompt.\nRealistic depth of field for that lens and aperture: focus falloff in front of and behind the subject, no uniform blur.\nNatural colour grading close to Kodak Portra 400 / Fuji Pro 400H: warm but true skin, gentle highlight roll-off, no crushed blacks, no teal-and-orange.\nFine, even sensor grain at 100% zoom. No digital smoothness, no HDR halos, no oversharpening.\nPeople (whenever a person appears)\n\nNigerian women of West African descent (Yoruba, Igbo, Edo features vary; do not repeat one face across slots). Ages as stated per slot.\nReal skin, professionally lit and lightly retouched, never airbrushed: visible pores across the nose, cheeks and forehead; fine vellus hair on the cheek and jawline catching the light; natural variation in tone (slightly deeper around the eyes and knuckles, warmer on the cheeks); subtle natural sheen on the forehead and cheekbones, not oily; the odd tiny mark or freckle left in. Lips with natural texture and fine lines.\nAccurate dark skin rendering: rich, deep brown and ebony tones with blue and red undertones as they really are. Never lightened, never grey, never orange. Expose for the skin.\nNatural hair and edges, or a properly tied gele (headwrap) with realistic folds and starch; no blurred or merged hairlines.\nHands with five fingers, natural knuckles, realistic nails (neat, short or medium, natural or a single plain colour); fabric pressed by fingers must deform correctly.\nReal expressions: relaxed, mid-moment, eyes with natural catchlights matching the light source. No frozen stock smile, no perfectly symmetrical face.\nBodies of real proportions and sizes as stated; clothing with real weight, creases and gravity.\nFabric (the product is the hero)\n\nLace must show its construction: the net ground, raised cord outlines, embroidery threads, and any stones, sequins or beads catching light individually as small specular points, with correct shadows on the net.\nDamask shows woven pattern by light direction; aso-oke shows its hand-woven strips and slight irregularity; satin shows soft directional sheen.\nFabric drapes with true weight: heavy beaded lace falls in deep folds; voile and chiffon float.\nColours must be believable dyed-textile colours, not neon.\nSet and place\n\nLagos, Nigeria, today: warm humid air with a soft haze in daylight; real interiors with plastered walls, tiled floors, wooden shelving, fluorescent or daylight mixed light where stated. Lived-in, clean and premium, not a slum cliché and not a Western studio pretending to be Lagos.\nNever (reject and regenerate if any appear)\n\nPlastic, waxy or airbrushed skin; beauty-filter smoothing; doll eyes; over-whitened teeth.\nExtra or fused fingers, warped hands, melted jewellery, asymmetric earrings that don't match.\nText, letters, logos, signs with writing, watermarks, labels on products, fake brand names.\nCGI or 3D-render look, illustration, painting, cartoon, anime.\nOver-saturated colour, neon, heavy vignettes, lens flare added for effect, HDR.\nLightened or orange skin; Western fashion-week styling substituted for Nigerian dress.\nBrand colours to echo (in props and wardrobe, not as overlays): black #0A0A0A, warm off-white #FAFAF7, and Harries Yellow #FDCE02 (a rich marigold yellow). Yellow appears as one accent at most per image (a gele, a ribbon, a bolt), never everywhere.\n\nText-safe areas. Several slots will have text set beside or over them. Each prompt says where to keep the picture calm (plain wall, soft background); respect it.\n\n",
+  "jobs": [
+    {
+      "id": "HV-STAGE-01",
+      "file": "assets/photography/campaign/stage-01-hero.jpg",
+      "width": 2400,
+      "height": 3000,
+      "prompt": "Editorial fashion portrait, photographed on a Hasselblad X2D with an XCD 90mm f/2.5 lens at f/3.2, 1/250s, ISO 100. A Nigerian woman in her early thirties, deep brown skin with cool undertones, stands three-quarters to camera against a warm off-white plaster wall in a Lagos atelier, late-afternoon daylight coming through a tall window on camera left and diffused by sheer cotton, with a large white bounce card on the right lifting the shadow side of her face. She wears a floor-length iro and buba in heavy ivory French lace embroidered with raised cord flowers and scattered with small clear stones; each stone catches the window light as a separate point. Her gele is a marigold-yellow (#FDCE02) aso-oke, tied high with crisp architectural folds and visible weave. Small gold stud earrings, matching. Her expression is calm and self-assured, lips relaxed, looking just past the lens. Skin is rendered with full real texture: visible pores on the nose and cheeks, fine vellus hair along the jaw catching the light, natural sheen on the cheekbones, slight tonal variation under the eyes; professional light retouching only, no airbrushing. The lace drapes with real weight, folding at the hip, net ground visible where it stretches. Composition: she occupies the right two-thirds of the frame, cropped mid-thigh; the left third is calm, softly lit plaster wall with a gentle falloff (text will sit beside this area). Colour grade like Kodak Portra 400, warm true skin, soft highlight roll-off, fine natural grain. No text, no logos, no jewellery distortion, no extra fingers, no plastic skin, no beauty filter, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-STAGE-02",
+      "file": "assets/photography/campaign/stage-02-bolt.jpg",
+      "width": 2400,
+      "height": 3000,
+      "prompt": "Interior photograph of a premium fabric shop in Abule Egba, Lagos, shot on a Fujifilm GFX100 II with a GF 45mm f/2.8 at f/5.6, 1/60s, ISO 400, on a tripod. Floor-to-ceiling dark wooden shelves on the right two-thirds of the frame hold rolled bolts of fabric stacked horizontally, ends facing camera: ivory and champagne French lace, emerald and wine sequin lace, coral beaded lace, gold damask, indigo-and-white aso-oke, black chiffon, with exactly one bolt of marigold-yellow (#FDCE02) lace at eye level as the single accent. You can see the cardboard tubes in the bolt centres, the cut edges of the fabric with loose threads, plastic sleeves on two bolts reflecting the light, and slight unevenness in the stacking as in a working shop. Light: soft daylight from a doorway on the left mixing with one warm practical lamp; gentle shadows between shelves. The left third shows a plain off-white plastered wall section and a corner of a wooden cutting table in soft focus (calm area for text). No people. No signs, no writing, no price tags, no labels with text. Realistic textile colours, no neon. Photographic, Portra-like grade, fine grain; not CGI, not a render.",
+      "excluded": false
+    },
+    {
+      "id": "HV-STAGE-03",
+      "file": "assets/photography/campaign/stage-03-yard.jpg",
+      "width": 2400,
+      "height": 3000,
+      "prompt": "Close, top-down-angled detail photograph on a Sony A1 with an FE 90mm f/2.8 Macro G at f/4, 1/200s, ISO 200. On a pale wooden cutting table, a length of emerald-green beaded lace is unrolled from a bolt; a soft cloth tailor's tape measure in faded yellow lies along the selvedge edge, its markings legible only as tick marks (no readable numbers or letters in focus). A woman's hands (deep brown skin with visible knuckle creases, fine skin texture, short natural nails, one thin gold ring) hold the tape flat with one hand and smooth the lace with the other; the fingers press into the fabric and the net deforms realistically. The glass beads and sequins on the lace each catch the window light as individual highlights with tiny shadows on the net ground. A pair of black tailor's shears rests at the top edge, partly out of frame. Light: soft side window light from the left, gentle shadows to the right. Composition: the hands and tape occupy the right two-thirds; the left third is the plain wooden table surface with soft grain, slightly out of focus (calm area for text). Real textile detail, natural colour, fine grain, Portra-like grade. No text, no readable numbers, no logos, five fingers per hand, no warped fingers, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-STAGE-04",
+      "file": "assets/photography/campaign/stage-04-cut.jpg",
+      "width": 2400,
+      "height": 3000,
+      "prompt": "Dramatic but natural detail photograph on a Hasselblad X2D with an XCD 120mm Macro f/3.5 at f/5, 1/160s, ISO 200. Heavy black steel tailor's shears mid-cut through ivory French lace with raised cord embroidery, the blades open at a narrow angle, a clean cut line visible behind them with a few loose threads lifting from the cut edge. A woman's right hand (deep brown skin with true texture: visible pores on the back of the hand, natural knuckle creases, short natural nails) grips the shears; her left fingertips hold the lace taut, the fabric creasing realistically around the pressure. The shears' steel shows real wear: fine scratches and a slightly darker pivot screw. Single soft key light from high on the left (a large softbox simulating window light), creating a defined but soft shadow of the blades on the lace. Background: the wooden cutting table falling into soft shadow. Composition: shears and hands in the right two-thirds, diagonal from lower right to upper centre; left third is soft shadowed table (calm area for text). Photographic, true colour, fine grain. No text, no logos, no brand engravings on the shears, no extra fingers, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-STAGE-05",
+      "file": "assets/photography/campaign/stage-05-occasion.jpg",
+      "width": 2400,
+      "height": 3000,
+      "prompt": "Candid wedding-guest editorial on a Sony A1 with an FE 50mm f/1.2 GM at f/2, 1/320s, ISO 400, at an evening owambe in Lagos under warm festoon lights and the last blue of dusk. Three Nigerian women (ages about 28, 40 and 55, different face shapes and body types, deep and medium-deep brown skin) in matching aso-ebi: coral-pink beaded lace bubas with wrappers, and matching gele tied in three different styles, laughing together mid-conversation, one with her hand on another's arm. The nearest woman is in sharp focus on the right; the others fall gently out of focus behind her. Skin rendered with full real texture: pores, fine facial hair catching the warm light, natural sheen from the warm evening, laugh lines at the eyes of the eldest. Gold jewellery (matching earring pairs, bangles) with real reflections. The beads on the lace sparkle as individual points of light. Background: soft bokeh of warm string lights and blurred guests in other colours, no faces recognisable. Composition: subjects in the right two-thirds, cropped at mid-thigh; left third falls to dark blurred background with warm bokeh (calm area for text). Grade like Portra 800 pushed one stop: warm, true skin, deep but detailed shadows, fine grain. No text, no signs, no logos, no distorted hands, no plastic skin, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-LINE-FABRICS",
+      "file": "assets/photography/campaign/line-fabrics.jpg",
+      "width": 2400,
+      "height": 2400,
+      "prompt": "Still-life fabric photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, studio strobe through a large octabox from upper left with a white fill card on the right. Three lengths of fabric draped over a hidden horizontal bar against a warm off-white (#FAFAF7) seamless paper backdrop: ivory French lace with clear stones in front, emerald sequin lace in the middle, gold damask behind, falling in deep natural folds to a soft pool on the floor. Every stone and sequin catches the light individually; the damask pattern appears and disappears with the folds; loose threads at one cut edge. Soft natural shadow on the backdrop. Centred composition with even space around. True textile colour, fine grain, crisp but not oversharpened. No people, no text, no labels, no logos, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-LINE-LINGERIE",
+      "file": "assets/photography/campaign/line-lingerie.jpg",
+      "width": 2400,
+      "height": 2400,
+      "prompt": "Tasteful lingerie editorial on a Hasselblad X2D with an XCD 80mm f/1.9 at f/2.8, 1/200s, ISO 100, soft north-window light. A Nigerian woman in her late twenties with deep brown skin, seated on the edge of an unmade linen bed in a sunlit Lagos apartment, wearing a black lace bralette and matching high-waisted brief with a sheer lace robe in warm ivory falling off one shoulder; the image is elegant and editorial, not explicit, framed from collarbone to mid-thigh with her face turned towards the window in soft profile. The lace pattern is crisp and readable against her skin; straps sit with real tension and slight indentation. Skin rendered with full real texture: visible pores on the shoulder and décolletage, fine body hair catching the backlight, natural tonal variation, soft sheen on the collarbone; professional light retouching only. Warm off-white walls and linen in the background, softly out of focus. Centred, calm composition. Portra-like grade, fine grain. Not explicit, no nudity, no text, no logos, no plastic skin, no warped hands, not CGI.",
+      "excluded": true,
+      "excludeReason": "User requested deletion and omission on 2026-11-18"
+    },
+    {
+      "id": "HV-LINE-RTW",
+      "file": "assets/photography/campaign/line-rtw.jpg",
+      "width": 2400,
+      "height": 2400,
+      "prompt": "Fashion editorial on a Sony A1 with an FE 85mm f/1.4 GM II at f/2.8, 1/500s, ISO 100, natural Lagos daylight under light cloud. A Nigerian woman in her mid-thirties with deep brown skin and short natural hair, walking towards camera mid-stride along a clean, warm-toned plaster wall, wearing a tailored black wrap midi dress with a structured shoulder and a single marigold-yellow (#FDCE02) silk sash at the waist; low black block-heel sandals. The dress moves with her stride: real fabric weight, creases at the waist, hem swinging. Expression confident and present, looking just off camera. Skin with full real texture: pores, fine facial hair, natural sheen on the forehead and cheekbones, no airbrushing. Background: plain warm off-white wall with a soft shadow line from a palm frond out of frame. Centred composition, full-length figure with breathing room. Portra-like grade, fine grain. No text, no logos, no distorted limbs or feet, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-SHEET-BACKDROP",
+      "file": "assets/photography/campaign/sheet-backdrop.jpg",
+      "width": 3000,
+      "height": 1700,
+      "prompt": "Extreme close-up textile photograph, filling the entire frame, on a Hasselblad X2D with an XCD 120mm Macro at f/8, 1/125s, ISO 100, raking soft light from the left. Champagne-gold French lace laid flat over black satin, so the lace pattern reads in gold against deep black; raised cord flowers, scalloped edges and small clear stones casting tiny shadows. The texture is even across the whole frame with no single focal point (a printed sheet will be centred on top of it). Slight natural unevenness in the lace. True colour, deep but detailed blacks, fine grain. No text, no logos, no objects, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-BUY-PARCEL",
+      "file": "assets/photography/campaign/buy-parcel.jpg",
+      "width": 2100,
+      "height": 2800,
+      "prompt": "Still life on a Fujifilm GFX100 II with a GF 80mm f/1.7 at f/4, 1/125s, ISO 200, soft window light from the right. On a pale wooden table in a Lagos shop, five yards of coral beaded lace folded neatly into a flat rectangle, half wrapped in crisp black tissue paper and tied with a thin marigold-yellow (#FDCE02) ribbon in a simple bow; beside it a plain black paper bag with rope handles (no print, no logo) and a folded paper slip with no readable writing. Beads catch the light individually; the tissue paper has real creases. Background: plastered off-white wall, softly out of focus. Composition: parcel in the lower two-thirds, calm wall above. Portra-like grade, fine grain. No text, no logos, no readable writing, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-BUY-HANDOFF",
+      "file": "assets/photography/campaign/buy-handoff.jpg",
+      "width": 1600,
+      "height": 1600,
+      "prompt": "Close detail on a Sony A1 with an FE 50mm f/1.2 at f/2.8, 1/250s, ISO 200, daylight at a shop doorway in Lagos. Two pairs of hands passing the same black paper bag with rope handles from one to the other: the giver's hands deep brown with short natural nails and a thin gold ring, the receiver's hands medium-brown with neat burgundy nails and a gold bangle. Real skin texture on both: knuckle creases, fine lines, visible pores on the backs of the hands. The bag has real paper creases, no print. Background: soft-focus doorway with warm daylight. No faces. No text, no logos, five fingers per hand, no warping, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-FOOTER",
+      "file": "assets/photography/campaign/footer-owambe.jpg",
+      "width": 3200,
+      "height": 1800,
+      "prompt": "Wide editorial photograph on a Hasselblad X2D with an XCD 38mm f/2.5 at f/4, 1/200s, ISO 800, at golden hour on a Lagos rooftop terrace after a wedding. A group of six Nigerian women and two men in matching marigold-and-black aso-ebi (women in lace bubas and gele, men in agbada with fila) stand in a loose line in the middle band of the frame, laughing and adjusting each other's outfits, backlit by low warm sun with rim light on the gele and shoulders. Faces natural and varied, ages 25 to 60, real skin texture visible on the nearest figures, no faces in the top or bottom third. The middle band holds all the interest; the top third is soft evening sky with haze over the Lagos skyline (low and blurred), the bottom third is the terrace floor in soft shadow (white text will sit at the top and bottom, and the image will be darkened). Portra-like grade, warm, fine grain. No text, no signs, no logos, no distorted hands, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-BANNER-FABRICS",
+      "file": "assets/photography/banners/line-fabrics-banner.jpg",
+      "width": 3000,
+      "height": 1250,
+      "prompt": "Wide interior photograph on a Fujifilm GFX100 II with a GF 32-64mm at 40mm, f/5.6, ISO 400. A woman's hands (deep brown, natural nails) unroll a bolt of wine-red sequin lace across a long wooden cutting table in a Lagos fabric shop; the lace cascades over the table edge on the right half of the frame, sequins catching soft daylight from a window. Bolts on dark shelves behind, softly out of focus. The left half is calm: plain off-white wall and the near end of the table in soft light. Portra-like grade, fine grain. No text, no logos, no signs, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-BANNER-LINGERIE",
+      "file": "assets/photography/banners/line-lingerie-banner.jpg",
+      "width": 3000,
+      "height": 1250,
+      "prompt": "Still life on a Hasselblad X2D with an XCD 90mm at f/4, soft window light from the right. On warm ivory linen, a black lace bralette and matching brief laid flat beside a folded ivory silk robe and a single marigold-yellow (#FDCE02) satin ribbon, arranged on the right half of the frame; the lace pattern crisp, the silk with soft directional sheen and real creases. Left half: plain linen texture, calm. No person. No tags, no text, no logos, not CGI.",
+      "excluded": true,
+      "excludeReason": "User requested deletion and omission on 2026-11-18"
+    },
+    {
+      "id": "HV-BANNER-RTW",
+      "file": "assets/photography/banners/line-rtw-banner.jpg",
+      "width": 3000,
+      "height": 1250,
+      "prompt": "Fashion photograph on a Sony A1 with an FE 35mm f/1.4 GM at f/2.8, natural daylight. A Nigerian woman with deep brown skin in a tailored ivory linen co-ord (cropped jacket and wide-leg trousers) leaning against a warm off-white plaster wall on the right half of the frame, one hand in a pocket, relaxed, looking away; fabric with real creases at the elbow and knee. Skin with full real texture, no airbrushing. Left half: the same plain wall in soft light. Portra-like grade, fine grain. No text, no logos, no distorted limbs, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-CAMPAIGN-WEDDING",
+      "file": "assets/photography/banners/campaign-wedding-desktop.jpg",
+      "width": 3200,
+      "height": 1200,
+      "prompt": "Editorial photograph on a Hasselblad X2D with an XCD 90mm at f/2.8, daylight under a white canopy at a Lagos garden wedding. A Nigerian bride's party: two bridesmaids in champagne beaded lace with matching gele adjust the bride's veil-free gele of ivory aso-oke; the bride (early thirties, deep brown skin) in ivory French lace with stones, eyes closed, smiling softly. Real skin texture on all faces (pores, fine hair catching the backlight, natural sheen); beads and stones sparkle as individual points. Soft-focus greenery behind. For the desktop version, keep the group in the right half and the left half as soft canopy light and blurred greenery; for the phone version, keep the group in the lower two-thirds and the top third as soft canopy light. Portra-like grade, fine grain. No text, no logos, no distorted hands, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-CAMPAIGN-WEDDING",
+      "file": "assets/photography/banners/campaign-wedding-phone.jpg",
+      "width": 1350,
+      "height": 1800,
+      "prompt": "Editorial photograph on a Hasselblad X2D with an XCD 90mm at f/2.8, daylight under a white canopy at a Lagos garden wedding. A Nigerian bride's party: two bridesmaids in champagne beaded lace with matching gele adjust the bride's veil-free gele of ivory aso-oke; the bride (early thirties, deep brown skin) in ivory French lace with stones, eyes closed, smiling softly. Real skin texture on all faces (pores, fine hair catching the backlight, natural sheen); beads and stones sparkle as individual points. Soft-focus greenery behind. For the desktop version, keep the group in the right half and the left half as soft canopy light and blurred greenery; for the phone version, keep the group in the lower two-thirds and the top third as soft canopy light. Portra-like grade, fine grain. No text, no logos, no distorted hands, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-CAMPAIGN-FESTIVE",
+      "file": "assets/photography/banners/campaign-festive-desktop.jpg",
+      "width": 3200,
+      "height": 1200,
+      "prompt": "Warm evening editorial on a Sony A1 with an FE 50mm f/1.2 at f/1.8, at a Lagos family dinner in December lit by warm pendant lights and candles. A Nigerian woman in her forties with deep brown skin wears a deep emerald velvet-and-lace wrap dress and gold earrings, mid-laugh as she sets down a dish; behind her, blurred family members and warm bokeh. Real skin texture, natural warm sheen, laugh lines. Desktop: subject in the right half, left half warm dark bokeh. Phone: subject in the lower two-thirds, top third warm dark bokeh. Portra 800 grade, fine grain. No Christmas text, no logos, no signs, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-CAMPAIGN-FESTIVE",
+      "file": "assets/photography/banners/campaign-festive-phone.jpg",
+      "width": 1350,
+      "height": 1800,
+      "prompt": "Warm evening editorial on a Sony A1 with an FE 50mm f/1.2 at f/1.8, at a Lagos family dinner in December lit by warm pendant lights and candles. A Nigerian woman in her forties with deep brown skin wears a deep emerald velvet-and-lace wrap dress and gold earrings, mid-laugh as she sets down a dish; behind her, blurred family members and warm bokeh. Real skin texture, natural warm sheen, laugh lines. Desktop: subject in the right half, left half warm dark bokeh. Phone: subject in the lower two-thirds, top third warm dark bokeh. Portra 800 grade, fine grain. No Christmas text, no logos, no signs, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-CAMPAIGN-EID",
+      "file": "assets/photography/banners/campaign-eid-desktop.jpg",
+      "width": 3200,
+      "height": 1200,
+      "prompt": "Morning editorial on a Fujifilm GFX100 II with a GF 110mm f/2 at f/2.8, soft early sunlight in a Lagos courtyard. A Nigerian woman in her late twenties with deep brown skin wears a flowing ivory abaya-style kaftan in fine embroidered voile with a matching marigold-yellow (#FDCE02) silk scarf loosely framing her face, holding prayer beads, serene and smiling slightly. The voile is translucent where light passes through, embroidery crisp. Real skin texture with pores and fine facial hair catching the light. Desktop: subject in the right half, left half calm courtyard wall in soft light. Phone: subject in the lower two-thirds, top third calm wall. Portra-like grade, fine grain. No text, no logos, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-CAMPAIGN-EID",
+      "file": "assets/photography/banners/campaign-eid-phone.jpg",
+      "width": 1350,
+      "height": 1800,
+      "prompt": "Morning editorial on a Fujifilm GFX100 II with a GF 110mm f/2 at f/2.8, soft early sunlight in a Lagos courtyard. A Nigerian woman in her late twenties with deep brown skin wears a flowing ivory abaya-style kaftan in fine embroidered voile with a matching marigold-yellow (#FDCE02) silk scarf loosely framing her face, holding prayer beads, serene and smiling slightly. The voile is translucent where light passes through, embroidery crisp. Real skin texture with pores and fine facial hair catching the light. Desktop: subject in the right half, left half calm courtyard wall in soft light. Phone: subject in the lower two-thirds, top third calm wall. Portra-like grade, fine grain. No text, no logos, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-ivory-french-lace-01-front",
+      "file": "assets/photography/products/fabric/ivory-french-lace/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: ivory French lace with raised cord flowers and scattered clear stones, neatly folded with one end draped over a hidden stand, front view; garments on an invisible dress form. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-ivory-french-lace-02-drape",
+      "file": "assets/photography/products/fabric/ivory-french-lace/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: ivory French lace with raised cord flowers and scattered clear stones, draped over a hidden dress form falling to the floor. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-ivory-french-lace-03-macro",
+      "file": "assets/photography/products/fabric/ivory-french-lace/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: ivory French lace with raised cord flowers and scattered clear stones, extreme macro filling the frame. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-emerald-sequin-lace-01-front",
+      "file": "assets/photography/products/fabric/emerald-sequin-lace/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: emerald-green sequin lace on fine net, sequins densely sewn in floral scrolls, neatly folded with one end draped over a hidden stand, front view; garments on an invisible dress form. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-emerald-sequin-lace-02-drape",
+      "file": "assets/photography/products/fabric/emerald-sequin-lace/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: emerald-green sequin lace on fine net, sequins densely sewn in floral scrolls, draped over a hidden dress form falling to the floor. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-emerald-sequin-lace-03-macro",
+      "file": "assets/photography/products/fabric/emerald-sequin-lace/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: emerald-green sequin lace on fine net, sequins densely sewn in floral scrolls, extreme macro filling the frame. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-coral-beaded-lace-01-front",
+      "file": "assets/photography/products/fabric/coral-beaded-lace/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: coral-pink heavy beaded lace with glass bugle beads and pearls, neatly folded with one end draped over a hidden stand, front view; garments on an invisible dress form. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-coral-beaded-lace-02-drape",
+      "file": "assets/photography/products/fabric/coral-beaded-lace/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: coral-pink heavy beaded lace with glass bugle beads and pearls, draped over a hidden dress form falling to the floor. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-coral-beaded-lace-03-macro",
+      "file": "assets/photography/products/fabric/coral-beaded-lace/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: coral-pink heavy beaded lace with glass bugle beads and pearls, extreme macro filling the frame. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-gold-damask-01-front",
+      "file": "assets/photography/products/fabric/gold-damask/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: gold jacquard damask with a large woven floral pattern and a soft sheen, neatly folded with one end draped over a hidden stand, front view; garments on an invisible dress form. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-gold-damask-02-drape",
+      "file": "assets/photography/products/fabric/gold-damask/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: gold jacquard damask with a large woven floral pattern and a soft sheen, draped over a hidden dress form falling to the floor. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-gold-damask-03-macro",
+      "file": "assets/photography/products/fabric/gold-damask/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: gold jacquard damask with a large woven floral pattern and a soft sheen, extreme macro filling the frame. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-indigo-aso-oke-01-front",
+      "file": "assets/photography/products/fabric/indigo-aso-oke/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: hand-woven indigo-and-ivory aso-oke with narrow strips and slight weave irregularity, neatly folded with one end draped over a hidden stand, front view; garments on an invisible dress form. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-indigo-aso-oke-02-drape",
+      "file": "assets/photography/products/fabric/indigo-aso-oke/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: hand-woven indigo-and-ivory aso-oke with narrow strips and slight weave irregularity, draped over a hidden dress form falling to the floor. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-indigo-aso-oke-03-macro",
+      "file": "assets/photography/products/fabric/indigo-aso-oke/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: hand-woven indigo-and-ivory aso-oke with narrow strips and slight weave irregularity, extreme macro filling the frame. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-black-swiss-voile-01-front",
+      "file": "assets/photography/products/fabric/black-swiss-voile/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: black Swiss voile lace with eyelet embroidery, light and semi-translucent, neatly folded with one end draped over a hidden stand, front view; garments on an invisible dress form. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-black-swiss-voile-02-drape",
+      "file": "assets/photography/products/fabric/black-swiss-voile/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: black Swiss voile lace with eyelet embroidery, light and semi-translucent, draped over a hidden dress form falling to the floor. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-black-swiss-voile-03-macro",
+      "file": "assets/photography/products/fabric/black-swiss-voile/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: black Swiss voile lace with eyelet embroidery, light and semi-translucent, extreme macro filling the frame. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-black-lace-bralette-set-01-front",
+      "file": "assets/photography/products/lingerie/black-lace-bralette-set/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: black lace bralette and matching high-waisted brief, neatly folded with one end draped over a hidden stand, front view; garments on an invisible dress form. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": true,
+      "excludeReason": "User requested deletion and omission on 2026-11-18"
+    },
+    {
+      "id": "HV-PRODUCT-black-lace-bralette-set-02-drape",
+      "file": "assets/photography/products/lingerie/black-lace-bralette-set/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: black lace bralette and matching high-waisted brief, worn by an adult Nigerian woman in her thirties, deep brown skin with full real skin texture and pores and fine hair, no airbrushing, in natural movement. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": true,
+      "excludeReason": "User requested deletion and omission on 2026-11-18"
+    },
+    {
+      "id": "HV-PRODUCT-black-lace-bralette-set-03-macro",
+      "file": "assets/photography/products/lingerie/black-lace-bralette-set/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: black lace bralette and matching high-waisted brief, extreme macro filling the frame. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": true,
+      "excludeReason": "User requested deletion and omission on 2026-11-18"
+    },
+    {
+      "id": "HV-PRODUCT-ivory-silk-robe-01-front",
+      "file": "assets/photography/products/lingerie/ivory-silk-robe/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: ivory silk robe with lace trim at the cuffs, neatly folded with one end draped over a hidden stand, front view; garments on an invisible dress form. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": true,
+      "excludeReason": "User requested deletion and omission on 2026-11-18"
+    },
+    {
+      "id": "HV-PRODUCT-ivory-silk-robe-02-drape",
+      "file": "assets/photography/products/lingerie/ivory-silk-robe/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: ivory silk robe with lace trim at the cuffs, worn by an adult Nigerian woman in her thirties, deep brown skin with full real skin texture and pores and fine hair, no airbrushing, in natural movement. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": true,
+      "excludeReason": "User requested deletion and omission on 2026-11-18"
+    },
+    {
+      "id": "HV-PRODUCT-ivory-silk-robe-03-macro",
+      "file": "assets/photography/products/lingerie/ivory-silk-robe/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, against a warm off-white (#FAFAF7) seamless paper backdrop, lit by a large octabox from upper left with a white fill card on the right, giving soft even light and a gentle natural shadow. Subject: ivory silk robe with lace trim at the cuffs, extreme macro filling the frame. Every stone, sequin, bead, cord and weave applicable to this textile is rendered individually with true texture and correct shadows; fabric falls with real weight and creases; true textile colour. Centred, consistent framing. Fine grain, crisp but not oversharpened. No text, no labels, no tags, no logos, no props, not CGI.",
+      "excluded": true,
+      "excludeReason": "User requested deletion and omission on 2026-11-18"
+    },
+    {
+      "id": "HV-PRODUCT-black-wrap-midi-01-front",
+      "file": "assets/photography/products/rtw/black-wrap-midi/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100. Full front view of tailored black wrap midi dress with structured shoulders in plain matte black woven fabric with a fine weave on an invisible dress form. Entire garment visible with breathing room. Wrap V-neck, three-quarter sleeves, tied waist and midi hem. Warm off-white #FAFAF7 seamless backdrop where visible. Large octabox upper left, fill card right, soft even light and gentle shadow. True colour, realistic fabric weight and creases, fine natural grain, crisp weave without oversharpening. PLAIN fabric only: NO lace, embroidery, beads, sequins, stones, appliques, floral patterns or embellishments. No text, labels, tags, logos, props, watermarks or CGI. Portrait 4:5, requested native 1600 x 2000.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-black-wrap-midi-02-drape",
+      "file": "assets/photography/products/rtw/black-wrap-midi/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100. tailored black wrap midi dress with structured shoulders in plain matte black woven fabric with a fine weave, worn by an adult Nigerian woman in her thirties, deep brown skin with real pores, natural hair and light natural sheen, in natural movement. Wrap V-neck, three-quarter sleeves, tied waist and midi hem. Natural anatomy, five fingers on each hand, realistic feet. Warm off-white #FAFAF7 seamless backdrop where visible. Large octabox upper left, fill card right, soft even light and gentle shadow. True colour, realistic fabric weight and creases, fine natural grain, crisp weave without oversharpening. PLAIN fabric only: NO lace, embroidery, beads, sequins, stones, appliques, floral patterns or embellishments. No text, labels, tags, logos, props, watermarks or CGI. Portrait 4:5, requested native 1600 x 2000.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-black-wrap-midi-03-macro",
+      "file": "assets/photography/products/rtw/black-wrap-midi/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100. EXTREME MACRO photograph of plain matte black woven fabric with a fine weave, filling EVERY edge of the frame, showing individual fibres and a tiny stitched seam. Only a few centimetres of cloth are visible. No person, no face, no full garment, no mannequin, no background visible. Warm off-white #FAFAF7 seamless backdrop where visible. Large octabox upper left, fill card right, soft even light and gentle shadow. True colour, realistic fabric weight and creases, fine natural grain, crisp weave without oversharpening. PLAIN fabric only: NO lace, embroidery, beads, sequins, stones, appliques, floral patterns or embellishments. No text, labels, tags, logos, props, watermarks or CGI. Portrait 4:5, requested native 1600 x 2000.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-ivory-linen-coord-01-front",
+      "file": "assets/photography/products/rtw/ivory-linen-coord/01-front.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100. Full front view of ivory linen cropped jacket and matching wide-leg trouser co-ord in plain ivory linen with visible natural slub weave on an invisible dress form. Entire garment visible with breathing room. Simple tailored cropped jacket with lapels and plain buttons, wide-leg trousers. Warm off-white #FAFAF7 seamless backdrop where visible. Large octabox upper left, fill card right, soft even light and gentle shadow. True colour, realistic fabric weight and creases, fine natural grain, crisp weave without oversharpening. PLAIN fabric only: NO lace, embroidery, beads, sequins, stones, appliques, floral patterns or embellishments. No text, labels, tags, logos, props, watermarks or CGI. Portrait 4:5, requested native 1600 x 2000.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-ivory-linen-coord-02-drape",
+      "file": "assets/photography/products/rtw/ivory-linen-coord/02-drape.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100. ivory linen cropped jacket and matching wide-leg trouser co-ord in plain ivory linen with visible natural slub weave, worn by an adult Nigerian woman in her thirties, deep brown skin with real pores, natural hair and light natural sheen, in natural movement. Simple tailored cropped jacket with lapels and plain buttons, wide-leg trousers. Natural anatomy, five fingers on each hand, realistic feet. Warm off-white #FAFAF7 seamless backdrop where visible. Large octabox upper left, fill card right, soft even light and gentle shadow. True colour, realistic fabric weight and creases, fine natural grain, crisp weave without oversharpening. PLAIN fabric only: NO lace, embroidery, beads, sequins, stones, appliques, floral patterns or embellishments. No text, labels, tags, logos, props, watermarks or CGI. Portrait 4:5, requested native 1600 x 2000.",
+      "excluded": false
+    },
+    {
+      "id": "HV-PRODUCT-ivory-linen-coord-03-macro",
+      "file": "assets/photography/products/rtw/ivory-linen-coord/03-macro.jpg",
+      "width": 1600,
+      "height": 2000,
+      "prompt": "Professional e-commerce product photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100. EXTREME MACRO photograph of plain ivory linen with visible natural slub weave, filling EVERY edge of the frame, showing individual fibres and a tiny stitched seam. Only a few centimetres of cloth are visible. No person, no face, no full garment, no mannequin, no background visible. Warm off-white #FAFAF7 seamless backdrop where visible. Large octabox upper left, fill card right, soft even light and gentle shadow. True colour, realistic fabric weight and creases, fine natural grain, crisp weave without oversharpening. PLAIN fabric only: NO lace, embroidery, beads, sequins, stones, appliques, floral patterns or embellishments. No text, labels, tags, logos, props, watermarks or CGI. Portrait 4:5, requested native 1600 x 2000.",
+      "excluded": false
+    },
+    {
+      "id": "HV-OG",
+      "file": "assets/brand/social/og-default-1200x630.jpg",
+      "width": 2400,
+      "height": 1260,
+      "prompt": "Editorial photograph on a Hasselblad X2D with an XCD 90mm at f/3.2, warm late-afternoon window light. A close crop of a Nigerian woman's shoulder and neck in heavy ivory French lace with clear stones and the edge of a marigold-yellow (#FDCE02) aso-oke gele, filling the right two-thirds of the frame; deep brown skin with full real texture (pores, fine hair catching the light, natural sheen). Left third: warm off-white plaster wall, calm (the logo is added in code). Portra-like grade, fine grain. No text, no logos, not CGI.",
+      "excluded": false
+    }
+  ],
+  "optionalVideo": "Skipped: no photographic video generation tool available",
+  "correctionNotes": [
+    {
+      "slot": "HV-STAGE-04",
+      "instruction": "Explicit portrait 4:5 canvas; rejected first narrow frame."
+    },
+    {
+      "slot": "HV-STAGE-05 alt1",
+      "instruction": "All three gele coral pink, matching the coral lace; no yellow headwraps."
+    },
+    {
+      "slot": "HV-FOOTER",
+      "instruction": "Exactly six women and two men, wide distant group centred in middle band; broad empty sky above and terrace floor below."
+    },
+    {
+      "slot": "HV-CAMPAIGN-FESTIVE desktop alt2",
+      "instruction": "One yellow cap only; flowers ivory, other background garments ivory."
+    },
+    {
+      "slot": "Coral front and indigo front alt2",
+      "instruction": "Folded fabric on entirely hidden support; no visible mannequin neck or metal cap."
+    }
+  ]
+}
