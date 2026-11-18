@@ -28,10 +28,23 @@ Apply all of these to every prompt (they are repeated inside each prompt so each
 - Bodies of real proportions and sizes as stated; clothing with real weight, creases and gravity.
 
 **Fabric (the product is the hero)**
-- Lace must show its construction: the net ground, raised cord outlines, embroidery threads, and any stones, sequins or beads catching light individually as small specular points, with correct shadows on the net.
-- Damask shows woven pattern by light direction; aso-oke shows its hand-woven strips and slight irregularity; satin shows soft directional sheen.
-- Fabric drapes with true weight: heavy beaded lace falls in deep folds; voile and chiffon float.
-- Colours must be believable dyed-textile colours, not neon.
+
+Harries Vogue sells the full range of ladies' fabrics, not only lace. Across the set, show silk, satin, chiffon, crepe, george, ankara, adire, aso-oke, velvet, organza, tulle, brocade, damask, sequin fabric and lace in roughly equal measure. Each must read as itself:
+
+- **Silk (charmeuse, mikado, dupion):** liquid drape, a soft moving highlight that follows the folds, fine slubs in dupion, crisp body in mikado.
+- **Satin (duchess, crepe-back, stretch):** a bright directional sheen with deep, smooth shadows; duchess satin holds stiff sculptural folds; crepe-back shows its matte reverse at a turned edge.
+- **Chiffon and georgette:** sheer, layered, floating, light passing through, a faint crinkle texture in georgette; edges flutter.
+- **Crepe:** matte, fine pebbled surface, heavy fluid drape.
+- **George (Indian george wrapper fabric):** rich silk or taffeta base with dense metallic embroidery and appliqué, real thread relief.
+- **Ankara (wax print):** crisp cotton with a slight waxy sheen, bold printed motifs with the fine crackle and slight colour registration offsets of real wax printing; print visible on both sides.
+- **Adire:** indigo resist-dyed cotton, hand-made irregular patterns, slight tonal variation and soft edges where the dye bled.
+- **Aso-oke:** hand-woven narrow strips sewn together, visible weave and slight irregularity, metallic threads if stated.
+- **Velvet:** deep pile that changes shade with direction; crushed velvet shows mottled highlights.
+- **Organza and tulle:** stiff sheer structure, crisp folds, a fine net (tulle) or a smooth glassy sheen (organza).
+- **Brocade and damask:** woven pattern that appears and disappears with the light direction.
+- **Sequin fabric:** every sequin a separate reflective disc with its own shadow, overlapping like scales.
+- **Lace (French, cord, beaded, Swiss voile):** the net ground, raised cord outlines, embroidery threads, stones and beads catching light individually.
+- Every fabric drapes with true weight and gravity; colours are believable dyed-textile colours, never neon.
 
 **Set and place**
 - Lagos, Nigeria, today: warm humid air with a soft haze in daylight; real interiors with plastered walls, tiled floors, wooden shelving, fluorescent or daylight mixed light where stated. Lived-in, clean and premium, not a slum cliché and not a Western studio pretending to be Lagos.
@@ -75,22 +88,22 @@ All five stage images share **one framing family**: portrait 4:5, subject or act
 ### HV-STAGE-02 — Chapter "The bolt": the wall of fabric
 - **File:** `assets/photography/campaign/stage-02-bolt.jpg` · **Size:** 2400 × 3000 (4:5)
 
-> Interior photograph of a premium fabric shop in Abule Egba, Lagos, shot on a Fujifilm GFX100 II with a GF 45mm f/2.8 at f/5.6, 1/60s, ISO 400, on a tripod. Floor-to-ceiling dark wooden shelves on the right two-thirds of the frame hold rolled bolts of fabric stacked horizontally, ends facing camera: ivory and champagne French lace, emerald and wine sequin lace, coral beaded lace, gold damask, indigo-and-white aso-oke, black chiffon, with exactly one bolt of marigold-yellow (#FDCE02) lace at eye level as the single accent. You can see the cardboard tubes in the bolt centres, the cut edges of the fabric with loose threads, plastic sleeves on two bolts reflecting the light, and slight unevenness in the stacking as in a working shop. Light: soft daylight from a doorway on the left mixing with one warm practical lamp; gentle shadows between shelves. The left third shows a plain off-white plastered wall section and a corner of a wooden cutting table in soft focus (calm area for text). No people. No signs, no writing, no price tags, no labels with text. Realistic textile colours, no neon. Photographic, Portra-like grade, fine grain; not CGI, not a render.
+> Interior photograph of a premium fabric shop in Abule Egba, Lagos, shot on a Fujifilm GFX100 II with a GF 45mm f/2.8 at f/5.6, 1/60s, ISO 400, on a tripod. Floor-to-ceiling dark wooden shelves on the right two-thirds of the frame hold rolled bolts of fabric stacked horizontally, ends facing camera, a real mix of what a Lagos ladies' fabric shop sells: emerald and champagne silk satin with a soft sheen, wine and navy duchess satin, blush and ivory chiffon, black crepe, gold and royal-blue george with metallic embroidery, folded stacks of bold ankara wax prints and indigo adire, aso-oke, burgundy velvet, ivory organza, and a few bolts of French and sequin lace, with exactly one bolt of marigold-yellow (#FDCE02) silk at eye level as the single accent. Each fabric reads as itself at the bolt end: satin and silk catch the light, chiffon looks airy, velvet looks deep, ankara shows crisp print. You can see the cardboard tubes in the bolt centres, cut edges with loose threads, clear plastic sleeves on two bolts reflecting the light, and slight unevenness in the stacking as in a working shop. Light: soft daylight from a doorway on the left mixing with one warm practical lamp; gentle shadows between shelves. The left third shows a plain off-white plastered wall section and a corner of a wooden cutting table in soft focus (calm area for text). No people. No signs, no writing, no price tags, no labels with text. Realistic textile colours, no neon. Photographic, Portra-like grade, fine grain; not CGI, not a render.
 
-### HV-STAGE-03 — Chapter "The yard": measuring
+### HV-STAGE-03 — Chapter "The yard": measuring silk satin
 - **File:** `assets/photography/campaign/stage-03-yard.jpg` · **Size:** 2400 × 3000 (4:5)
 
-> Close, top-down-angled detail photograph on a Sony A1 with an FE 90mm f/2.8 Macro G at f/4, 1/200s, ISO 200. On a pale wooden cutting table, a length of emerald-green beaded lace is unrolled from a bolt; a soft cloth tailor's tape measure in faded yellow lies along the selvedge edge, its markings legible only as tick marks (no readable numbers or letters in focus). A woman's hands (deep brown skin with visible knuckle creases, fine skin texture, short natural nails, one thin gold ring) hold the tape flat with one hand and smooth the lace with the other; the fingers press into the fabric and the net deforms realistically. The glass beads and sequins on the lace each catch the window light as individual highlights with tiny shadows on the net ground. A pair of black tailor's shears rests at the top edge, partly out of frame. Light: soft side window light from the left, gentle shadows to the right. Composition: the hands and tape occupy the right two-thirds; the left third is the plain wooden table surface with soft grain, slightly out of focus (calm area for text). Real textile detail, natural colour, fine grain, Portra-like grade. No text, no readable numbers, no logos, five fingers per hand, no warped fingers, not CGI.
+> Close, top-down-angled detail photograph on a Sony A1 with an FE 90mm f/2.8 Macro G at f/4, 1/200s, ISO 200. On a pale wooden cutting table, a length of emerald-green silk satin is unrolled from a bolt, its liquid sheen sliding across the folds; a soft cloth tailor's tape measure in faded yellow lies along the selvedge edge, its markings legible only as tick marks (no readable numbers or letters in focus). A woman's hands (deep brown skin with visible knuckle creases, fine skin texture, short natural nails, one thin gold ring) hold the tape flat with one hand and smooth the satin with the other; the fabric dimples and ripples realistically under her fingers, the highlight bending around each ripple. At the top of the frame, a second bolt of blush chiffon spills over, sheer enough to see the table grain through it. A pair of black tailor's shears rests at the top edge, partly out of frame. Light: soft side window light from the left, gentle shadows to the right. Composition: the hands and tape occupy the right two-thirds; the left third is the plain wooden table surface with soft grain, slightly out of focus (calm area for text). Real textile detail, natural colour, fine grain, Portra-like grade. No text, no readable numbers, no logos, five fingers per hand, no warped fingers, not CGI.
 
-### HV-STAGE-04 — Chapter "The cut": the shears
+### HV-STAGE-04 — Chapter "The cut": shears through ankara
 - **File:** `assets/photography/campaign/stage-04-cut.jpg` · **Size:** 2400 × 3000 (4:5)
 
-> Dramatic but natural detail photograph on a Hasselblad X2D with an XCD 120mm Macro f/3.5 at f/5, 1/160s, ISO 200. Heavy black steel tailor's shears mid-cut through ivory French lace with raised cord embroidery, the blades open at a narrow angle, a clean cut line visible behind them with a few loose threads lifting from the cut edge. A woman's right hand (deep brown skin with true texture: visible pores on the back of the hand, natural knuckle creases, short natural nails) grips the shears; her left fingertips hold the lace taut, the fabric creasing realistically around the pressure. The shears' steel shows real wear: fine scratches and a slightly darker pivot screw. Single soft key light from high on the left (a large softbox simulating window light), creating a defined but soft shadow of the blades on the lace. Background: the wooden cutting table falling into soft shadow. Composition: shears and hands in the right two-thirds, diagonal from lower right to upper centre; left third is soft shadowed table (calm area for text). Photographic, true colour, fine grain. No text, no logos, no brand engravings on the shears, no extra fingers, not CGI.
+> Dramatic but natural detail photograph on a Hasselblad X2D with an XCD 120mm Macro f/3.5 at f/5, 1/160s, ISO 200. Heavy black steel tailor's shears mid-cut through a length of bold ankara wax print (deep indigo, ochre and marigold geometric motifs, with the fine crackle and slight registration offsets of real wax printing), the blades open at a narrow angle, a clean cut line visible behind them with a few loose cotton threads lifting from the cut edge. Beside it on the table, folded lengths of champagne duchess satin and burgundy velvet wait their turn, the satin's sheen and the velvet's deep pile clearly different. A woman's right hand (deep brown skin with true texture: visible pores on the back of the hand, natural knuckle creases, short natural nails) grips the shears; her left fingertips hold the cotton taut, the fabric creasing realistically around the pressure. The shears' steel shows real wear: fine scratches and a slightly darker pivot screw. Single soft key light from high on the left (a large softbox simulating window light), creating a defined but soft shadow of the blades on the fabric. Background: the wooden cutting table falling into soft shadow. Composition: shears and hands in the right two-thirds, diagonal from lower right to upper centre; left third is soft shadowed table (calm area for text). Photographic, true colour, fine grain. No text, no logos, no brand engravings on the shears, no extra fingers, not CGI.
 
-### HV-STAGE-05 — Chapter "The occasion": the aso-ebi
+### HV-STAGE-05 — Chapter "The occasion": the aso-ebi in silk, george and velvet
 - **File:** `assets/photography/campaign/stage-05-occasion.jpg` · **Size:** 2400 × 3000 (4:5)
 
-> Candid wedding-guest editorial on a Sony A1 with an FE 50mm f/1.2 GM at f/2, 1/320s, ISO 400, at an evening owambe in Lagos under warm festoon lights and the last blue of dusk. Three Nigerian women (ages about 28, 40 and 55, different face shapes and body types, deep and medium-deep brown skin) in matching aso-ebi: coral-pink beaded lace bubas with wrappers, and matching gele tied in three different styles, laughing together mid-conversation, one with her hand on another's arm. The nearest woman is in sharp focus on the right; the others fall gently out of focus behind her. Skin rendered with full real texture: pores, fine facial hair catching the warm light, natural sheen from the warm evening, laugh lines at the eyes of the eldest. Gold jewellery (matching earring pairs, bangles) with real reflections. The beads on the lace sparkle as individual points of light. Background: soft bokeh of warm string lights and blurred guests in other colours, no faces recognisable. Composition: subjects in the right two-thirds, cropped at mid-thigh; left third falls to dark blurred background with warm bokeh (calm area for text). Grade like Portra 800 pushed one stop: warm, true skin, deep but detailed shadows, fine grain. No text, no signs, no logos, no distorted hands, no plastic skin, not CGI.
+> Candid wedding-guest editorial on a Sony A1 with an FE 50mm f/1.2 GM at f/2, 1/320s, ISO 400, at an evening owambe in Lagos under warm festoon lights and the last blue of dusk. Three Nigerian women (ages about 28, 40 and 55, different face shapes and body types, deep and medium-deep brown skin) in coordinated aso-ebi made from different fabrics in one colour story: the nearest in a fitted emerald silk satin mermaid gown with soft directional sheen, the second in an emerald george wrapper and blouse with gold metallic embroidery, the eldest in an emerald velvet buba with a chiffon overlay, all with matching gele tied in three different styles, laughing together mid-conversation, one with her hand on another's arm. The nearest woman is in sharp focus on the right; the others fall gently out of focus behind her. Skin rendered with full real texture: pores, fine facial hair catching the warm light, natural sheen from the warm evening, laugh lines at the eyes of the eldest. Gold jewellery (matching earring pairs, bangles) with real reflections. The satin catches the festoon lights in long highlights; the george embroidery glints; the velvet absorbs light. Background: soft bokeh of warm string lights and blurred guests in other colours, no faces recognisable. Composition: subjects in the right two-thirds, cropped at mid-thigh; left third falls to dark blurred background with warm bokeh (calm area for text). Grade like Portra 800 pushed one stop: warm, true skin, deep but detailed shadows, fine grain. No text, no signs, no logos, no distorted hands, no plastic skin, not CGI.
 
 ---
 
@@ -98,10 +111,10 @@ All five stage images share **one framing family**: portrait 4:5, subject or act
 
 Square 1:1. The subject is centred with even breathing room; the background is a single flat tone so the three plates match each other.
 
-### HV-LINE-FABRICS
+### HV-LINE-FABRICS — the range, side by side
 - **File:** `assets/photography/campaign/line-fabrics.jpg` · **Size:** 2400 × 2400
 
-> Still-life fabric photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, studio strobe through a large octabox from upper left with a white fill card on the right. Three lengths of fabric draped over a hidden horizontal bar against a warm off-white (#FAFAF7) seamless paper backdrop: ivory French lace with clear stones in front, emerald sequin lace in the middle, gold damask behind, falling in deep natural folds to a soft pool on the floor. Every stone and sequin catches the light individually; the damask pattern appears and disappears with the folds; loose threads at one cut edge. Soft natural shadow on the backdrop. Centred composition with even space around. True textile colour, fine grain, crisp but not oversharpened. No people, no text, no labels, no logos, not CGI.
+> Still-life fabric photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, studio strobe through a large octabox from upper left with a white fill card on the right. Six lengths of fabric draped side by side over a hidden horizontal bar against a warm off-white (#FAFAF7) seamless paper backdrop, falling in deep natural folds to soft pools on the floor: champagne silk satin with a liquid moving highlight, blush chiffon floating in sheer layers, a bold indigo-and-ochre ankara wax print, royal-blue george with gold metallic embroidery, burgundy velvet with deep pile that darkens in the folds, and ivory French lace with clear stones. Each reads unmistakably as its own fabric; loose threads at one cut edge. Soft natural shadows on the backdrop. Centred composition with even space around. True textile colour, fine grain, crisp but not oversharpened. No people, no text, no labels, no logos, not CGI.
 
 ### HV-LINE-LINGERIE
 - **File:** `assets/photography/campaign/line-lingerie.jpg` · **Size:** 2400 × 2400
@@ -125,7 +138,7 @@ Square 1:1. The subject is centred with even breathing room; the background is a
 ### HV-BUY-PARCEL — tall photo beside the buying questions
 - **File:** `assets/photography/campaign/buy-parcel.jpg` · **Size:** 2100 × 2800 (3:4 portrait)
 
-> Still life on a Fujifilm GFX100 II with a GF 80mm f/1.7 at f/4, 1/125s, ISO 200, soft window light from the right. On a pale wooden table in a Lagos shop, five yards of coral beaded lace folded neatly into a flat rectangle, half wrapped in crisp black tissue paper and tied with a thin marigold-yellow (#FDCE02) ribbon in a simple bow; beside it a plain black paper bag with rope handles (no print, no logo) and a folded paper slip with no readable writing. Beads catch the light individually; the tissue paper has real creases. Background: plastered off-white wall, softly out of focus. Composition: parcel in the lower two-thirds, calm wall above. Portra-like grade, fine grain. No text, no logos, no readable writing, not CGI.
+> Still life on a Fujifilm GFX100 II with a GF 80mm f/1.7 at f/4, 1/125s, ISO 200, soft window light from the right. On a pale wooden table in a Lagos shop, five yards of emerald silk satin folded neatly into a flat rectangle, its sheen catching the window light, stacked on a folded length of indigo adire; the satin half wrapped in crisp black tissue paper and tied with a thin marigold-yellow (#FDCE02) ribbon in a simple bow; beside it a plain black paper bag with rope handles (no print, no logo) and a folded paper slip with no readable writing. The tissue paper has real creases; the adire shows hand-dyed irregular pattern at its folded edge. Background: plastered off-white wall, softly out of focus. Composition: parcel in the lower two-thirds, calm wall above. Portra-like grade, fine grain. No text, no logos, no readable writing, not CGI.
 
 ### HV-BUY-HANDOFF — small square overlapping the tall photo
 - **File:** `assets/photography/campaign/buy-handoff.jpg` · **Size:** 1600 × 1600
@@ -146,7 +159,7 @@ Landscape 12:5, subject on the right half, calm left half for the page title.
 ### HV-BANNER-FABRICS
 - **File:** `assets/photography/banners/line-fabrics-banner.jpg` · **Size:** 3000 × 1250
 
-> Wide interior photograph on a Fujifilm GFX100 II with a GF 32-64mm at 40mm, f/5.6, ISO 400. A woman's hands (deep brown, natural nails) unroll a bolt of wine-red sequin lace across a long wooden cutting table in a Lagos fabric shop; the lace cascades over the table edge on the right half of the frame, sequins catching soft daylight from a window. Bolts on dark shelves behind, softly out of focus. The left half is calm: plain off-white wall and the near end of the table in soft light. Portra-like grade, fine grain. No text, no logos, no signs, not CGI.
+> Wide interior photograph on a Fujifilm GFX100 II with a GF 32-64mm at 40mm, f/5.6, ISO 400. A woman's hands (deep brown, natural nails) unroll a bolt of wine-red duchess satin across a long wooden cutting table in a Lagos fabric shop; the satin cascades over the table edge on the right half of the frame in stiff, glossy folds, beside a loosely piled length of ivory chiffon and a folded stack of ankara prints. Bolts of silk, crepe, george and velvet on dark shelves behind, softly out of focus. The left half is calm: plain off-white wall and the near end of the table in soft light. Portra-like grade, fine grain. No text, no logos, no signs, not CGI.
 
 ### HV-BANNER-LINGERIE
 - **File:** `assets/photography/banners/line-lingerie-banner.jpg` · **Size:** 3000 × 1250
@@ -202,15 +215,26 @@ Each stand-in product gets **three images**, all 1600 × 2000 (4:5), shot as the
 
 | Folder | Description to put in the template |
 | --- | --- |
+| `products/fabric/champagne-silk-satin/` | champagne silk charmeuse satin with a liquid moving highlight |
+| `products/fabric/emerald-duchess-satin/` | emerald duchess satin, heavy, holding stiff sculptural folds with a bright sheen |
+| `products/fabric/ivory-silk-mikado/` | ivory silk mikado, crisp body, subtle slub texture |
+| `products/fabric/blush-chiffon/` | blush-pink chiffon, sheer and floating, layered to show transparency |
+| `products/fabric/black-crepe/` | black crepe, matte pebbled surface, heavy fluid drape |
+| `products/fabric/royal-blue-george/` | royal-blue george with dense gold metallic embroidery and appliqué |
+| `products/fabric/indigo-ochre-ankara/` | indigo and ochre geometric ankara wax print with fine crackle |
+| `products/fabric/indigo-adire/` | hand-dyed indigo adire cotton with irregular resist pattern |
+| `products/fabric/burgundy-velvet/` | burgundy velvet with pile that changes shade with direction |
+| `products/fabric/ivory-organza/` | ivory organza, crisp and sheer with a glassy sheen |
+| `products/fabric/gold-brocade/` | gold brocade with a large woven floral pattern |
+| `products/fabric/wine-sequin/` | wine-red sequin fabric, overlapping sequins like scales |
 | `products/fabric/ivory-french-lace/` | ivory French lace with raised cord flowers and scattered clear stones |
-| `products/fabric/emerald-sequin-lace/` | emerald-green sequin lace on fine net, sequins densely sewn in floral scrolls |
-| `products/fabric/coral-beaded-lace/` | coral-pink heavy beaded lace with glass bugle beads and pearls |
-| `products/fabric/gold-damask/` | gold jacquard damask with a large woven floral pattern and a soft sheen |
 | `products/fabric/indigo-aso-oke/` | hand-woven indigo-and-ivory aso-oke with narrow strips and slight weave irregularity |
-| `products/fabric/black-swiss-voile/` | black Swiss voile lace with eyelet embroidery, light and semi-translucent |
 | `products/lingerie/black-lace-bralette-set/` | black lace bralette and matching high-waisted brief (worn on model for 02-drape) |
+| `products/lingerie/champagne-silk-slip/` | champagne silk satin slip dress with fine straps |
 | `products/lingerie/ivory-silk-robe/` | ivory silk robe with lace trim at the cuffs |
-| `products/rtw/black-wrap-midi/` | tailored black wrap midi dress with a structured shoulder |
+| `products/rtw/emerald-satin-wrap-dress/` | emerald satin wrap dress with a draped neckline |
+| `products/rtw/black-crepe-midi/` | tailored black crepe midi dress with a structured shoulder |
+| `products/rtw/ankara-two-piece/` | ankara print cropped jacket and wide-leg trouser two-piece |
 | `products/rtw/ivory-linen-coord/` | ivory linen cropped jacket and wide-leg trouser co-ord |
 
 ---
@@ -220,7 +244,7 @@ Each stand-in product gets **three images**, all 1600 × 2000 (4:5), shot as the
 ### HV-OG
 - **File:** `assets/brand/social/og-default-1200x630.jpg` · **Size:** 2400 × 1260 (export also at 1200 × 630)
 
-> Editorial photograph on a Hasselblad X2D with an XCD 90mm at f/3.2, warm late-afternoon window light. A close crop of a Nigerian woman's shoulder and neck in heavy ivory French lace with clear stones and the edge of a marigold-yellow (#FDCE02) aso-oke gele, filling the right two-thirds of the frame; deep brown skin with full real texture (pores, fine hair catching the light, natural sheen). Left third: warm off-white plaster wall, calm (the logo is added in code). Portra-like grade, fine grain. No text, no logos, not CGI.
+> Editorial photograph on a Hasselblad X2D with an XCD 90mm at f/3.2, warm late-afternoon window light. A close crop of a Nigerian woman's shoulder and neck in a draped champagne silk satin gown with a soft liquid highlight, and the edge of a marigold-yellow (#FDCE02) aso-oke gele, filling the right two-thirds of the frame; deep brown skin with full real texture (pores, fine hair catching the light, natural sheen). Left third: warm off-white plaster wall, calm (the logo is added in code). Portra-like grade, fine grain. No text, no logos, not CGI.
 
 ---
 
