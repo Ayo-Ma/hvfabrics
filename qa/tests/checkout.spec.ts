@@ -52,7 +52,7 @@ test("browse → 5 yards → pay → confirmation → order in the dashboard →
   await expect(page.getByRole("heading", { name: "Checkout" })).toBeVisible();
 
   await page.getByLabel("Full name").fill("QA Shopper");
-  await page.getByLabel("Email").fill("qa.shopper@example.com");
+  await page.getByLabel("Email", { exact: true }).fill("qa.shopper@example.com");
   await page.getByLabel("Phone").fill("0803 123 4567");
   await page.locator('input[name="zoneId"][value="lagos"]').check({ force: true });
   await page.getByLabel("Street address").fill("12 Test Close");
