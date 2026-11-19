@@ -9,6 +9,10 @@
 
 ## Phase 1 — MVP (in progress)
 
+- Owner can cancel a paid or packed order and record the bank-transfer refund from the dashboard, choosing whether to
+  restock (cut fabric can't go back); owner-only, one transaction, and a late Paystack confirmation can't revive it.
+- Checkout "Send me offers" tick box (off by default); saved on the order and shown in the dashboard.
+- Our shops page (/about): pinned-poster design with live shop clocks and a visit planner.
 - Home redesign (2026-11-18): magazine-cover hero, scrolling story with a fixed photograph stage, season campaign,
   picture tiles for the three lines, live price sheet, yard-tape slip. Copy rewritten to sell the outcome (docs/VOICE.md).
 - Headlines in Futura via "HV Display" (Jost stands in until a Futura PT web licence is bought).

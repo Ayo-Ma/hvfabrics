@@ -299,3 +299,12 @@ picture:hover > .reveal-img { transform: scale(1.03); }
 
 .about-hero-title .cover-line { overflow: visible; padding: 0; margin: 0; }
 .about-hero-title .cover-line > span { animation-name: fade-up; }
+
+/* Checkout: the offers tick. A filled square that fills yellow with a drawn tick; keyboard focus shows the ring. */
+.offers-box { position: relative; flex: none; width: 24px; height: 24px; margin-top: 1px; background: var(--color-grey-100); transition: background-color var(--duration-fast), transform var(--duration-fast); }
+.offers-box::after { content: ""; position: absolute; left: 8px; top: 3px; width: 7px; height: 13px; border-right: 2.5px solid var(--color-ink); border-bottom: 2.5px solid var(--color-ink); transform: rotate(45deg) scale(0); transition: transform var(--duration-base) var(--ease-out); }
+.offers-check:hover .offers-box { background: var(--color-grey-200); }
+.peer:checked + .offers-box { background: var(--color-yellow); }
+.peer:checked + .offers-box::after { transform: rotate(45deg) scale(1); }
+.peer:focus-visible + .offers-box { outline: 3px solid var(--color-yellow); outline-offset: 2px; box-shadow: 0 0 0 5px var(--color-ink); }
+.offers-check:active .offers-box { transform: scale(0.92); }

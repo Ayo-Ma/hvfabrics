@@ -100,6 +100,7 @@ export async function startCheckout(
       ...(geo.country ? { country: geo.country } : {}),
       ...(geo.city ? { city: geo.city } : {}),
       ...(req.source ? { source: req.source } : {}),
+      ...(req.marketingOptIn ? { marketingOptIn: true } : {}),
       createdAt: now.toISOString(),
     };
     return order;

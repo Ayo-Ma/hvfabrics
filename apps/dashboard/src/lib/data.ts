@@ -1,6 +1,7 @@
 import type { BOARD_LABELS, Order, Product, ProductInput, StockPatch, Variant } from "@hv/core";
 import { api } from "./api";
 import { invalidate, setData, useQuery } from "./query";
+import type { RefundInput } from "@hv/core";
 
 /** Every read and write the dashboard makes, in one place. */
 
@@ -44,6 +45,15 @@ export async function moveOrder(order: Order, to: BoardStatus): Promise<Order> {
     setData<{ orders: Order[]; at: string }>(keys.board, (b) => b && { ...b, orders: b.orders.map((o) => (o.id === order.id ? order : o)) });
     throw e;
   }
+}
+
+/** Owner only: cancel a paid order and record the bank-transfer refund (optionally restocking). */
+export async function refundOrder(order: Order, input: RefundInput): Promise<Order> {
+  const next = await api<Order>(`/admin/orders/${order.id}/refund`, { body: input });
+  setData<Order>(keys.order(order.id), () => next);
+  setData<{ orders: Order[]; at: string }>(keys.board, (b) => b && { ...b, orders: b.orders.filter((o) => o.id !== next.id) });
+  invalidate(keys.takings);
+  return next;
 }
 
 export async function saveProduct(id: string | null, input: ProductInput): Promise<Entry> {

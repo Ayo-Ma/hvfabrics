@@ -28,6 +28,8 @@ export const ROLE_CAN = {
   orders: ["owner", "manager", "packer"],
   products: ["owner", "manager"],
   takings: ["owner", "manager"],
+  /** Cancelling a paid order means giving money back: the owner alone (questionnaire Q63). */
+  refunds: ["owner"],
 } as const satisfies Record<string, readonly AdminRole[]>;
 
 export function roleCan(role: AdminRole, what: keyof typeof ROLE_CAN): boolean {
@@ -81,6 +83,14 @@ export type StockPatch = z.infer<typeof StockPatchSchema>;
 export const BoardStatusSchema = z.enum(["paid", "packed", "shipped", "delivered"]);
 
 export const OrderMoveSchema = z.object({ to: BoardStatusSchema });
+
+export const RefundInputSchema = z.object({
+  /** Put the items back on the shelf. Off when the fabric has already been cut. */
+  restock: z.boolean(),
+  reference: z.string().trim().max(80).optional(),
+  reason: z.string().trim().max(200).optional(),
+});
+export type RefundInput = z.infer<typeof RefundInputSchema>;
 
 export const PushTokenSchema = z.object({ token: z.string().min(20).max(4096) });
 

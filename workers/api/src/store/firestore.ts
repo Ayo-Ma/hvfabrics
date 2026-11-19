@@ -1,3 +1,5 @@
+import type { RefundInput } from "@hv/core";
+import type { RefundPlan } from "./logic";
 import {
   CustomerSchema,
   OrderSchema,
@@ -17,7 +19,8 @@ import {
 } from "@hv/core";
 import { decodeFields, encodeFields, encodeValue, type FsFields } from "./firestore-codec";
 import type { GoogleAuth } from "./google-auth";
-import { planCancel, planMove, planPayment, planProductSave, planReservation, planStock, variantIdsOf, withPushToken } from "./logic";
+import { planCancel,
+  planRefund, planMove, planPayment, planProductSave, planReservation, planStock, variantIdsOf, withPushToken } from "./logic";
 import {
   customerId,
   type CreateOrderResult,
@@ -412,6 +415,28 @@ export class FirestoreStore implements Store {
       const raw = (await read([name])).get(name);
       const plan = planMove(raw ? OrderSchema.parse(raw) : null, to, at);
       return { result: plan, writes: plan.ok ? [this.write(`orders/${orderId}`, plan.order)] : [] };
+    });
+  }
+
+  async refundOrder(orderId: string, input: RefundInput, by: string, at: string): Promise<RefundPlan> {
+    return this.transact<RefundPlan>(async (read) => {
+      const orderName = this.name(`orders/${orderId}`);
+      const raw = (await read([orderName])).get(orderName);
+      if (!raw) return { result: planRefund(null, new Map(), input, by, at), writes: [] };
+      const order = OrderSchema.parse(raw);
+      const ids = variantIdsOf(order);
+      const docs = await read(ids.map((id) => this.variantDoc(id)));
+      const variants = new Map<string, Variant>();
+      for (const id of ids) {
+        const v = docs.get(this.variantDoc(id));
+        if (v) variants.set(id, VariantSchema.parse(v));
+      }
+      const plan = planRefund(order, variants, input, by, at);
+      if (!plan.ok) return { result: plan, writes: [] };
+      return {
+        result: plan,
+        writes: [...plan.variants.map((v) => this.variantWrite(v)), this.write(`orders/${orderId}`, plan.order)],
+      };
     });
   }
 

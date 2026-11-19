@@ -1,5 +1,8 @@
+import type { RefundInput } from "@hv/core";
+import type { RefundPlan } from "./logic";
 import type { BagLine, Customer, Order, OrderStatus, Product, ProductInput, Settings, StockPatch, Variant } from "@hv/core";
-import { byPaidDesc, planCancel, planMove, planPayment, planProductSave, planReservation, planStock, variantIdsOf, withPushToken } from "./logic";
+import { byPaidDesc, planCancel,
+  planRefund, planMove, planPayment, planProductSave, planReservation, planStock, variantIdsOf, withPushToken } from "./logic";
 import {
   customerId,
   type CreateOrderResult,
@@ -159,6 +162,15 @@ export class MemoryStore implements Store {
     const plan = planMove(this.orders.get(orderId) ?? null, to, at);
     if (plan.ok) this.orders.set(orderId, structuredClone(plan.order));
     return plan;
+  }
+
+  async refundOrder(orderId: string, input: RefundInput, by: string, at: string): Promise<RefundPlan> {
+    const order = this.orders.get(orderId) ?? null;
+    const plan = planRefund(order, order ? this.variantMap(order) : new Map(), input, by, at);
+    if (!plan.ok) return plan;
+    for (const v of plan.variants) this.variants.get(v.id)!.variant = v;
+    this.orders.set(orderId, structuredClone(plan.order));
+    return { ...plan, order: structuredClone(plan.order) };
   }
 
   async addPushToken(token: string): Promise<void> {

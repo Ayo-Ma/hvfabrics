@@ -45,6 +45,8 @@ export async function action({ request, context }: Route.ActionArgs) {
       state: form.get("state"),
     },
     source: "storefront",
+    // A real tick only: absent, or anything but "yes", means no consent.
+    ...(form.get("offers") === "yes" ? { marketingOptIn: true } : {}),
   });
 
   if (!parsed.success) {
@@ -168,6 +170,14 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
               </div>
             </div>
           </fieldset>
+          <label className="offers-check mt-8 flex cursor-pointer items-start gap-3 text-[15px]">
+            <input type="checkbox" name="offers" value="yes" className="peer sr-only" />
+            <span aria-hidden="true" className="offers-box" />
+            <span>
+              <span className="font-semibold">Send me offers from Harries Vogue</span>
+              <span className="mt-0.5 block text-grey-600">New fabrics and offers on WhatsApp and email. Stop any time.</span>
+            </span>
+          </label>
         </div>
 
         <aside className="md:col-span-5" aria-labelledby="summary-title">

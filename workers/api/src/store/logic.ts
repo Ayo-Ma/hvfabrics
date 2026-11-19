@@ -15,6 +15,8 @@ import {
   type ProductInput,
   type StockPatch,
   type Variant,
+  type Refund,
+  type RefundInput,
 } from "@hv/core";
 import { customerId, MAX_PUSH_TOKENS, type Entry, type MoveResult, type SaveProductResult, type StockResult, type VariantWithProduct } from "./types";
 
@@ -46,6 +48,8 @@ export function planPayment(
   paidAt: string,
 ): { changed: false } | { changed: true; order: Order; variants: Variant[]; customer: Customer } {
   if (order.status !== "pending" && order.status !== "cancelled") return { changed: false };
+  // Refunded by the owner: a repeated or late Paystack confirmation must not revive it.
+  if (order.refund) return { changed: false };
 
   const updated: Variant[] = [];
   const flags = new Set(order.flags ?? []);
@@ -113,6 +117,38 @@ export function planCancel(
     return v ? [release(v, i.qty)] : [];
   });
   return { changed: true, order: { ...order, status: "cancelled", cancelledAt: at }, variants: updated };
+}
+
+export type RefundPlan =
+  | { ok: false; reason: "not_found" | "invalid"; message: string }
+  | { ok: true; order: Order; variants: Variant[] };
+
+/**
+ * Owner cancels a paid (or packed) order and refunds it by bank transfer. Stock goes back only when
+ * she says so (cut fabric can't), and never for lines the payment didn't take (the shortfall case).
+ */
+export function planRefund(order: Order | null, variants: Map<string, Variant>, input: RefundInput, by: string, at: string): RefundPlan {
+  if (!order) return { ok: false, reason: "not_found", message: "Not found" };
+  if (order.status !== "paid" && order.status !== "packed") {
+    return { ok: false, reason: "invalid", message: order.status === "cancelled" ? "This order is already cancelled." : "Only paid orders that haven't been sent can be cancelled and refunded." };
+  }
+  const restock = input.restock && !(order.flags ?? []).includes(SHORTFALL_FLAG);
+  const updated = restock
+    ? order.items.flatMap((i) => {
+        const v = variants.get(i.variantId);
+        return v ? [{ ...v, stock: v.stock + i.qty }] : [];
+      })
+    : [];
+  const refund: Refund = {
+    amount: order.totals.total,
+    method: "bank_transfer",
+    ...(input.reference ? { reference: input.reference } : {}),
+    ...(input.reason ? { reason: input.reason } : {}),
+    restocked: restock,
+    by,
+    at,
+  };
+  return { ok: true, order: { ...order, status: "cancelled", cancelledAt: at, refund }, variants: updated };
 }
 
 /** Multiple lines of one order can touch the same variant only once after merging, but guard anyway. */

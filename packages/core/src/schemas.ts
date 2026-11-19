@@ -120,6 +120,20 @@ export const OrderItemSchema = z.object({
 });
 export type OrderItem = z.infer<typeof OrderItemSchema>;
 
+/** A paid order cancelled by the owner and refunded by bank transfer (questionnaire Q39, Q63). */
+export const RefundSchema = z.object({
+  amount: MoneySchema,
+  method: z.literal("bank_transfer"),
+  /** Her transfer reference, if she has one. */
+  reference: z.string().max(80).optional(),
+  reason: z.string().max(200).optional(),
+  restocked: z.boolean(),
+  /** Admin uid who cancelled it. */
+  by: z.string(),
+  at: isoDate,
+});
+export type Refund = z.infer<typeof RefundSchema>;
+
 export const OrderSchema = z.object({
   id,
   number: z.string(),
@@ -142,6 +156,9 @@ export const OrderSchema = z.object({
   cancelledAt: isoDate.optional(),
   /** Needs her attention, e.g. "paid_after_expiry_stock_short" (payment arrived after the hold expired and stock ran out). */
   flags: z.array(z.string()).optional(),
+  /** Ticked "send me offers" at checkout (questionnaire Q42). Absent means no. */
+  marketingOptIn: z.boolean().optional(),
+  refund: RefundSchema.optional(),
 });
 export type Order = z.infer<typeof OrderSchema>;
 
@@ -222,6 +239,8 @@ export const CheckoutInputSchema = z.object({
     state: z.string().trim().min(2).max(80),
   }),
   source: z.string().max(80).optional(),
+  /** Off unless the customer ticks it: consent must be given, never assumed. */
+  marketingOptIn: z.boolean().optional(),
 });
 export type CheckoutInput = z.infer<typeof CheckoutInputSchema>;
 

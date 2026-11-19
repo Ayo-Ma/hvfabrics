@@ -1,4 +1,6 @@
 import type { BagLine, BagProblem, Customer, Order, OrderStatus, Product, ProductInput, Settings, StockPatch, Variant } from "@hv/core";
+import type { RefundInput } from "@hv/core";
+import type { RefundPlan } from "./logic";
 
 /** A variant with the product fields checkout needs, read inside the same transaction. */
 export interface VariantWithProduct {
@@ -78,6 +80,8 @@ export interface Store {
   listPaidSince(since: string, limit: number): Promise<Order[]>;
   /** A move on the orders board (see moveOrder in @hv/core). */
   moveOrder(orderId: string, to: OrderStatus, at: string): Promise<MoveResult>;
+  /** Owner cancels a paid order and records the bank-transfer refund; optionally restocks. One transaction. */
+  refundOrder(orderId: string, input: RefundInput, by: string, at: string): Promise<RefundPlan>;
   addPushToken(token: string): Promise<void>;
   removePushTokens(tokens: readonly string[]): Promise<void>;
 }

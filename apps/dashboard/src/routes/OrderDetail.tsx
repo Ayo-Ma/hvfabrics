@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 import { BOARD_LABELS, multiply, type OrderStatus } from "@hv/core";
 import { ChevronLeftIcon, MailIcon, PhoneIcon, PrintIcon, WhatsappIcon } from "@hv/ui/icons";
 import { Button, ErrorLine, PageHeader, Panel, Pill, Skel } from "../components/ui";
-import { useOrder, type BoardStatus } from "../lib/data";
+import { refundOrder, useOrder, type BoardStatus } from "../lib/data";
+import { useMe } from "../lib/auth";
 import { dateTime, money, qtyText } from "../lib/format";
 import { printOrder } from "../lib/print";
 import { FLAG_TEXT, move } from "./Orders";
@@ -31,9 +32,82 @@ function whatsapp(phone: string): string {
   return `https://wa.me/${digits.startsWith("0") ? `234${digits.slice(1)}` : digits}`;
 }
 
+/**
+ * Owner only (questionnaire Q63): cancel a paid order and record the refund she sends by bank transfer
+ * (Q39). Cut fabric can't go back on the shelf, so restocking is a choice, on by default only before packing.
+ */
+function RefundDialog({ order, onDone }: { order: NonNullable<ReturnType<typeof useOrder>["data"]>; onDone: () => void }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const [restock, setRestock] = useState(order.status === "paid");
+  const [reference, setReference] = useState("");
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  return (
+    <>
+      <Button tone="danger" onClick={() => ref.current?.showModal()}>
+        Cancel and refund
+      </Button>
+      <dialog ref={ref} aria-labelledby="refund-title" className="refund-dialog">
+        <form
+          method="dialog"
+          className="grid gap-4"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setBusy(true);
+            setError(null);
+            try {
+              await refundOrder(order, { restock, ...(reference.trim() ? { reference: reference.trim() } : {}), ...(reason.trim() ? { reason: reason.trim() } : {}) });
+              ref.current?.close();
+              onDone();
+            } catch (err) {
+              setError(err instanceof Error ? err.message : "Couldn't cancel the order. Try again.");
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          <h2 id="refund-title" className="text-lg font-bold">
+            Cancel <span className="num">{order.number}</span> and refund {money(order.totals.total)}?
+          </h2>
+          <p className="text-sm text-muted">
+            Send {money(order.totals.total)} to {order.customer.name} by bank transfer, then confirm here. The order moves to Cancelled and
+            stops counting in money in. This can&rsquo;t be undone.
+          </p>
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" checked={restock} onChange={(e) => setRestock(e.target.checked)} className="mt-0.5 size-4 accent-[var(--color-yellow)]" />
+            <span>
+              <span className="font-medium">Put the items back in stock</span>
+              <span className="block text-muted">Leave unticked if the fabric has already been cut.</span>
+            </span>
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="font-medium">Transfer reference (optional)</span>
+            <input value={reference} onChange={(e) => setReference(e.target.value)} maxLength={80} className="h-10 rounded-[var(--radius-control)] border border-control bg-surface px-3" />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="font-medium">Reason (optional)</span>
+            <input value={reason} onChange={(e) => setReason(e.target.value)} maxLength={200} className="h-10 rounded-[var(--radius-control)] border border-control bg-surface px-3" />
+          </label>
+          {error ? <p role="alert" className="text-sm text-neg">{error}</p> : null}
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button type="button" onClick={() => ref.current?.close()}>
+              Keep the order
+            </Button>
+            <Button type="submit" tone="primary" disabled={busy}>
+              {busy ? "Cancelling…" : "I've sent the refund"}
+            </Button>
+          </div>
+        </form>
+      </dialog>
+    </>
+  );
+}
+
 export function OrderDetail() {
   const { id = "" } = useParams();
   const q = useOrder(id);
+  const me = useMe();
   const [busy, setBusy] = useState(false);
   const o = q.data;
 
@@ -104,6 +178,7 @@ export function OrderDetail() {
                 {next.label}
               </Button>
             ) : null}
+            {me.can.refunds && (o.status === "paid" || o.status === "packed") ? <RefundDialog order={o} onDone={() => void q.refresh()} /> : null}
           </>
         }
       />
@@ -116,6 +191,15 @@ export function OrderDetail() {
             </p>
           ))}
         </div>
+      ) : null}
+
+      {o.refund ? (
+        <p role="status" className="mb-4 rounded-[var(--radius-card)] border border-rule bg-surface px-4 py-3 text-sm">
+          Cancelled and refunded {money(o.refund.amount)} by bank transfer on {dateTime(o.refund.at)}
+          {o.refund.reference ? <> · ref <span className="num">{o.refund.reference}</span></> : null}
+          {o.refund.restocked ? " · items put back in stock" : " · stock not changed"}
+          {o.refund.reason ? ` · ${o.refund.reason}` : ""}
+        </p>
       ) : null}
 
       <div className="grid items-start gap-4 lg:grid-cols-12">
@@ -170,6 +254,7 @@ export function OrderDetail() {
             <p className="font-medium">{o.customer.name}</p>
             <p className="mt-1">{o.delivery.address}</p>
             <p className="mt-1 text-muted">{o.delivery.zone}</p>
+            <p className="mt-2 text-sm">{o.marketingOptIn ? "Agreed to receive offers on WhatsApp and email" : "Didn't ask for offers: don't send marketing"}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               <a className="inline-flex h-9 items-center gap-2 rounded-[var(--radius-control)] border border-control px-3 text-sm font-medium hover:border-text" href={`tel:${o.customer.phone}`}>
                 <PhoneIcon size={16} /> {o.customer.phone}

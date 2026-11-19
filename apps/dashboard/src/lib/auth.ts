@@ -8,7 +8,7 @@ export interface Me {
   uid: string;
   email?: string;
   role: AdminRole;
-  can: { orders: boolean; products: boolean; takings: boolean };
+  can: { orders: boolean; products: boolean; takings: boolean; refunds?: boolean };
   /** The API is serving placeholder data (local development). */
   sampleData: boolean;
 }

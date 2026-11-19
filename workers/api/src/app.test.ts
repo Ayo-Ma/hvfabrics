@@ -426,6 +426,78 @@ describe("orders board", () => {
   });
 });
 
+describe("cancel and refund (owner)", () => {
+  const refund = (t: ReturnType<typeof setup>, id: string, role: "owner" | "manager" | "packer", body: Record<string, unknown>) =>
+    t.app.request(`/admin/orders/${id}/refund`, { method: "POST", headers: jsonHeaders(role), body: JSON.stringify(body) });
+
+  it("cancels a paid order, records the transfer refund and puts the yards back", async () => {
+    const t = setup();
+    const order = await paidOrder(t, 3);
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 7, reserved: 0 });
+    const res = await refund(t, order.id, "owner", { restock: true, reference: "TRF-123", reason: "Customer changed her mind" });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { status: string; refund: Record<string, unknown> };
+    expect(body.status).toBe("cancelled");
+    expect(body.refund).toMatchObject({ method: "bank_transfer", reference: "TRF-123", restocked: true, by: "dev-owner", amount: order.totals.total });
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 10, reserved: 0 });
+  });
+
+  it("leaves stock alone when the fabric was already cut", async () => {
+    const t = setup();
+    const order = await paidOrder(t, 2);
+    const res = await refund(t, order.id, "owner", { restock: false });
+    expect(((await res.json()) as { refund: { restocked: boolean } }).refund.restocked).toBe(false);
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 8 });
+  });
+
+  it("is for the owner only", async () => {
+    const t = setup();
+    const order = await paidOrder(t);
+    expect((await refund(t, order.id, "manager", { restock: true })).status).toBe(403);
+    expect((await refund(t, order.id, "packer", { restock: true })).status).toBe(403);
+    expect((await refund(t, order.id, "owner", { restock: "yes" })).status).toBe(400);
+    expect((await refund(t, "nope", "owner", { restock: true })).status).toBe(404);
+  });
+
+  it("refuses twice, refuses sent orders, and a late Paystack confirmation can't revive it", async () => {
+    const t = setup();
+    const order = await paidOrder(t);
+    expect((await refund(t, order.id, "owner", { restock: true })).status).toBe(200);
+    expect((await refund(t, order.id, "owner", { restock: true })).status).toBe(409);
+    await webhook(t.app, order.id);
+    await t.settle();
+    expect((await t.store.getOrder(order.id))!.status).toBe("cancelled");
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 10 });
+
+    const sent = await paidOrder(t);
+    const move = (to: string) => t.app.request(`/admin/orders/${sent.id}/move`, { method: "POST", headers: jsonHeaders("owner"), body: JSON.stringify({ to }) });
+    await move("packed");
+    await move("shipped");
+    expect((await refund(t, sent.id, "owner", { restock: true })).status).toBe(409);
+  });
+
+  it("drops a refunded order from money in", async () => {
+    const t = setup();
+    const order = await paidOrder(t);
+    await refund(t, order.id, "owner", { restock: false });
+    const res = await t.app.request("/admin/takings?since=2026-11-01T00:00:00Z", { headers: as("owner") });
+    const { orders } = (await res.json()) as { orders: { id: string; status: string }[] };
+    // Listed for the record, but cancelled orders never count toward takings (see takings() in @hv/core).
+    expect(orders.find((o) => o.id === order.id)?.status ?? "cancelled").toBe("cancelled");
+  });
+});
+
+describe("offers consent at checkout", () => {
+  it("saves the tick only when the customer gives it", async () => {
+    const t = setup();
+    const withTick = await t.app.request("/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: checkoutBody([{ variantId: "lace--gold", qty: 2 }], { marketingOptIn: true }) });
+    const a = (await withTick.json()) as { orderNumber: string };
+    expect((await t.store.getOrderByNumber(a.orderNumber))!.marketingOptIn).toBe(true);
+    const without = (await (await checkout(t.app, [{ variantId: "lace--gold", qty: 2 }])).json()) as { orderNumber: string };
+    expect((await t.store.getOrderByNumber(without.orderNumber))!.marketingOptIn).toBeUndefined();
+  });
+});
+
 describe("products and stock", () => {
   it("creates a product, publishes it to the catalogue and refuses a second one on the same address", async () => {
     const t = setup();

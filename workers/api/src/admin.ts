@@ -1,6 +1,7 @@
 import { Hono, type Context } from "hono";
 import {
   OrderMoveSchema,
+  RefundInputSchema,
   ProductInputSchema,
   PushTokenSchema,
   StockPatchSchema,
@@ -89,7 +90,7 @@ export function adminApp(depsFor: (c: Context) => Deps) {
 
   app.get("/me", (c) => {
     const user = c.get("user");
-    const can = (r: AdminRole) => ({ orders: roleCan(r, "orders"), products: roleCan(r, "products"), takings: roleCan(r, "takings") });
+    const can = (r: AdminRole) => ({ orders: roleCan(r, "orders"), products: roleCan(r, "products"), takings: roleCan(r, "takings"), refunds: roleCan(r, "refunds") });
     return c.json({ ...user, can: can(user.role), sampleData: c.get("deps").placeholderData });
   });
 
@@ -112,6 +113,16 @@ export function adminApp(depsFor: (c: Context) => Deps) {
     const r = await c.get("deps").store.moveOrder(param(c, "id"), b.data.to, nowIso(c));
     if (r.ok) return c.json(r.order);
     return r.reason === "not_found" ? c.json({ message: "Not found" }, 404) : c.json({ message: r.message }, 409);
+  });
+
+  app.post("/orders/:id/refund", need("refunds"), async (c) => {
+    const b = await body(c, RefundInputSchema);
+    if (!b.ok) return b.res;
+    const deps = c.get("deps");
+    const r = await deps.store.refundOrder(param(c, "id"), b.data, c.get("user").uid, nowIso(c));
+    if (!r.ok) return r.reason === "not_found" ? c.json({ message: "Not found" }, 404) : c.json({ message: r.message }, 409);
+    if (r.variants.length) rebuildLater(deps, "refund restock");
+    return c.json(r.order);
   });
 
   /* ---------- Money in ---------- */
