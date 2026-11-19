@@ -54,7 +54,7 @@ test("browse → 5 yards → pay → confirmation → order in the dashboard →
   await page.getByLabel("Full name").fill("QA Shopper");
   await page.getByLabel("Email").fill("qa.shopper@example.com");
   await page.getByLabel("Phone").fill("0803 123 4567");
-  await page.locator('input[name="zoneId"]').first().check({ force: true });
+  await page.locator('input[name="zoneId"][value="lagos"]').check({ force: true });
   await page.getByLabel("Street address").fill("12 Test Close");
   await page.getByLabel("Town or city").fill("Ikeja");
   await page.getByLabel("State").fill("Lagos");

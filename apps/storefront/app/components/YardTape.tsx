@@ -33,7 +33,7 @@ export function YardTape({
   return (
     <div>
       <div className="flex items-end justify-between gap-4">
-        <label htmlFor={id} className="font-display text-4xl font-black tracking-(--tracking-display)">
+        <label htmlFor={id} className="font-display text-4xl font-medium uppercase">
           <span className="tabular">{value}</span> {unitLabel(unit, value)}
         </label>
         <p className="tabular pb-1 text-xl font-semibold" aria-live="polite">

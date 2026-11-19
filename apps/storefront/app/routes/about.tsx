@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRightIcon, cx } from "@hv/ui";
 import { Media } from "~/components/Media";
 import { SHOP, SHOP_CITIES } from "~/lib/shop";
+import { cutoffText, shopStatus, useLagosClock } from "~/lib/clock";
 
 /*
  * Our shops — "The pinned poster" (design-taste-frontend, seed 1727317164).
@@ -20,44 +21,6 @@ export function meta() {
       content: `Eight years selling fabric, lingerie and ready-to-wear. Visit Harries Vogue in ${SHOP_CITIES}, open ${SHOP.hours}, or order online and collect for free.`,
     },
   ];
-}
-
-/* ---------------- The shop clock (Nigerian time; computed after load so the server never guesses) ---------------- */
-
-const OPEN_MIN = 9 * 60; // 9am
-const CLOSE_MIN = 18 * 60; // 6pm
-const CUTOFF_MIN = 10 * 60; // pay before 10am, out the same day
-// [TBC: open days] She gave hours only (Q4); the clock treats every day as open until she says otherwise.
-
-function lagosMinutes(now = new Date()): number {
-  const parts = new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Lagos", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(now);
-  const get = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? 0);
-  return get("hour") * 60 + get("minute");
-}
-
-function useLagosClock(): number | null {
-  const [mins, setMins] = useState<number | null>(null);
-  useEffect(() => {
-    const tick = () => setMins(lagosMinutes());
-    tick();
-    const id = window.setInterval(tick, 20_000);
-    return () => window.clearInterval(id);
-  }, []);
-  return mins;
-}
-
-const span = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, "0")}m` : `${m}m`);
-
-function shopStatus(mins: number | null): { open: boolean | null; text: string } {
-  if (mins === null) return { open: null, text: `Open ${SHOP.hours}` };
-  if (mins >= OPEN_MIN && mins < CLOSE_MIN) return { open: true, text: `Open now · closes in ${span(CLOSE_MIN - mins)}` };
-  const until = mins < OPEN_MIN ? OPEN_MIN - mins : 24 * 60 - mins + OPEN_MIN;
-  return { open: false, text: `Closed · opens at 9am, in ${span(until)}` };
-}
-
-function cutoffText(mins: number | null): string {
-  if (mins === null || mins >= CUTOFF_MIN) return "Before 10am";
-  return `${span(CUTOFF_MIN - mins)} left today`;
 }
 
 function StatusLine({ mins, className }: { mins: number | null; className?: string }) {

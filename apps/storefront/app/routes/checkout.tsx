@@ -11,8 +11,7 @@ import { startCheckout } from "~/lib/api.server";
 import { useBag } from "~/lib/bag";
 import { Button, ButtonLink } from "~/components/Button";
 import { StateMessage } from "~/components/StateMessage";
-import { ProductImage } from "~/components/ProductImage";
-import { feeLabel } from "~/lib/shop";
+import { SHOP, SHOP_CITIES, feeLabel } from "~/lib/shop";
 
 export function meta() {
   return [{ title: "Checkout · Harries Vogue" }, { name: "robots", content: "noindex" }];
@@ -111,12 +110,19 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
   }
 
   const total = zone ? add(bag.subtotal, zone.fee) : bag.subtotal;
+  const PICKUP_STATE: Record<string, string> = { ilorin: "Kwara", abeokuta: "Ogun" };
+  const pickupShop = zone?.id.startsWith("pickup")
+    ? (() => {
+        const shop = SHOP.shops.find((sh) => zone.id === `pickup-${sh.id}`);
+        return shop ? { ...shop, state: PICKUP_STATE[shop.id] ?? shop.city } : null;
+      })()
+    : null;
   const lines = JSON.stringify(bag.items.map((i) => ({ variantId: i.variantId, qty: i.qty })));
 
   return (
     <div className="mx-auto max-w-(--container-page) px-(--spacing-gutter) pb-24 pt-10 md:pt-14">
-      <h1 className="text-4xl tracking-(--tracking-display)">Checkout</h1>
-      <p className="mt-3 text-lg text-grey-600">No account needed. You'll pay on Paystack's secure page.</p>
+      <h1 className="display-size cover-fade">Checkout</h1>
+      <p className="mt-4 text-lg">No account needed. You&rsquo;ll pay on Paystack&rsquo;s secure page.</p>
 
       {actionData?.message && (
         <div role="alert" className="mt-8 flex items-center gap-4 bg-grey-100 p-4">
@@ -129,7 +135,7 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
         <input type="hidden" name="items" value={lines} />
         <div className="space-y-12 md:col-span-7">
           <fieldset>
-            <legend className="font-display text-2xl font-black tracking-(--tracking-heading)">Your details</legend>
+            <legend className="checkout-legend">Your details</legend>
             <div className="mt-6 grid gap-5">
               <Field label="Full name" name="name" autoComplete="name" error={errors.name} />
               <Field label="Email" name="email" type="email" autoComplete="email" inputMode="email" error={errors.email} hint="We'll send your receipt here." />
@@ -138,37 +144,47 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
           </fieldset>
 
           <fieldset>
-            <legend className="font-display text-2xl font-black tracking-(--tracking-heading)">Delivery</legend>
-            <div className="mt-6 grid gap-3" role="radiogroup" aria-describedby={errors.zoneId ? "zoneId-error" : undefined}>
-              {loaderData.zones.map((z) => (
-                <label
-                  key={z.id}
-                  className="flex min-h-14 cursor-pointer items-center justify-between gap-4 bg-grey-100 px-4 has-checked:bg-ink has-checked:text-paper"
-                >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="zoneId"
-                      value={z.id}
-                      checked={zoneId === z.id}
-                      onChange={() => setZoneId(z.id)}
-                      className="size-5 accent-yellow"
-                    />
-                    <span className="font-medium">{z.name}</span>
-                    <span className="text-[15px] opacity-80">{z.eta}</span>
-                  </span>
-                  <span className="tabular font-semibold">{feeLabel(z)}</span>
-                </label>
-              ))}
+            <legend className="checkout-legend">Collect or deliver</legend>
+            <div className="mt-6 grid gap-6" role="radiogroup" aria-label="Collect or deliver" aria-describedby={errors.zoneId ? "zoneId-error" : undefined}>
+              {[
+                { title: "Collect free from a shop", list: loaderData.zones.filter((z) => z.id.startsWith("pickup")) },
+                { title: "Deliver to", list: loaderData.zones.filter((z) => !z.id.startsWith("pickup")) },
+              ]
+                .filter((g) => g.list.length)
+                .map((g) => (
+                  <div key={g.title}>
+                    <p className="text-[15px] font-semibold">{g.title}</p>
+                    <div className="zone-grid mt-3">
+                      {g.list.map((z) => (
+                        <label key={z.id} className="zone-tile">
+                          <input type="radio" name="zoneId" value={z.id} checked={zoneId === z.id} onChange={() => setZoneId(z.id)} className="sr-only" />
+                          <span className="zone-name">{z.id.startsWith("pickup") ? z.name.replace("Collect from our ", "").replace(" shop", "") : z.name}</span>
+                          <span className="zone-fee tabular">{feeLabel(z)}</span>
+                          {z.eta && !z.eta.startsWith("[TBC") ? <span className="zone-eta">{z.eta}</span> : null}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               {errors.zoneId && <p id="zoneId-error" className="text-[15px] font-medium text-danger">{errors.zoneId}</p>}
             </div>
-            <div className="mt-6 grid gap-5">
-              <Field label="Street address" name="address" autoComplete="street-address" error={errors.address} />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Town or city" name="city" autoComplete="address-level2" error={errors.city} />
-                <Field label="State" name="state" autoComplete="address-level1" error={errors.state} />
+            {pickupShop ? (
+              <div className="collect-note mt-6">
+                <input type="hidden" name="address" value={`Collect from ${pickupShop.address}`} />
+                <input type="hidden" name="city" value={pickupShop.city} />
+                <input type="hidden" name="state" value={pickupShop.state} />
+                <p className="font-medium">Collect from {pickupShop.address}</p>
+                <p className="mt-1 text-grey-600">Open {SHOP.hours}. We&rsquo;ll message you on WhatsApp when it&rsquo;s ready.</p>
               </div>
-            </div>
+            ) : (
+              <div className="mt-6 grid gap-5">
+                <Field label="Street address" name="address" autoComplete="street-address" error={errors.address} />
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field label="Town or city" name="city" autoComplete="address-level2" error={errors.city} />
+                  <Field label="State" name="state" autoComplete="address-level1" error={errors.state} />
+                </div>
+              </div>
+            )}
           </fieldset>
           <label className="offers-check mt-8 flex cursor-pointer items-start gap-3 text-[15px]">
             <input type="checkbox" name="offers" value="yes" className="peer sr-only" />
@@ -181,45 +197,38 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
         </div>
 
         <aside className="md:col-span-5" aria-labelledby="summary-title">
-          <div className="bg-grey-50 p-6 md:sticky md:top-24">
-            <h2 id="summary-title" className="text-2xl">
-              Order summary
-            </h2>
-            <ul className="mt-6 space-y-4">
-              {bag.items.map((i) => (
-                <li key={i.variantId} className="grid grid-cols-[56px_1fr_auto] items-center gap-4">
-                  <div className="bg-grey-100">
-                    {i.image && <ProductImage image={i.image} sizes="56px" className="aspect-[4/5] w-full object-cover" />}
-                  </div>
-                  <div className="min-w-0 text-[15px]">
-                    <p className="truncate font-medium">{i.title}</p>
-                    <p className="text-grey-600">
-                      {i.variantLabel} · {i.qty} {unitLabel(i.unit, i.qty)}
-                    </p>
-                  </div>
-                  <p className="tabular text-[15px] font-semibold">{formatMoney(multiply(i.unitPrice, i.qty))}</p>
-                </li>
-              ))}
-            </ul>
-            <dl className="mt-6 space-y-2 text-base">
-              <div className="flex justify-between">
-                <dt>Subtotal</dt>
-                <dd className="tabular">{formatMoney(bag.subtotal)}</dd>
+          <div className="md:sticky md:top-24">
+            <div className="checkout-slip-field">
+              <div className="slip bg-paper px-6 pb-12 pt-7 text-base">
+                <p className="text-[15px] text-grey-600">Harries Vogue · {SHOP_CITIES}</p>
+                <h2 id="summary-title" className="mt-4 text-lg font-bold">Your order</h2>
+                <ul className="mt-2">
+                  {bag.items.map((i) => (
+                    <li key={i.variantId} className="slip-row">
+                      <span className="min-w-0">
+                        <span className="block truncate font-medium">{i.title}</span>
+                        <span className="block text-[15px] text-grey-600">
+                          {i.variantLabel} · {i.qty} {unitLabel(i.unit, i.qty)}
+                        </span>
+                      </span>
+                      <i />
+                      <span className="tabular">{formatMoney(multiply(i.unitPrice, i.qty))}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="slip-row mt-5"><span>Subtotal</span><i /><span className="tabular">{formatMoney(bag.subtotal)}</span></p>
+                <p className="slip-row"><span>{zone?.id.startsWith("pickup") ? "Collection" : "Delivery"}</span><i /><span key={zone?.id ?? "none"} className="tabular tick">{!zone ? "Choose above" : feeLabel(zone)}</span></p>
+                <p className="mt-6 flex items-center justify-between gap-4 bg-ink px-4 py-3 text-lg font-bold text-paper">
+                  <span>Total</span>
+                  <span key={total.amount} className="tabular tick">{formatMoney(total)}</span>
+                </p>
               </div>
-              <div className="flex justify-between">
-                <dt>Delivery</dt>
-                <dd className="tabular">{!zone ? "—" : feeLabel(zone)}</dd>
-              </div>
-              <div className="flex justify-between pt-3 text-xl font-semibold">
-                <dt>Total</dt>
-                <dd className="tabular">{formatMoney(total)}</dd>
-              </div>
-            </dl>
-            <Button type="submit" className="mt-6 w-full" disabled={submitting || !bag.ready}>
+            </div>
+            <Button type="submit" className="mt-6 min-h-14 w-full" disabled={submitting || !bag.ready}>
               <LockIcon /> {submitting ? "Starting secure payment…" : `Pay ${formatMoney(total)}`}
             </Button>
-            <p className="mt-3 text-[13px] text-grey-600">
-              Items are held for 15 minutes while you pay. Prices and stock are confirmed when you press Pay.{" "}
+            <p className="mt-3 text-[15px] text-grey-600">
+              Your items are held for 15 minutes while you pay. Prices and stock are confirmed when you press Pay.{" "}
               <Link to="/policies/returns" className="underline underline-offset-4">
                 Returns
               </Link>

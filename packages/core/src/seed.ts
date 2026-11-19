@@ -95,11 +95,18 @@ export function seedCatalogue(now = new Date(T)): Catalogue {
 }
 
 export const seedSettings: Settings = {
+  // Mirrors the live zones (workers/api/scripts/shop-settings.json) so the local preview behaves like the shop.
   deliveryZones: [
-    { id: "lagos", name: "[TBC] Lagos", fee: { amount: 0, currency: "NGN" }, eta: "[TBC]" },
-    { id: "nationwide", name: "[TBC] Rest of Nigeria", fee: { amount: 0, currency: "NGN" }, eta: "[TBC]" },
+    { id: "pickup-ilorin", name: "Collect from our Ilorin shop", fee: { amount: 0, currency: "NGN" }, eta: "Ready to collect, 9am to 6pm" },
+    { id: "pickup-abeokuta", name: "Collect from our Abeokuta shop", fee: { amount: 0, currency: "NGN" }, eta: "Ready to collect, 9am to 6pm" },
+    { id: "lagos", name: "Lagos", fee: { amount: 400_000, currency: "NGN" }, eta: "[TBC]" },
+    { id: "abuja", name: "Abuja", fee: { amount: 500_000, currency: "NGN" }, eta: "[TBC]" },
+    { id: "ibadan", name: "Ibadan", fee: { amount: 300_000, currency: "NGN" }, eta: "[TBC]" },
+    { id: "akure", name: "Akure", fee: { amount: 400_000, currency: "NGN" }, eta: "[TBC]" },
+    { id: "osogbo", name: "Osogbo", fee: { amount: 300_000, currency: "NGN" }, eta: "[TBC]" },
+    { id: "abeokuta", name: "Abeokuta", fee: { amount: 400_000, currency: "NGN" }, eta: "[TBC]" },
   ],
-  storeAddress: "[TBC: shop address, Abule Egba, Lagos]",
+  storeAddress: "Beckadims Resort, Tanke Oke Odo, Ilorin · Odo Eran, Obantoko, Abeokuta",
   policies: {
     delivery: "[TBC: delivery policy]",
     returns: "[TBC: returns policy]",
