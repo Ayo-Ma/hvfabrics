@@ -132,6 +132,23 @@ Small choices PLAN.md doesn't cover. Anything bigger goes to Malik first.
 
 ## Blocked: needed from Malik and her
 
+Questionnaire answered 2026-11-19 (filled PDF kept locally, git-ignored). Done from it: shops, contacts, delivery zones and fees,
+2-yard minimum, policies, low-stock default. Still needed:
+
+1. **Fabric list:** every fabric type she actually stocks and her best sellers (Q14 said only "all types of fabrics"). Feeds the
+   Fabrics page wording, search filters and the image prompts. A WhatsApp list is enough.
+2. **Paystack verification:** owner's ID and BVN (both "Nil" in Q44); payout account must match the business (currently a personal
+   Opay account). Live payments are blocked until Paystack approves.
+3. **Domain:** buy harriesvogue.com (then .ng); needed for customer receipts (Resend test sender only reaches harriesvogueglobal@gmail.com).
+4. **Real products:** titles, prices, stock, photos (she photographs them herself, per the photo guide).
+5. **Delivery times** for each city (Q31 gave fees only).
+6. **Reporting window** for wrong or damaged items (days after delivery).
+7. **Facebook page link** (guessed from the handle) and whether offers need a consent tick box at checkout (Q42 said yes to offers).
+8. **Seasonal campaigns** she runs (Q58 said yes, none named).
+9. Features she asked for: a page about the shops (Q59); owner can cancel and refund paid orders from the dashboard (Q63).
+
+### Answered before the questionnaire (kept for history)
+
 1. Firebase project (with owner access for the build), Cloudflare account, Paystack account in test mode.
 2. Delivery: Lagos plus nationwide flat rates? Zone names and fees.
 3. Real products for launch: titles, prices, stock, photos (per PLAN.md photo spec).
