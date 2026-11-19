@@ -182,3 +182,114 @@ picture:hover > .reveal-img { transform: scale(1.03); }
   .cover-line > span, .cover-photo img, .cover-fade, .tick, .flash, .badge-pop, .add-check, .js .is-in .sheet-row { animation: none; }
   .stage-rail > span::after, .door::before, .link-arrow::after, .way-title, .link-arrow, .reveal-img, .faq::details-content { transition: none; }
 }
+
+/* ---------- Our shops: the pinned poster ---------- */
+
+:root { --hdr: 6.75rem; }
+@media (min-width: 768px) { :root { --hdr: 4rem; } }
+
+/* 1. The window that opens to the edges. Without script or with reduced motion: the picture open, words on a scrim. */
+.about-hero { position: relative; height: 200svh; background: var(--color-paper); --p: 1; }
+.about-hero-stage { position: sticky; top: var(--hdr); height: calc(100svh - var(--hdr)); overflow: hidden; }
+.about-hero-window { position: absolute; inset: 0; }
+.about-hero-copy { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 1.25rem; padding: 0 var(--spacing-gutter) 2.5rem; color: var(--color-paper); background: linear-gradient(to top, rgb(10 10 10 / 0.55), rgb(10 10 10 / 0) 55%); }
+.about-hero-title { font-family: var(--font-display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1.02; font-size: clamp(2.5rem, 10vw, 3.5rem); }
+.about-hero-side { max-width: 26rem; font-size: 1rem; line-height: 1.5; }
+.about-btn { display: inline-flex; min-height: 3.5rem; align-items: center; margin-top: 1rem; padding: 0 2rem; background: var(--color-yellow); color: var(--color-ink); font-weight: 600; transition: background-color var(--duration-base), translate var(--duration-base) var(--ease-out), scale var(--duration-fast); }
+.about-btn:hover { background: var(--color-yellow-press); translate: 0 -2px; }
+.about-btn:active { translate: 0 0; scale: 0.97; }
+
+@media (min-width: 1024px) {
+  .about-hero-title { font-size: clamp(2.75rem, 3.9vw, 3.5rem); }
+  .about-hero-copy { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .about-hero { --p: 0; }
+  .js .about-hero-window { clip-path: inset(calc((1 - var(--p)) * 30%) calc((1 - var(--p)) * 11%) calc((1 - var(--p)) * 22%)); }
+  .js .about-hero-copy { background: none; color: var(--color-ink); justify-content: space-between; padding-top: 2rem; padding-bottom: 1.25rem; opacity: calc(1 - var(--p) * 9); translate: 0 calc(var(--p) * 40px); pointer-events: none; }
+  .js .about-hero-copy a { pointer-events: auto; }
+  .js .about-hero-side { display: flex; flex-direction: column; }
+  .js .about-hero-side .about-btn { align-self: stretch; justify-content: center; }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  .js .about-hero-window { clip-path: inset(calc((1 - var(--p)) * 13%) calc((1 - var(--p)) * 32%)); }
+  .js .about-hero-copy { flex-direction: row; align-items: flex-end; justify-content: space-between; padding-bottom: 13vh; }
+  .js .about-hero-title { max-width: 29vw; }
+  .js .about-hero-side { max-width: 26ch; width: 26vw; }
+  .js .about-hero-side .about-btn { align-self: flex-start; }
+}
+
+/* 2. Ilorin and Abeokuta pinned to opposite corners; prints pass between them. */
+.pin-run { position: relative; background: var(--color-paper); }
+.pin-layer { position: sticky; top: var(--hdr); height: calc(100svh - var(--hdr)); z-index: 10; pointer-events: none; }
+.pin-layer a { pointer-events: auto; }
+.pin-word { position: absolute; font-family: var(--font-display); font-weight: 500; text-transform: uppercase; line-height: 0.85; letter-spacing: -0.01em; font-size: 11vw; }
+.pin-word-a { top: 0.75rem; left: var(--spacing-gutter); }
+.pin-word-b { top: 0.75rem; right: var(--spacing-gutter); }
+.pin-words { position: relative; background: var(--color-paper); height: calc(11vw + 1.75rem); }
+.pin-meta { display: none; }
+.pin-flow { position: relative; z-index: 0; margin-top: calc(-1 * (100svh - var(--hdr)) + 11vw + 3rem); padding-bottom: 30svh; display: flex; flex-direction: column; gap: 3rem; }
+.pin-print { width: 72%; }
+.pin-print.is-left { margin-left: var(--spacing-gutter); }
+.pin-print.is-right { margin-left: auto; margin-right: var(--spacing-gutter); }
+.pin-img { transition: transform 1200ms var(--ease-out); }
+.pin-print:hover .pin-img { transform: scale(1.04); }
+@media (min-width: 1024px) {
+  .pin-words { position: static; background: none; height: auto; }
+  .pin-word { font-size: clamp(3.5rem, 7.2vw, 8rem); }
+  .pin-word-a { top: 2rem; left: var(--spacing-gutter); }
+  .pin-word-b { top: auto; bottom: 2rem; right: var(--spacing-gutter); }
+  .pin-meta { display: flex; flex-direction: column; gap: 0.35rem; position: absolute; max-width: 26vw; font-size: 1rem; }
+  .pin-meta-a { left: var(--spacing-gutter); top: calc(2rem + clamp(3.5rem, 7.2vw, 8rem) * 0.85 + 1.25rem); }
+  .pin-meta-b { right: var(--spacing-gutter); bottom: calc(2rem + clamp(3.5rem, 7.2vw, 8rem) * 0.85 + 1.25rem); text-align: right; align-items: flex-end; }
+  .pin-flow { margin-top: calc(-1 * (100svh - var(--hdr)) + 40svh); gap: 34svh; padding-bottom: 50svh; }
+  .pin-print { width: 21vw; }
+  .pin-print.is-left { margin-left: 34.5vw; }
+  .pin-print.is-right { margin-left: 36.5vw; margin-right: 0; }
+}
+.status-line { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; }
+.status-dot { width: 10px; height: 10px; border-radius: 9999px; background: var(--color-grey-400); flex: none; }
+.status-dot.is-open { background: var(--color-success); animation: pulse 2s var(--ease-out) infinite; }
+.status-dot.is-closed { background: var(--color-grey-500); }
+@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
+
+/* 3. Plan your visit: sticky photograph, active list. */
+.visit-grid { display: grid; gap: 2rem; padding-block: 6rem; }
+.visit-photo { position: sticky; top: var(--hdr); z-index: 5; height: 38svh; margin-inline: calc(-1 * var(--spacing-gutter)); overflow: hidden; background: var(--color-grey-100); }
+.visit-frame { position: absolute; inset: 0; opacity: 0; transition: opacity 300ms var(--ease-out); }
+.visit-frame.is-active { opacity: 1; }
+.visit-frame img { transform: scale(1.05); transition: transform 1600ms var(--ease-out); }
+.visit-frame.is-active img { transform: scale(1); }
+.visit-list { margin-top: 1rem; }
+.visit-row-head { display: flex; width: 100%; min-height: 3.6rem; align-items: center; justify-content: space-between; gap: 1rem; text-align: left; color: var(--color-grey-600); cursor: pointer; transition: color var(--duration-fast), padding-left var(--duration-base) var(--ease-out); }
+.visit-name { font-size: clamp(1.25rem, 1rem + 0.6vw, 1.5rem); font-weight: 500; }
+.visit-value { font-size: 0.9375rem; }
+.visit-row.is-active .visit-row-head { color: var(--color-ink); padding-left: 1rem; }
+.visit-row { position: relative; }
+.visit-row::before { content: ""; position: absolute; left: 0; top: 0.9rem; width: 4px; height: 1.8rem; background: var(--color-yellow); transform: scaleY(0); transition: transform var(--duration-base) var(--ease-out); }
+.visit-row.is-active::before { transform: scaleY(1); }
+.visit-row.is-active .visit-name { font-weight: 700; }
+.visit-body { max-width: 38ch; padding: 0 0 1.25rem 1rem; font-size: 1rem; animation: fade-up 400ms var(--ease-out); }
+@media (min-width: 1024px) {
+  .visit-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 1.5rem; padding-block: 10rem; }
+  .visit-title { grid-column: 7 / span 6; grid-row: 1; }
+  .visit-photo { grid-column: 1 / span 5; grid-row: 1 / span 2; top: calc(var(--hdr) + 8vh); height: auto; aspect-ratio: 4 / 5; margin-inline: 0; align-self: start; }
+  .visit-list-col { grid-column: 7 / span 6; grid-row: 2; }
+}
+
+/* 4. The number as display type, on the inverse ground. */
+.talk { background: var(--color-ink); color: var(--color-paper); }
+.talk-inner { display: flex; min-height: 86svh; flex-direction: column; justify-content: space-between; gap: 3rem; padding-block: 5rem 2.5rem; }
+.talk-number { display: block; font-family: var(--font-display); font-weight: 500; line-height: 0.9; letter-spacing: -0.02em; font-size: clamp(2.5rem, 12vw, 15rem); white-space: nowrap; transition: color 300ms var(--ease-out), letter-spacing 500ms var(--ease-out); }
+.talk-number:hover, .talk-number:focus-visible { color: var(--color-yellow); letter-spacing: 0; }
+.talk-corners { display: grid; gap: 1.5rem; font-size: 0.9375rem; }
+@media (min-width: 640px) { .talk-corners { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .talk-number { font-size: clamp(5rem, 12.5vw, 15rem); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .status-dot.is-open { animation: none; }
+  .visit-frame, .visit-frame img, .pin-img, .talk-number, .visit-body, .visit-row::before { transition: none; animation: none; }
+}
+
+.about-hero-title .cover-line { overflow: visible; padding: 0; margin: 0; }
+.about-hero-title .cover-line > span { animation-name: fade-up; }
