@@ -35,7 +35,7 @@
 /* The selvedge: the shop's name printed along the fabric's edge, travelling very slowly. */
 .selvedge { position: relative; height: 48px; overflow: hidden; background: var(--color-ink); }
 .selvedge::before {
-  content: "Harries Vogue · Abule Egba · Lagos · Harries Vogue · Abule Egba · Lagos · Harries Vogue · Abule Egba · Lagos · Harries Vogue · Abule Egba · Lagos · Harries Vogue · Abule Egba · Lagos · Harries Vogue · Abule Egba · Lagos · ";
+  content: "Harries Vogue · Ilorin · Abeokuta · Harries Vogue · Ilorin · Abeokuta · Harries Vogue · Ilorin · Abeokuta · Harries Vogue · Ilorin · Abeokuta · Harries Vogue · Ilorin · Abeokuta · Harries Vogue · Ilorin · Abeokuta · ";
   position: absolute; left: 20px; top: 50%; translate: 0 -50%; white-space: nowrap;
   color: var(--color-paper); font-size: 15px; font-weight: 500;
   animation: selvedge 90s linear infinite;

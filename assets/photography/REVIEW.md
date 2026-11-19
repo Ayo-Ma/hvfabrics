@@ -1,4 +1,4 @@
-﻿# Photography review — 2026-11-17
+# Photography review — 2026-11-17
 
 Generated with built-in image_gen using the full slot prompts in PROMPTS.json. No outputs are upscaled. Native dimensions and minimum-size results are recorded per image in GENERATION_STATUS.jsonl and MANIFEST.md. Product photographs are design stand-ins only and must be replaced with real stock photography before selling any product.
 
@@ -9,7 +9,7 @@ The built-in tool has returned 1122 × 1402 for requested 2400 × 3000 portraits
 - HV-STAGE-01: all three variations inspected at native size. Ivory lace construction, skin texture, marigold gele and calm left third are present; no visible text or watermarks. Main retained for its relaxed pose and visible hands. Resolution fails the requested minimum for all three.
 - HV-STAGE-02: all three variations inspected at native size. Visible bolt cores, raised lace texture, one yellow bolt and calm left wall; no visible text or labels. Main retained for the clear shelves and cutting-table context. Resolution fails the requested minimum for all three.
 
-No live publication is part of this work. Remaining slots and final quality review are in progress.
+No live publication is part of this work. See the final review below for completion status.
 - HV-STAGE-03: all three variations inspected at native size. Natural visible fingers and nails, emerald net and bead construction, tick-only tape markings and calm left table area; no visible text. Main retained. All three remain below the requested minimum resolution.
 - HV-STAGE-04 first attempt: rejected for incorrect narrow aspect ratio (733 x 2146). Files moved to previews/rejected; regeneration required.
 - HV-STAGE-04 regenerated: all three inspected at native size; intended 4:5 canvas family restored, lace detail and unbranded worn steel shears visible. Main retained; resolution still below minimum.
@@ -43,7 +43,7 @@ Gold damask: all mains retained for clear directional woven sheen.
 Indigo aso-oke: front alt2 regenerated to remove visible mannequin; replacement inspected. Original front alt1 and drape alt1 selected as mains for clear folds and breathing room; macro alt2 selected for weave filling the whole frame.
 Black Swiss voile: original front alt2 selected as main for a clearer translucent ground and folded edge. Drape/macro mains retained for eyelet and net detail.
 
-Ready-to-wear initial sets rejected for unintended embellishment and full-length images in macro slots. Regeneration with plain woven fabric and explicit view instructions in progress.
+Ready-to-wear initial sets rejected for unintended embellishment and full-length images in macro slots. Replaced by corrected sets described in the final review below.
 
 ## Final visual review — 2026-11-18
 
@@ -54,3 +54,4 @@ The footer was regenerated and inspected: all three now contain six women and tw
 All 18 ready-to-wear product photos were regenerated with plain fabric and garment-specific view instructions, then inspected at native size. Front views use invisible forms; drape views use adult models; macro views contain only weave and seam detail. All black-wrap mains retained. Ivory linen original drape alt1 selected as main for its matching three-button jacket, clear movement and natural expression; front/macro mains retained. No visible text, labels, watermarks or anatomy defects found in the retained images.
 
 Resolution remains unresolved: the built-in tool did not produce the requested minimum dimensions. No source has been upscaled. These assets are not approved as meeting the original production brief. Product sets remain design stand-ins and cannot be used as real-stock product photography.
+`nBuild complete: corepack pnpm images succeeded for 43 selected photographs, producing 198 AVIF/WebP files. Every derivative was checked for its declared width and no enlargement. The 1200 x 630 share export was also checked. No lingerie image files remain in assets or public media. See BUILD_REPORT.json. Native-resolution minimums remain unmet for all 132 retained originals.

@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
-import { multiply, sum, type Money, type ProductImage, type Unit } from "@hv/core";
+import { minQty, multiply, sum, type Money, type ProductImage, type Unit } from "@hv/core";
 
 /**
  * The bag lives in the browser (localStorage) as a snapshot for display.
@@ -82,7 +82,7 @@ const actions = {
   },
   setQty(variantId: string, qty: number) {
     update((prev) =>
-      prev.flatMap((i) => (i.variantId !== variantId ? [i] : qty <= 0 ? [] : [{ ...i, qty: Math.min(i.max, qty) }])),
+      prev.flatMap((i) => (i.variantId !== variantId ? [i] : qty <= 0 ? [] : [{ ...i, qty: Math.min(i.max, Math.max(minQty(i.unit), qty)) }])),
     );
   },
   remove(variantId: string) {

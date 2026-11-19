@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
-import { formatMoney, multiply, unitLabel } from "@hv/core";
+import { minQty, formatMoney, multiply, unitLabel } from "@hv/core";
 import { CloseIcon, MinusIcon, PlusIcon } from "@hv/ui";
 import emptyBag from "@hv/ui/illustrations/empty-bag.webp";
 import { useBag } from "~/lib/bag";
@@ -75,8 +75,9 @@ export function BagDrawer() {
                       <div className="flex items-center bg-grey-100">
                         <button
                           type="button"
-                          className="grid size-10 place-items-center hover:bg-grey-200"
+                          className="grid size-10 place-items-center hover:bg-grey-200 disabled:text-grey-300"
                           onClick={() => bag.setQty(item.variantId, item.qty - 1)}
+                          disabled={item.qty <= minQty(item.unit)}
                           aria-label={`Remove one ${unitLabel(item.unit, 1)} of ${item.title}`}
                         >
                           <MinusIcon size={20} />

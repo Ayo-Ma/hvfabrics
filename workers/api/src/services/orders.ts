@@ -2,6 +2,7 @@ import {
   CheckoutInputSchema,
   newOrderNumber,
   priceOrder,
+  MinimumQuantityError,
   reservationExpiry,
   variantLabel,
   type BagLine,
@@ -59,7 +60,9 @@ export async function startCheckout(
   const number = await uniqueOrderNumber(deps);
   const now = deps.now();
 
-  const created = await deps.store.createPendingOrder(lines, (found) => {
+  let created: Awaited<ReturnType<typeof deps.store.createPendingOrder>>;
+  try {
+  created = await deps.store.createPendingOrder(lines, (found) => {
     const pricing = new Map<string, PricingVariant>(
       [...found].map(([id, f]) => [
         id,
@@ -101,6 +104,10 @@ export async function startCheckout(
     };
     return order;
   });
+  } catch (e) {
+    if (e instanceof MinimumQuantityError) return { kind: "invalid", message: `${e.title} is cut from ${e.min} yards. Please choose at least ${e.min}.` };
+    throw e;
+  }
 
   if (!created.ok) return { kind: "stock", problems: created.problems };
   const order = created.order;

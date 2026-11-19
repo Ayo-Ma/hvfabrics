@@ -12,6 +12,7 @@ import { useBag } from "~/lib/bag";
 import { Button, ButtonLink } from "~/components/Button";
 import { StateMessage } from "~/components/StateMessage";
 import { ProductImage } from "~/components/ProductImage";
+import { feeLabel } from "~/lib/shop";
 
 export function meta() {
   return [{ title: "Checkout · Harries Vogue" }, { name: "robots", content: "noindex" }];
@@ -154,7 +155,7 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
                     <span className="font-medium">{z.name}</span>
                     <span className="text-[15px] opacity-80">{z.eta}</span>
                   </span>
-                  <span className="tabular font-semibold">{z.fee.amount === 0 ? "[TBC]" : formatMoney(z.fee)}</span>
+                  <span className="tabular font-semibold">{feeLabel(z)}</span>
                 </label>
               ))}
               {errors.zoneId && <p id="zoneId-error" className="text-[15px] font-medium text-danger">{errors.zoneId}</p>}
@@ -197,7 +198,7 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
               </div>
               <div className="flex justify-between">
                 <dt>Delivery</dt>
-                <dd className="tabular">{!zone ? "—" : zone.fee.amount === 0 ? "[TBC]" : formatMoney(zone.fee)}</dd>
+                <dd className="tabular">{!zone ? "—" : feeLabel(zone)}</dd>
               </div>
               <div className="flex justify-between pt-3 text-xl font-semibold">
                 <dt>Total</dt>

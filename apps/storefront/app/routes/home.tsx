@@ -10,6 +10,7 @@ import { flyToBag } from "~/lib/fly-to-bag";
 import { Button, ButtonLink } from "~/components/Button";
 import { Media } from "~/components/Media";
 import { YardTape } from "~/components/YardTape";
+import { SHOP, SHOP_CITIES, feeLabel } from "~/lib/shop";
 
 /*
  * Home — a magazine cover, then the counter (design-taste-frontend, seed 852726007).
@@ -21,10 +22,10 @@ import { YardTape } from "~/components/YardTape";
 
 export function meta() {
   return [
-    { title: "Harries Vogue · Fabric by the yard, lingerie and ready-to-wear from Lagos" },
+    { title: "Harries Vogue · Fabric by the yard, lingerie and ready-to-wear, delivered across Nigeria" },
     {
       name: "description",
-      content: "For the wedding, the aso-ebi and the owambe you've been planning for months. Fabric, lingerie and ready-to-wear from Harries Vogue in Lagos, so you walk in looking the way you pictured it.",
+      content: "For the wedding, the aso-ebi and the owambe you've been planning for months. Fabric, lingerie and ready-to-wear from Harries Vogue in Ilorin and Abeokuta, delivered across Nigeria, so you walk in looking the way you pictured it.",
     },
     { property: "og:title", content: "Harries Vogue" },
     { property: "og:type", content: "website" },
@@ -37,7 +38,7 @@ export async function loader({ context }: Route.LoaderArgs) {
   const byLine = Object.fromEntries(LINES.map((l) => [l, catalogue.products.filter((p) => p.line === l)])) as Record<Line, CatalogueProduct[]>;
   return {
     byLine,
-    zones: settings.deliveryZones.map((z) => ({ name: z.name, fee: z.fee, eta: z.eta })),
+    zones: settings.deliveryZones.map((z) => ({ id: z.id, name: z.name, fee: z.fee, eta: z.eta })),
   };
 }
 
@@ -352,9 +353,7 @@ function PriceSheet({ byLine }: { byLine: Record<Line, CatalogueProduct[]> }) {
             ) : null,
           )}
           <p className="mt-14 text-center text-[15px] text-grey-600">
-            Shop open [TBC: days]
-            <br />
-            [TBC: opening hours]
+            Our shops in {SHOP_CITIES} are open {SHOP.hours}.
           </p>
         </div>
         <Scallops flip />
@@ -367,7 +366,7 @@ function PriceSheet({ byLine }: { byLine: Record<Line, CatalogueProduct[]> }) {
 /* Your cut: the live tape writes the cutting slip                     */
 /* ------------------------------------------------------------------ */
 
-function YourCut({ fabrics, zones }: { fabrics: CatalogueProduct[]; zones: { name: string; fee: { amount: number; currency: "NGN" | "USD" }; eta: string }[] }) {
+function YourCut({ fabrics, zones }: { fabrics: CatalogueProduct[]; zones: { id: string; name: string; fee: { amount: number; currency: "NGN" | "USD" }; eta: string }[] }) {
   const choices = useMemo(() => fabrics.filter((p) => !p.soldOut).slice(0, 4), [fabrics]);
   const [pick, setPick] = useState(0);
   const product = choices[pick];
@@ -427,20 +426,20 @@ function YourCut({ fabrics, zones }: { fabrics: CatalogueProduct[]; zones: { nam
 
         <div className="lg:col-span-6 lg:col-start-7 lg:flex lg:flex-col lg:items-end" data-rise style={{ ["--rise-i" as string]: 1 }}>
           <div className="slip mx-auto w-full max-w-[480px] lg:mx-0 bg-paper px-7 pb-14 pt-9 text-lg" aria-live="polite">
-            <p className="text-[15px] text-grey-600">Harries Vogue · Abule Egba, Lagos</p>
+            <p className="text-[15px] text-grey-600">Harries Vogue · {SHOP_CITIES}</p>
             <h3 className="mt-6 text-lg font-bold">Your fabric</h3>
             <p key={`f-${product.id}`} className="slip-row flash"><span>{product.title}</span><i /><span className="tabular">{variantLabel(variant)}</span></p>
             <p className="slip-row"><span>Price per {unitLabel(unit, 1)}</span><i /><span className="tabular">{formatMoney(variant.price)}</span></p>
             <p className="slip-row"><span>{unit === "yard" ? "Yards" : "Quantity"}</span><i /><span key={qty} className="tabular tick">{qty}</span></p>
             <h3 className="mt-7 text-lg font-bold">At the counter</h3>
             <p className="slip-row"><span>Measured and cut</span><i /><span>to your {unitLabel(unit, 2)}</span></p>
-            <p className="slip-row"><span>Folded and packed</span><i /><span>[TBC]</span></p>
+            <p className="slip-row"><span>Paid before {SHOP.sameDayCutoff}</span><i /><span>goes out today</span></p>
             <h3 className="mt-7 text-lg font-bold">Delivery</h3>
             {zones.map((z) => (
               <p key={z.name} className="slip-row">
                 <span>{z.name}</span>
                 <i />
-                <span className="tabular">{z.fee.amount ? formatMoney(z.fee) : "[TBC]"}</span>
+                <span className="tabular">{feeLabel(z)}</span>
               </p>
             ))}
             <p className="mt-7 flex items-center justify-between gap-4 bg-ink px-4 py-3 font-bold text-paper">
@@ -503,15 +502,26 @@ function TheShop() {
         <div className="md:col-span-5 md:col-start-8">
         <h2 id="shop-title" className="chapter-title" data-rise>Come and feel it</h2>
         <div className="mt-8 space-y-6 text-lg leading-[1.6]" data-rise style={{ ["--rise-i" as string]: 1 }}>
-          <p>Some fabric you have to touch. Come to the shop in Abule Egba, hold it up in the light, see how it falls, and decide.</p>
-          <p>
-            Can&rsquo;t make it across Lagos? Order here and it comes to you.{" "}
-            <mark className="bg-yellow px-1 text-ink">[TBC: address, nearest landmark and opening hours]</mark>
-          </p>
-          <p>[TBC: two or three sentences from the owner on how Harries Vogue started and what it stands for.]</p>
+          <p>Some fabric you have to touch. Come to our shop in Ilorin or Abeokuta, hold it up in the light, see how it falls, and decide. Can&rsquo;t make it in? Order here and it comes to you, anywhere in Nigeria.</p>
+          <ul className="space-y-1 font-medium">
+            {SHOP.shops.map((s) => (
+              <li key={s.id}>{s.address}</li>
+            ))}
+            <li className="font-normal text-grey-600">Open {SHOP.hours}</li>
+          </ul>
+          <blockquote className="border-l-4 border-yellow pl-5">
+            <p>
+              &ldquo;Harries Vogue started from a passion for beautiful fabrics, and a wish to make quality fashion materials accessible and
+              affordable to everyone. Honesty, quality and affordability are at the heart of everything we do.&rdquo;
+            </p>
+            <footer className="mt-2 text-[15px] text-grey-600">The owner, after {SHOP.years} years in business</footer>
+          </blockquote>
         </div>
         <p className="mt-10 text-[24px] font-bold tracking-(--tracking-heading)" data-rise style={{ ["--rise-i" as string]: 2 }}>Harries Vogue</p>
-        <p className="text-[15px] text-grey-600">[TBC: WhatsApp number] · [TBC: email]</p>
+        <p className="text-[15px] text-grey-600">
+          <a className="underline underline-offset-4" href={SHOP.whatsapp} rel="noopener" target="_blank">WhatsApp {SHOP.phone.display}</a> ·{" "}
+          <a className="underline underline-offset-4 [overflow-wrap:anywhere]" href={`mailto:${SHOP.email}`}>{SHOP.email}</a>
+        </p>
         </div>
       </div>
     </section>
@@ -530,7 +540,7 @@ function Question({ q, children }: { q: string; children: React.ReactNode }) {
   );
 }
 
-function Buying({ zones }: { zones: { name: string; fee: { amount: number; currency: "NGN" | "USD" }; eta: string }[] }) {
+function Buying({ zones }: { zones: { id: string; name: string; fee: { amount: number; currency: "NGN" | "USD" }; eta: string }[] }) {
   return (
     <section aria-labelledby="buying-title" className="relative bg-ink text-paper">
       <div className="mx-auto grid max-w-(--container-page) gap-14 px-(--spacing-gutter) pb-24 pt-24 md:grid-cols-12 md:pb-36 md:pt-0">
@@ -538,7 +548,7 @@ function Buying({ zones }: { zones: { name: string; fee: { amount: number; curre
           <h2 id="buying-title" className="chapter-title" data-rise>Nothing to worry about</h2>
           <ul className="mt-8 space-y-2 text-lg" data-rise style={{ ["--rise-i" as string]: 1 }}>
             <li>Your card stays private with Paystack</li>
-            <li>Delivery to {zones.map((z) => z.name).join(" and ")}</li>
+            <li>Delivered across Nigeria, or collect from our shop in {SHOP_CITIES}</li>
             <li>Know where your order is with its number and your email</li>
           </ul>
           <div className="mt-12 space-y-7" data-rise style={{ ["--rise-i" as string]: 2 }}>
@@ -550,17 +560,28 @@ function Buying({ zones }: { zones: { name: string; fee: { amount: number; curre
             <Question q="What does delivery cost?">
               {zones.map((z) => (
                 <span key={z.name} className="block">
-                  {z.name}: {z.fee.amount ? formatMoney(z.fee) : "[TBC]"}, {z.eta}
+                  {z.name}: {feeLabel(z)}
+                  {z.eta && !z.eta.startsWith("[TBC") ? `, ${z.eta}` : ""}
                 </span>
               ))}
             </Question>
             <Question q="Can I return fabric that's been cut?">
-              [TBC: returns policy for cut fabric] <Link to="/policies/returns" className="underline underline-offset-4">Returns policy</Link>
+              No. Once fabric is cut to your yards it&rsquo;s yours, so we don&rsquo;t take returns or exchanges. If we send the wrong item,
+              we&rsquo;ll put it right. <Link to="/policies/returns" className="underline underline-offset-4">Returns policy</Link>
             </Question>
             <Question q="How do I track my order?">
               Use your order number and email on the <Link to="/track" className="underline underline-offset-4">tracking page</Link>.
             </Question>
-            <Question q="Can I see the fabric first?">[TBC: visiting the shop: address and hours]</Question>
+            <Question q="Can I see the fabric first?">
+              Yes. Visit us at {SHOP.shops.map((s) => s.address).join(" or ")}, {SHOP.hours}. You can also collect your order there.
+            </Question>
+            <Question q="When will my order go out?">
+              Orders paid before {SHOP.sameDayCutoff} go out the same day, by Speedaf or park dispatch.
+            </Question>
+            <Question q="Do you deliver abroad?">
+              Yes. Message us on <a className="underline underline-offset-4" href={SHOP.whatsapp} rel="noopener" target="_blank">WhatsApp</a> before you order
+              and we&rsquo;ll arrange it.
+            </Question>
           </div>
           <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4" data-rise style={{ ["--rise-i" as string]: 3 }}>
             <ButtonLink to="/track" variant="paper">Track an order</ButtonLink>

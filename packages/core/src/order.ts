@@ -11,6 +11,22 @@ export interface PricingVariant {
   price: Money;
 }
 
+/** Fabric sold by the yard is cut from 2 yards up (owner's answer, questionnaire Q16). */
+export const MIN_YARDS = 2;
+
+/** The smallest quantity a customer may buy of a variant sold in this unit. */
+export function minQty(unit: Unit | undefined): number {
+  return unit === "yard" ? MIN_YARDS : 1;
+}
+
+/** Thrown when a bag line is under its unit's minimum; checkout turns it into a clear message. */
+export class MinimumQuantityError extends RangeError {
+  constructor(readonly title: string, readonly min: number) {
+    super(`${title} is sold from ${min} yards`);
+    this.name = "MinimumQuantityError";
+  }
+}
+
 export interface PricedOrder {
   items: OrderItem[];
   totals: { subtotal: Money; delivery: Money; total: Money };
@@ -29,6 +45,7 @@ export function priceOrder(
     const v = variants.get(l.variantId);
     if (!v) throw new RangeError(`Unknown variant ${l.variantId}`);
     if (v.price.currency !== currency) throw new TypeError("Mixed currencies in one order");
+    if (l.qty < minQty(v.unit)) throw new MinimumQuantityError(v.title, minQty(v.unit));
     return {
       productId: v.productId,
       variantId: v.id,

@@ -57,7 +57,7 @@ interface Form {
 const defaultUnit = (line: Line): Unit => (line === "fabric" ? "yard" : "piece");
 
 function blankOption(line: Line, key = "v1"): OptionRow {
-  return { key, colour: "", size: "", unit: defaultUnit(line), price: "", stock: "", lowStockAt: line === "fabric" ? "5" : "2", sku: "", held: 0 };
+  return { key, colour: "", size: "", unit: defaultUnit(line), price: "", stock: "", lowStockAt: "20", sku: "", held: 0 };
 }
 
 function toForm(e: Entry | null): Form {

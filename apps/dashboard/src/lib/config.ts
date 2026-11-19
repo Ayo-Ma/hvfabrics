@@ -20,5 +20,5 @@ export const FCM_VAPID_KEY = (env.VITE_FCM_VAPID_KEY as string | undefined) || "
 export const FIREBASE_READY = Boolean(FIREBASE.apiKey && FIREBASE.projectId && FIREBASE.appId);
 export const DEV_SIGN_IN = !FIREBASE_READY && env.DEV;
 
-/** Her shop is in Lagos; screens show the viewer's own zone, which on her phone is Lagos. */
+/** Her shops are in Ilorin and Abeokuta (West Africa Time, as Lagos); screens show the viewer's own zone. */
 export const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || "Africa/Lagos";

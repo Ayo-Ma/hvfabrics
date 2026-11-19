@@ -43,3 +43,4 @@ Thumbs.db
 # Codex logs with local paths and session ids.
 /assets/photography/CATALOG.json
 /assets/photography/GENERATION_STATUS.jsonl
+/docs/Harries-Vogue-Questionnaire*.pdf

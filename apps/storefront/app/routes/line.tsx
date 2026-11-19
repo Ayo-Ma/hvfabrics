@@ -39,7 +39,7 @@ export function meta({ data }: Route.MetaArgs) {
   if (!data) return [];
   return [
     { title: `${LINE_LABELS[data.line]} · Harries Vogue` },
-    { name: "description", content: LINE_INTROS[data.line].startsWith("[TBC") ? `${LINE_LABELS[data.line]} from Harries Vogue, Lagos.` : LINE_INTROS[data.line] },
+    { name: "description", content: LINE_INTROS[data.line].startsWith("[TBC") ? `${LINE_LABELS[data.line]} from Harries Vogue, delivered across Nigeria.` : LINE_INTROS[data.line] },
   ];
 }
 

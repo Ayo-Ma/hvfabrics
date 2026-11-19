@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { formatMoney, multiply, unitLabel, type Money, type Unit } from "@hv/core";
+import { formatMoney, minQty, multiply, unitLabel, type Money, type Unit } from "@hv/core";
 import { MinusIcon, PlusIcon } from "@hv/ui";
 
 /**
@@ -21,12 +21,13 @@ export function YardTape({
   unitPrice: Money;
 }) {
   const id = useId();
-  const max = Math.max(1, Math.min(available, 30));
+  const min = minQty(unit);
+  const max = Math.max(min, Math.min(available, 30));
   const total = multiply(unitPrice, value);
   const every = max <= 12 ? 1 : 5;
   const ticks = Array.from({ length: max + 1 }, (_, i) => i);
-  const set = (n: number) => onChange(Math.min(max, Math.max(1, n)));
-  // The input runs 0..max like the drawn tape, so the marker sits exactly on the fill edge; 0 clamps to 1.
+  const set = (n: number) => onChange(Math.min(max, Math.max(min, n)));
+  // The input runs 0..max like the drawn tape, so the marker sits exactly on the fill edge; below the minimum clamps up.
   const pct = (n: number) => (n / max) * 100;
 
   return (
@@ -96,7 +97,7 @@ export function YardTape({
             type="button"
             className="grid size-12 place-items-center bg-grey-100 transition-colors hover:bg-grey-200 disabled:text-grey-300"
             onClick={() => set(value - 1)}
-            disabled={value <= 1}
+            disabled={value <= min}
             aria-label={`One ${unitLabel(unit, 1)} less`}
           >
             <MinusIcon />
@@ -115,6 +116,7 @@ export function YardTape({
           {formatMoney(unitPrice)} per {unitLabel(unit, 1)} · {available} {unitLabel(unit, available)} left
         </p>
       </div>
+      {min > 1 && <p className="mt-2 text-[15px] text-grey-600">Cut from {min} {unitLabel(unit, min)} up.</p>}
       {available > 30 && (
         <p className="mt-2 text-[15px] text-grey-600">Need more than 30? Add 30, then add again from the bag.</p>
       )}

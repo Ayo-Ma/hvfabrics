@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canTransition, newOrderNumber, priceOrder, type PricingVariant } from "./order";
+import { canTransition, MIN_YARDS, MinimumQuantityError, minQty, newOrderNumber, priceOrder, type PricingVariant } from "./order";
 import { CheckoutInputSchema, type DeliveryZone } from "./schemas";
 import { seedCatalogue } from "./seed";
 
@@ -7,6 +7,8 @@ const zone: DeliveryZone = { id: "lagos", name: "Lagos", fee: { amount: 300_000,
 const variants = new Map<string, PricingVariant>([
   ["lace--5", { id: "lace--5", productId: "lace", title: "Lace", variantLabel: "Gold", price: { amount: 1_000_000, currency: "NGN" } }],
   ["bra--m", { id: "bra--m", productId: "bra", title: "Bra", variantLabel: "M", price: { amount: 1_250_050, currency: "NGN" } }],
+  ["silk--y", { id: "silk--y", productId: "silk", title: "Silk", variantLabel: "Ivory", unit: "yard", price: { amount: 900_000, currency: "NGN" } }],
+  ["damask--b", { id: "damask--b", productId: "damask", title: "Damask", variantLabel: "Gold", unit: "bundle", price: { amount: 5_000_000, currency: "NGN" } }],
 ]);
 
 describe("priceOrder", () => {
@@ -31,6 +33,31 @@ describe("priceOrder", () => {
     expect(() => priceOrder([{ variantId: "x", qty: 1 }], variants, zone)).toThrow(RangeError);
     const usdZone = { ...zone, fee: { amount: 0, currency: "USD" as const } };
     expect(() => priceOrder([{ variantId: "lace--5", qty: 1 }], variants, usdZone)).toThrow(TypeError);
+  });
+});
+
+describe("minimum quantities", () => {
+  it("cuts yard fabric from 2 yards; bundles and pieces from 1", () => {
+    expect(MIN_YARDS).toBe(2);
+    expect(minQty("yard")).toBe(2);
+    expect(minQty("bundle")).toBe(1);
+    expect(minQty("piece")).toBe(1);
+    expect(minQty(undefined)).toBe(1);
+  });
+
+  it("refuses a yard line under the minimum and accepts it at the minimum", () => {
+    expect(() => priceOrder([{ variantId: "silk--y", qty: 1 }], variants, zone)).toThrow(MinimumQuantityError);
+    expect(priceOrder([{ variantId: "silk--y", qty: 2 }], variants, zone).totals.subtotal.amount).toBe(1_800_000);
+    expect(priceOrder([{ variantId: "damask--b", qty: 1 }], variants, zone).totals.subtotal.amount).toBe(5_000_000);
+  });
+
+  it("names the fabric and the minimum in the error", () => {
+    try {
+      priceOrder([{ variantId: "silk--y", qty: 1 }], variants, zone);
+    } catch (e) {
+      expect(e).toBeInstanceOf(RangeError);
+      expect(e).toMatchObject({ title: "Silk", min: 2 });
+    }
   });
 });
 

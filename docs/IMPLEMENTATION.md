@@ -100,6 +100,11 @@ Small choices PLAN.md doesn't cover. Anything bigger goes to Malik first.
 | 2026-11-13 | Poppins dropped; Satoshi (400/500/700/900) for everything | Client decision |
 | 2026-11-13 | ₦ glyph from a Plus Jakarta Sans subset via `unicode-range` | Satoshi has no ₦ |
 | 2026-11-18 | Headlines in Futura; Jost (SIL OFL) stands in as "HV Display" until a Futura PT web licence is bought | Client decision; Futura is a paid font |
+| 2026-11-19 | Two shops, Ilorin (Beckadims Resort, Tanke Oke Odo) and Abeokuta (Odo Eran, Obantoko); "Abule Egba, Lagos" removed | Owner's questionnaire Q3 |
+| 2026-11-19 | Delivery only to Lagos ₦4,000, Abuja ₦5,000, Ibadan ₦3,000, Akure ₦4,000, Osogbo ₦3,000, Abeokuta ₦4,000, plus free pickup at either shop; elsewhere and abroad by WhatsApp | Questionnaire Q30–34; Malik |
+| 2026-11-19 | Fabric sold by the yard has a 2-yard minimum, enforced in the picker, bag and API | Questionnaire Q16; Malik |
+| 2026-11-19 | Low-stock warning defaults to 20 for new variants | Questionnaire Q26 |
+| 2026-11-19 | No returns or exchanges; refunds by bank transfer only where the shop is at fault | Questionnaire Q36–40 |
 | 2026-11-13 | Variant unit `piece` added beside yard/bundle | Lingerie and ready-to-wear sell by the item — **Malik to confirm** |
 | 2026-11-13 | Storefront home: "dark room" composition (design-taste-frontend draw, seed 347725934), palette and type kept from the brand | Black brand base; few strong pictures needed while photos are pending |
 | 2026-11-13 | Built catalogue + search index stored in Workers KV | Shoppers never read Firestore (PLAN.md trap 2); KV is free at this volume |

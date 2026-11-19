@@ -3,6 +3,7 @@ import { LINES } from "@hv/core";
 import { LINE_LABELS, LINE_PATHS } from "~/lib/lines";
 import { Media } from "./Media";
 import { Wordmark } from "./Logo";
+import { SHOP, SHOP_CITIES } from "~/lib/shop";
 
 /**
  * The footer is the last photograph: the aso-ebi group at golden hour, darkened evenly so paper
@@ -44,16 +45,25 @@ export function Footer() {
             </ul>
           </nav>
           <div>
-            <h2 className="font-sans text-base font-bold tracking-normal">Visit the shop</h2>
-            <p className="mt-3">[TBC: shop address, Abule Egba, Lagos]</p>
-            <p className="mt-2">[TBC: opening hours]</p>
+            <h2 className="font-sans text-base font-bold tracking-normal">Visit a shop</h2>
+            <ul className="mt-3 space-y-2">
+              {SHOP.shops.map((s) => (
+                <li key={s.id}>{s.address}</li>
+              ))}
+            </ul>
+            <p className="mt-2">Open {SHOP.hours}</p>
           </div>
           <div>
             <h2 className="font-sans text-base font-bold tracking-normal">Talk to us</h2>
             <ul className="mt-3 space-y-2">
-              <li>[TBC: WhatsApp number]</li>
-              <li>[TBC: Instagram handle]</li>
-              <li>[TBC: email]</li>
+              <li><a className="footer-link" href={SHOP.whatsapp} rel="noopener" target="_blank">WhatsApp {SHOP.phone.display}</a></li>
+              <li><a className="footer-link" href={`tel:${SHOP.phone.tel}`}>Call {SHOP.phone.display}</a></li>
+              <li><a className="footer-link [overflow-wrap:anywhere]" href={`mailto:${SHOP.email}`}>{SHOP.email}</a></li>
+              {SHOP.socials.map((s) => (
+                <li key={s.label}>
+                  <a className="footer-link" href={s.url} rel="noopener" target="_blank">{s.label} {s.handle}</a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -61,7 +71,7 @@ export function Footer() {
         <div>
           <Wordmark className="block w-full text-paper [&>svg]:h-auto [&>svg]:w-full" />
           <p className="mt-5 text-[15px]">
-            © {new Date().getFullYear()} Harries Vogue, Abule Egba, Lagos. Payments are processed securely by Paystack.
+            © {new Date().getFullYear()} Harries Vogue, {SHOP_CITIES}. Payments are processed securely by Paystack.
           </p>
         </div>
       </div>

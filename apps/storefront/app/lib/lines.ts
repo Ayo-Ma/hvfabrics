@@ -19,7 +19,7 @@ export function lineFromPath(pathname: string): Line | undefined {
 export const LINE_INTROS: Record<Line, string> = {
   fabric: "For the outfit people ask about. Silk, satin, chiffon, lace, ankara and more.",
   lingerie: "The part nobody sees, and you feel all day. [TBC: owner to confirm]",
-  rtw: "For when the day is close and your tailor is fully booked. [TBC: owner to confirm]",
+  rtw: "For when the day is close and your tailor is fully booked. Made-to-measure too: message us on WhatsApp. [TBC: owner to confirm]",
 };
 
 export { LINE_LABELS };

@@ -1,0 +1,20 @@
+{
+  "_source": "Owner's questionnaire, 2026-11-19 (Q3-8, Q30-43). Apply with: node workers/api/scripts/update-settings.mjs <service-account.json>",
+  "storeAddress": "Beckadims Resort, Tanke Oke Odo, Ilorin · Odo Eran, Obantoko, Abeokuta",
+  "deliveryZones": [
+    { "id": "pickup-ilorin", "name": "Collect from our Ilorin shop", "fee": { "amount": 0, "currency": "NGN" }, "eta": "Ready to collect, 9am to 6pm" },
+    { "id": "pickup-abeokuta", "name": "Collect from our Abeokuta shop", "fee": { "amount": 0, "currency": "NGN" }, "eta": "Ready to collect, 9am to 6pm" },
+    { "id": "lagos", "name": "Lagos", "fee": { "amount": 400000, "currency": "NGN" }, "eta": "[TBC]" },
+    { "id": "abuja", "name": "Abuja", "fee": { "amount": 500000, "currency": "NGN" }, "eta": "[TBC]" },
+    { "id": "ibadan", "name": "Ibadan", "fee": { "amount": 300000, "currency": "NGN" }, "eta": "[TBC]" },
+    { "id": "akure", "name": "Akure", "fee": { "amount": 400000, "currency": "NGN" }, "eta": "[TBC]" },
+    { "id": "osogbo", "name": "Osogbo", "fee": { "amount": 300000, "currency": "NGN" }, "eta": "[TBC]" },
+    { "id": "abeokuta", "name": "Abeokuta", "fee": { "amount": 400000, "currency": "NGN" }, "eta": "[TBC]" }
+  ],
+  "policies": {
+    "delivery": "We deliver to Lagos, Abuja, Ibadan, Akure, Osogbo and Abeokuta through Speedaf and park dispatch, or you can collect your order free from our shop in Ilorin (Beckadims Resort, Tanke Oke Odo) or Abeokuta (Odo Eran, Obantoko), 9am to 6pm. The delivery fee for your city is shown at checkout; there is no free delivery above a set amount. Orders paid before 10am go out the same day. Somewhere else in Nigeria, or abroad? Message us on WhatsApp on 0811 820 6598 before you order and we'll arrange it. [TBC: delivery time for each city]",
+    "returns": "All sales are final: we don't accept returns or exchanges. This includes fabric once it has been cut to the yards you ordered, and lingerie. If we sent you the wrong item, or an item left us damaged, tell us on WhatsApp on 0811 820 6598 and we'll refund you by bank transfer. If an item was damaged after it left us, we can't take responsibility for it, but tell us and we'll try to make it up to you on your next order. Colours on screen can look slightly different from the real fabric. [TBC: how many days after delivery a customer has to report a problem]",
+    "privacy": "We use your name, phone number, email and delivery address to deliver your order, send your receipt and contact you about it. We may also send you offers from Harries Vogue by WhatsApp or email; tell us at any time and we'll stop. We don't sell your details. Payments are handled by Paystack: we never see or store your card details. To see, correct or delete the details we hold about you, email harriesvogueglobal@gmail.com."
+  },
+  "notificationEmails": ["harriesvogueglobal@gmail.com"]
+}

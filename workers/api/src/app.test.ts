@@ -183,6 +183,14 @@ describe("checkout", () => {
     expect(problems.map((p) => p.kind)).toEqual(["not_found", "not_found"]);
   });
 
+  it("refuses fabric under the 2-yard minimum without holding stock", async () => {
+    const res = await checkout(t.app, [{ variantId: "lace--gold", qty: 1 }]);
+    expect(res.status).toBe(400);
+    expect(((await res.json()) as { message: string }).message).toMatch(/at least 2/);
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ reserved: 0 });
+    expect(t.paystack.initialize).not.toHaveBeenCalled();
+  });
+
   it("rejects invalid input and foreign callback origins", async () => {
     const bad = await t.app.request("/checkout", { method: "POST", body: "{}" });
     expect(bad.status).toBe(400);
@@ -195,7 +203,7 @@ describe("checkout", () => {
 
   it("answers 503 honestly when Paystack isn't configured", async () => {
     const u = setup({ paystack: false });
-    const res = await checkout(u.app, [{ variantId: "lace--gold", qty: 1 }]);
+    const res = await checkout(u.app, [{ variantId: "lace--gold", qty: 2 }]);
     expect(res.status).toBe(503);
     expect(u.store.peekVariant("lace--gold")).toMatchObject({ reserved: 0 });
   });
@@ -207,12 +215,12 @@ describe("checkout", () => {
     expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 10, reserved: 0 });
   });
 
-  it("never oversells: 20 concurrent buyers, 5 units", async () => {
-    const results = await Promise.all(Array.from({ length: 20 }, () => checkout(t.app, [{ variantId: "last--red", qty: 1 }])));
+  it("never oversells: 20 concurrent buyers of 2 yards, 5 yards on the bolt", async () => {
+    const results = await Promise.all(Array.from({ length: 20 }, () => checkout(t.app, [{ variantId: "last--red", qty: 2 }])));
     const statuses = results.map((r) => r.status);
-    expect(statuses.filter((s) => s === 200)).toHaveLength(5);
-    expect(statuses.filter((s) => s === 409)).toHaveLength(15);
-    expect(t.store.peekVariant("last--red")).toMatchObject({ stock: 5, reserved: 5 });
+    expect(statuses.filter((s) => s === 200)).toHaveLength(2);
+    expect(statuses.filter((s) => s === 409)).toHaveLength(18);
+    expect(t.store.peekVariant("last--red")).toMatchObject({ stock: 5, reserved: 4 });
   });
 });
 
@@ -259,7 +267,7 @@ describe("Paystack webhook", () => {
 
   it("refuses to mark paid when the amount doesn't match", async () => {
     const t = setup({ verifyAmount: () => 100 });
-    const res = await checkout(t.app, [{ variantId: "lace--gold", qty: 1 }]);
+    const res = await checkout(t.app, [{ variantId: "lace--gold", qty: 2 }]);
     const { orderNumber } = (await res.json()) as { orderNumber: string };
     const order = (await t.store.getOrderByNumber(orderNumber))!;
     await webhook(t.app, order.id);
@@ -320,7 +328,7 @@ describe("catalogue and order lookup", () => {
 
   it("looks up orders by reference or email, hiding private fields", async () => {
     const t = setup();
-    const { orderNumber } = (await (await checkout(t.app, [{ variantId: "lace--gold", qty: 1 }])).json()) as { orderNumber: string };
+    const { orderNumber } = (await (await checkout(t.app, [{ variantId: "lace--gold", qty: 2 }])).json()) as { orderNumber: string };
     const order = (await t.store.getOrderByNumber(orderNumber))!;
 
     const byRef = await t.app.request(`/orders/${orderNumber}?reference=${order.id}`);
@@ -410,7 +418,7 @@ describe("orders board", () => {
   it("returns paid orders for money in, never pending ones", async () => {
     const t = setup();
     const paid = await paidOrder(t);
-    await checkout(t.app, [{ variantId: "lace--gold", qty: 1 }]); // pending, unpaid
+    await checkout(t.app, [{ variantId: "lace--gold", qty: 2 }]); // pending, unpaid
     const res = await t.app.request("/admin/takings?since=2026-11-01T00:00:00Z", { headers: as("owner") });
     const body = (await res.json()) as { orders: { id: string }[] };
     expect(body.orders.map((o) => o.id)).toEqual([paid.id]);

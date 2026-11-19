@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, data, useRevalidator } from "react-router";
-import { formatMoney, toMajorString, unitLabel, variantLabel, type CatalogueVariant } from "@hv/core";
+import { minQty, formatMoney, toMajorString, unitLabel, variantLabel, type CatalogueVariant } from "@hv/core";
 import { CheckIcon, MinusIcon, PlusIcon, RulerIcon, TruckIcon, cx } from "@hv/ui";
 import type { Route } from "./+types/product";
 import { getProduct } from "~/lib/catalogue.server";
@@ -11,6 +11,7 @@ import { ProductImage } from "~/components/ProductImage";
 import { StockTag } from "~/components/ProductCard";
 import { YardTape } from "~/components/YardTape";
 import { Button } from "~/components/Button";
+import { SHOP, SHOP_CITIES } from "~/lib/shop";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const product = await getProduct(context.cloudflare.env, params.slug);
@@ -21,7 +22,7 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 export function meta({ data, location }: Route.MetaArgs) {
   if (!data) return [];
   const p = data.product;
-  const description = p.description.startsWith("[TBC") ? `${p.title} from Harries Vogue, Lagos.` : p.description.slice(0, 155);
+  const description = p.description.startsWith("[TBC") ? `${p.title} from Harries Vogue, delivered across Nigeria.` : p.description.slice(0, 155);
   return [
     { title: `${p.title} · Harries Vogue` },
     { name: "description", content: description },
@@ -72,16 +73,19 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
   const variant = product.variants.find((v) => v.id === variantId) ?? firstAvailable;
   const inBag = bag.items.find((i) => i.variantId === variant.id)?.qty ?? 0;
   const canAdd = Math.max(0, variant.available - inBag);
-  const [wantedQty, setQty] = useState(variant.unit === "yard" ? Math.min(5, Math.max(1, variant.available)) : 1);
+  const min = minQty(variant.unit);
+  const [wantedQty, setQty] = useState(variant.unit === "yard" ? Math.min(5, Math.max(min, variant.available)) : 1);
   const [added, setAdded] = useState(false);
   // Always inside what can still be bought, even after the variant or live stock changes.
-  const qty = Math.min(Math.max(1, wantedQty), Math.max(1, canAdd));
+  const qty = Math.min(Math.max(min, wantedQty), Math.max(min, canAdd));
+  // Fewer yards left than the minimum cut: shown, but it can't be bought online.
+  const belowMin = variant.available > 0 && canAdd < min;
 
   const optionKind = product.variants.some((v) => v.size) ? "Size" : product.variants.some((v) => v.colour) ? "Colour" : null;
   const isYard = variant.unit === "yard";
 
   async function addToBag() {
-    if (canAdd < 1) return;
+    if (canAdd < min) return;
     bag.add(
       {
         variantId: variant.id,
@@ -159,6 +163,11 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
             <div className="mt-8">
               {variant.available === 0 ? (
                 <p className="text-lg font-medium">This {optionKind?.toLowerCase() ?? "piece"} is sold out.</p>
+              ) : belowMin ? (
+                <p className="text-lg font-medium">
+                  Only {variant.available} {unitLabel(variant.unit, variant.available)} left, under our {min}-yard minimum. Message us on WhatsApp and
+                  we&rsquo;ll see what we can do.
+                </p>
               ) : isYard ? (
                 <YardTape value={qty} onChange={setQty} available={canAdd || 1} unit={variant.unit} unitPrice={variant.price} />
               ) : (
@@ -171,7 +180,7 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
               type="button"
               className="mt-6 w-full"
               onClick={addToBag}
-              disabled={variant.available === 0 || canAdd < 1}
+              disabled={variant.available === 0 || canAdd < min}
             >
               {variant.available === 0 ? "Sold out" : canAdd < 1 ? "All available units are in your bag" : added ? (
                 <>
@@ -221,7 +230,7 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
                 <li className="flex gap-3">
                   <TruckIcon className="shrink-0" />
                   <span>
-                    Delivery: [TBC: zones and times].{" "}
+                    Delivered across Nigeria, or collect free from our shop in {SHOP_CITIES}. Paid before {SHOP.sameDayCutoff}, it goes out today.{" "}
                     <Link to="/policies/delivery" className="underline underline-offset-4">
                       Delivery policy
                     </Link>
