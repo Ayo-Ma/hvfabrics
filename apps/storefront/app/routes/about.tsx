@@ -101,7 +101,7 @@ function useScrollProgress(ref: React.RefObject<HTMLElement | null>, cssVar: str
 
 function WindowHero() {
   const ref = useRef<HTMLElement>(null);
-  useScrollProgress(ref, "--p", 0.7);
+  useScrollProgress(ref, "--p", 0.5);
   return (
     <section ref={ref} aria-labelledby="about-title" className="about-hero">
       <div className="about-hero-stage">
@@ -205,7 +205,8 @@ function VisitPlanner({ mins }: { mins: number | null }) {
     { key: "measure", name: "Made to measure", value: "On request", slot: "products/rtw/ivory-linen-coord/01-front", alt: "An ivory linen jacket and trousers on an invisible form", body: "Want a ready-to-wear piece cut to your size? Send us your measurements on WhatsApp and we'll take it from there.", href: SHOP.whatsapp, cta: "Message us" },
     { key: "abroad", name: "Sending abroad", value: "Ask us", slot: "products/fabric/indigo-aso-oke/03-macro", alt: "The woven texture of indigo aso-oke, close up", body: "We send orders abroad too. Message us before you order and we'll arrange it with you.", href: SHOP.whatsapp, cta: "Message us" },
   ];
-  const [active, setActive] = useState(0);
+  const [open, setOpen] = useState(0);
+  const [shown, setShown] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
 
   // On a phone, the row nearest the middle of the screen becomes the active one as you scroll.
@@ -214,7 +215,7 @@ function VisitPlanner({ mins }: { mins: number | null }) {
     if (!list || !("IntersectionObserver" in window) || window.matchMedia("(hover: hover)").matches) return;
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) if (e.isIntersecting) setActive(Number((e.target as HTMLElement).dataset.row));
+        for (const e of entries) if (e.isIntersecting) setShown(Number((e.target as HTMLElement).dataset.row));
       },
       { rootMargin: "-48% 0px -48% 0px" },
     );
@@ -228,7 +229,7 @@ function VisitPlanner({ mins }: { mins: number | null }) {
         <h2 id="visit-title" className="visit-title chapter-title" data-rise>Plan your visit</h2>
         <div className="visit-photo" data-rise>
           {rows.map((r, i) => (
-            <div key={r.key} aria-hidden={i !== active} className={cx("visit-frame", i === active && "is-active")}>
+            <div key={r.key} aria-hidden={i !== shown} className={cx("visit-frame", i === shown && "is-active")}>
               <Media slot={r.slot} alt={r.alt} sizes="(min-width: 1024px) 34vw, 100vw" ratio="4 / 5" className="size-full" {...("pos" in r ? { imgClassName: r.pos } : {})} />
             </div>
           ))}
@@ -236,7 +237,7 @@ function VisitPlanner({ mins }: { mins: number | null }) {
         <div className="visit-list-col">
           <ul ref={listRef} className="visit-list">
             {rows.map((r, i) => {
-              const on = i === active;
+              const on = i === open;
               const external = r.href.startsWith("http");
               return (
                 <li key={r.key} data-row={i} className={cx("visit-row", on && "is-active")} data-rise style={{ ["--rise-i" as string]: i }}>
@@ -245,19 +246,24 @@ function VisitPlanner({ mins }: { mins: number | null }) {
                     className="visit-row-head"
                     aria-expanded={on}
                     aria-controls={`visit-${r.key}`}
-                    onClick={() => setActive(i)}
-                    onMouseEnter={() => setActive(i)}
-                    onFocus={() => setActive(i)}
+                    onClick={() => {
+                      setOpen(i);
+                      setShown(i);
+                    }}
+                    onMouseEnter={() => setShown(i)}
+                    onFocus={() => setShown(i)}
                   >
                     <span className="visit-name">{r.name}</span>
                     <span className="visit-value tabular">{r.value}</span>
                   </button>
-                  <div id={`visit-${r.key}`} className="visit-body" hidden={!on}>
+                  <div id={`visit-${r.key}`} className="visit-body" inert={!on}>
+                    <div className="visit-body-inner">
                     <p>{r.body}</p>
                     {r.key === "ilorin" || r.key === "abeokuta" ? <StatusLine mins={mins} className="mt-2" /> : null}
                     <a className="link-arrow mt-3" href={r.href} {...(external ? { target: "_blank", rel: "noopener" } : {})}>
                       {r.cta} <ArrowRightIcon size={18} />
                     </a>
+                    </div>
                   </div>
                 </li>
               );
