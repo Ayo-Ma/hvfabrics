@@ -38,6 +38,7 @@ export function Footer() {
           <nav aria-labelledby="footer-orders">
             <h2 id="footer-orders" className="font-sans text-base font-bold tracking-normal">Orders</h2>
             <ul className="mt-3 space-y-2">
+              <li><Link className="footer-link" to="/about">Our shops</Link></li>
               <li><Link className="footer-link" to="/track">Track an order</Link></li>
               <li><Link className="footer-link" to="/policies/delivery">Delivery</Link></li>
               <li><Link className="footer-link" to="/policies/returns">Returns</Link></li>
@@ -45,7 +46,9 @@ export function Footer() {
             </ul>
           </nav>
           <div>
-            <h2 className="font-sans text-base font-bold tracking-normal">Visit a shop</h2>
+            <h2 className="font-sans text-base font-bold tracking-normal">
+              <Link className="footer-link" to="/about">Visit a shop</Link>
+            </h2>
             <ul className="mt-3 space-y-2">
               {SHOP.shops.map((s) => (
                 <li key={s.id}>{s.address}</li>

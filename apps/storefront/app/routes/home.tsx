@@ -522,6 +522,9 @@ function TheShop() {
           <a className="underline underline-offset-4" href={SHOP.whatsapp} rel="noopener" target="_blank">WhatsApp {SHOP.phone.display}</a> ·{" "}
           <a className="underline underline-offset-4 [overflow-wrap:anywhere]" href={`mailto:${SHOP.email}`}>{SHOP.email}</a>
         </p>
+        <Link to="/about" className="link-arrow mt-8" data-rise style={{ ["--rise-i" as string]: 3 }}>
+          More about our shops <ArrowRightIcon size={20} />
+        </Link>
         </div>
       </div>
     </section>
