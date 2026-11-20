@@ -9,8 +9,13 @@ import type { BagProblem, CheckoutInput, Money, OrderStatus } from "@hv/core";
 export interface PublicOrder {
   number: string;
   status: OrderStatus;
+  /** Absent from APIs older than 2026-11-20: treat as card. */
+  payment?: "card" | "transfer";
   createdAt: string;
   paidAt?: string;
+  /** Transfer orders still waiting: when the hold ends, and the account to pay into (own order page only). */
+  holdUntil?: string;
+  payTo?: { bank: string; accountName: string; accountNumber: string };
   items: { title: string; variantLabel: string; qty: number; unitPrice: Money }[];
   totals: { subtotal: Money; delivery: Money; total: Money };
   deliveryZone: string;

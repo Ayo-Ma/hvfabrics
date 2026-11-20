@@ -8,8 +8,12 @@ import { useBag } from "~/lib/bag";
 import { StateMessage } from "~/components/StateMessage";
 import { ButtonLink } from "~/components/Button";
 import { OrderDetails } from "~/components/OrderDetails";
+import { PayByTransfer } from "~/components/PayByTransfer";
 
-/** Paystack returns here: /order/<number>?reference=<ref>. The API confirms payment server-side. */
+/**
+ * Paystack returns here: /order/<number>?reference=<ref>. The API confirms payment server-side.
+ * Transfer orders land here straight from checkout and show the account to pay into.
+ */
 export async function loader({ params, request, context }: Route.LoaderArgs) {
   const env = context.cloudflare.env;
   const reference = new URL(request.url).searchParams.get("reference");
@@ -28,24 +32,32 @@ export default function OrderPage({ loaderData }: Route.ComponentProps) {
   const { revalidate } = useRevalidator();
   const paid = loaderData.state === "found" && loaderData.order.status !== "pending" && loaderData.order.status !== "cancelled";
   const pending = loaderData.state === "found" && loaderData.order.status === "pending";
+  const transfer = loaderData.state === "found" && loaderData.order.payment === "transfer";
 
-  // Clear the bag once payment is confirmed.
+  // Clear the bag once payment is confirmed, or once a transfer order is placed (it's held for them).
   useEffect(() => {
-    if (paid && bag.ready) bag.clear();
-  }, [paid, bag.ready]); // eslint-disable-line react-hooks/exhaustive-deps
+    if ((paid || (pending && transfer)) && bag.ready) bag.clear();
+  }, [paid, pending, transfer, bag.ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // The webhook may land a few seconds after the redirect: check again while pending.
+  // A transfer waits for the owner to check her account, so look less often.
   useEffect(() => {
     if (!pending) return;
-    const t = setInterval(revalidate, 3000);
+    const t = setInterval(revalidate, transfer ? 30_000 : 3000);
     return () => clearInterval(t);
-  }, [pending, revalidate]);
+  }, [pending, transfer, revalidate]);
+
+  if (loaderData.state === "found" && pending && transfer && loaderData.order.payTo) {
+    return <PayByTransfer order={{ ...loaderData.order, payTo: loaderData.order.payTo }} />;
+  }
 
   if (loaderData.state === "found" && paid) {
     return (
       <div className="px-(--spacing-gutter) pb-24">
         <StateMessage illustration={orderSuccess} title="Order confirmed">
-          Thank you. We've emailed your receipt and we're packing your order now.
+          {transfer
+            ? "Thank you. Your payment is in and we're getting your order ready."
+            : "Thank you. We've emailed your receipt and we're packing your order now."}
         </StateMessage>
         <OrderDetails order={loaderData.order} />
       </div>
@@ -55,6 +67,18 @@ export default function OrderPage({ loaderData }: Route.ComponentProps) {
     return (
       <StateMessage illustration={orderSuccess} title="Confirming your payment…">
         This usually takes a few seconds. Please keep this page open.
+      </StateMessage>
+    );
+  }
+  if (loaderData.state === "found" && loaderData.order.status === "cancelled" && transfer) {
+    return (
+      <StateMessage
+        illustration={paymentFailed}
+        title="This order was cancelled"
+        action={<ButtonLink to="/checkout">Order again</ButtonLink>}
+      >
+        We didn't receive the transfer within 24 hours, so the items went back on sale. If you did pay, send your receipt on WhatsApp
+        with the order number {loaderData.number} and we'll put it right.
       </StateMessage>
     );
   }

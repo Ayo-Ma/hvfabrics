@@ -75,6 +75,13 @@ export function reservationExpiry(from: Date): Date {
   return new Date(from.getTime() + RESERVATION_MINUTES * 60_000);
 }
 
+/** Paying by bank transfer: the items are held this long for the money to arrive and the owner to confirm it. */
+export const TRANSFER_HOLD_HOURS = 24;
+
+export function transferHoldExpiry(from: Date): Date {
+  return new Date(from.getTime() + TRANSFER_HOLD_HOURS * 3_600_000);
+}
+
 function assertQty(qty: number): void {
   if (!Number.isSafeInteger(qty) || qty < 1) throw new RangeError(`Invalid quantity ${qty}`);
 }

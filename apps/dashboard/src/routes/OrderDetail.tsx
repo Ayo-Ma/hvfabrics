@@ -2,8 +2,9 @@ import { useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 import { BOARD_LABELS, multiply, type OrderStatus } from "@hv/core";
 import { ChevronLeftIcon, MailIcon, PhoneIcon, PrintIcon, WhatsappIcon } from "@hv/ui/icons";
-import { Button, ErrorLine, PageHeader, Panel, Pill, Skel } from "../components/ui";
-import { refundOrder, useOrder, type BoardStatus } from "../lib/data";
+import { Button, ErrorLine, PageHeader, Panel, Pill, Skel, showToast } from "../components/ui";
+import { ApiError } from "../lib/api";
+import { cancelTransfer, confirmTransfer, refundOrder, useOrder, type BoardStatus } from "../lib/data";
 import { useMe } from "../lib/auth";
 import { dateTime, money, qtyText } from "../lib/format";
 import { printOrder } from "../lib/print";
@@ -179,6 +180,45 @@ export function OrderDetail() {
               </Button>
             ) : null}
             {me.can.refunds && (o.status === "paid" || o.status === "packed") ? <RefundDialog order={o} onDone={() => void q.refresh()} /> : null}
+            {me.can.payments && o.payment === "transfer" && o.status === "pending" ? (
+              <>
+                <Button
+                  tone="primary"
+                  disabled={busy}
+                  onClick={async () => {
+                    setBusy(true);
+                    try {
+                      await confirmTransfer(o);
+                      showToast(`${o.number} is paid. It's in New, ready to pack.`);
+                    } catch (e) {
+                      showToast(e instanceof ApiError ? e.message : "Couldn't save. Try again.");
+                    }
+                    await q.refresh();
+                    setBusy(false);
+                  }}
+                >
+                  Money received
+                </Button>
+                <Button
+                  tone="ghost"
+                  disabled={busy}
+                  onClick={async () => {
+                    if (!confirm(`Cancel ${o.number}? The held items go back on sale.`)) return;
+                    setBusy(true);
+                    try {
+                      await cancelTransfer(o);
+                      showToast(`${o.number} cancelled. Items are back on sale.`);
+                    } catch (e) {
+                      showToast(e instanceof ApiError ? e.message : "Couldn't save. Try again.");
+                    }
+                    await q.refresh();
+                    setBusy(false);
+                  }}
+                >
+                  Not paid
+                </Button>
+              </>
+            ) : null}
           </>
         }
       />
@@ -191,6 +231,13 @@ export function OrderDetail() {
             </p>
           ))}
         </div>
+      ) : null}
+
+      {o.payment === "transfer" && o.status === "pending" ? (
+        <p role="status" className="mb-4 rounded-[var(--radius-card)] border border-warn-line bg-warn-bg px-4 py-3 text-sm text-warn-ink">
+          Waiting for a bank transfer of <span className="num font-bold">{money(o.totals.total)}</span>. The customer sends the receipt on WhatsApp; check
+          that the money is in your account before you confirm.
+        </p>
       ) : null}
 
       {o.refund ? (

@@ -88,6 +88,10 @@ Phases 2–5 follow PLAN.md and get their own tables when Phase 1 passes.
 
 ## Decisions made during implementation
 
+- 2026-11-20 (Malik): until Paystack is verified, customers pay by bank transfer. Production runs `PAYMENT_MODE=transfer`;
+  items are held 24 hours (`TRANSFER_HOLD_HOURS`); the owner confirms each payment in the dashboard; the customer sends
+  only the receipt on WhatsApp and every question is answered on the site. Account details live in settings/store
+  (`update-settings.mjs --bank <file in hv-secrets>`). To return to cards: set `PAYMENT_MODE` to "card" once live keys are in.
 Small choices PLAN.md doesn't cover. Anything bigger goes to Malik first.
 
 | Date | Decision | Why |

@@ -74,7 +74,7 @@ export function Footer() {
         <div>
           <Wordmark className="block w-full text-paper [&>svg]:h-auto [&>svg]:w-full" />
           <p className="mt-5 text-[15px]">
-            © {new Date().getFullYear()} Harries Vogue, {SHOP_CITIES}. Payments are processed securely by Paystack.
+            © {new Date().getFullYear()} Harries Vogue, {SHOP_CITIES}.
           </p>
         </div>
       </div>

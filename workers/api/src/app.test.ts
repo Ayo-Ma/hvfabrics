@@ -45,6 +45,8 @@ const settings: Settings = {
   notificationTargets: { emails: ["owner@example.com"], pushTokens: [] },
 };
 
+const bankTransfer = { bank: "Opay", accountName: "Harries Vogue", accountNumber: "0123456789" };
+
 class FakeBucket implements BucketLike {
   data = new Map<string, { bytes: Uint8Array; type: string }>();
   async put(k: string, v: Uint8Array, o: { httpMetadata: { contentType: string } }) {
@@ -69,14 +71,14 @@ class FakeKv implements KvLike {
   }
 }
 
-function setup(opts: { paystack?: boolean; verifyAmount?: (ref: string) => number } = {}) {
+function setup(opts: { paystack?: boolean; verifyAmount?: (ref: string) => number; transfer?: boolean; bank?: boolean } = {}) {
   const store = new MemoryStore(
     [
       { product: product("lace"), variants: [variant("lace", "gold", 10)] },
       { product: product("last"), variants: [variant("last", "red", 5)] },
       { product: product("draft", "draft"), variants: [variant("draft", "x", 5)] },
     ],
-    settings,
+    opts.bank === false ? settings : { ...settings, bankTransfer },
   );
   const orders = new Map<string, number>();
   const paystack = {
@@ -110,6 +112,7 @@ function setup(opts: { paystack?: boolean; verifyAmount?: (ref: string) => numbe
     admin: new DevVerifier(),
     dashboardOrigin: "https://admin.example",
     storefrontOrigin: ORIGIN,
+    paymentMode: opts.transfer ? "transfer" : "card",
     placeholderData: false,
     now: () => now,
     waitUntil: (p) => void pending.push(p),
@@ -484,6 +487,98 @@ describe("cancel and refund (owner)", () => {
     const { orders } = (await res.json()) as { orders: { id: string; status: string }[] };
     // Listed for the record, but cancelled orders never count toward takings (see takings() in @hv/core).
     expect(orders.find((o) => o.id === order.id)?.status ?? "cancelled").toBe("cancelled");
+  });
+});
+
+describe("bank transfer (PAYMENT_MODE transfer)", () => {
+  const confirm = (t: ReturnType<typeof setup>, id: string, role: "owner" | "manager" | "packer" = "owner") =>
+    t.app.request(`/admin/orders/${id}/confirm-transfer`, { method: "POST", headers: as(role) });
+  const cancel = (t: ReturnType<typeof setup>, id: string) => t.app.request(`/admin/orders/${id}/cancel-transfer`, { method: "POST", headers: as("owner") });
+
+  async function placed(t: ReturnType<typeof setup>, qty = 2) {
+    const res = await checkout(t.app, [{ variantId: "lace--gold", qty }]);
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { orderNumber: string; authorizationUrl: string };
+    return { ...body, order: (await t.store.getOrderByNumber(body.orderNumber))! };
+  }
+
+  it("places the order without Paystack, holds the yards for 24 hours and sends the shopper to her order page", async () => {
+    const t = setup({ transfer: true, paystack: false });
+    const { authorizationUrl, order } = await placed(t, 3);
+    expect(order).toMatchObject({ status: "pending", payment: "transfer", reservedUntil: "2026-11-14T10:00:00.000Z" });
+    expect(authorizationUrl).toBe(`${ORIGIN}/order/${order.number}?reference=${order.paystackRef}`);
+    expect(t.paystack.initialize).not.toHaveBeenCalled();
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 10, reserved: 3 });
+  });
+
+  it("refuses to take orders until the shop's account is set", async () => {
+    const t = setup({ transfer: true, bank: false });
+    const res = await checkout(t.app, [{ variantId: "lace--gold", qty: 2 }]);
+    expect(res.status).toBe(503);
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ reserved: 0 });
+  });
+
+  it("shows the account to pay into on her own order page only, never to an email lookup", async () => {
+    const t = setup({ transfer: true });
+    const { order } = await placed(t);
+    const own = (await (await t.app.request(`/orders/${order.number}?reference=${order.paystackRef}`)).json()) as Record<string, unknown>;
+    expect(own).toMatchObject({ status: "pending", payment: "transfer", holdUntil: order.reservedUntil, payTo: { accountNumber: "0123456789" } });
+    expect(t.paystack.verify).not.toHaveBeenCalled();
+    const byEmail = (await (await t.app.request(`/orders/${order.number}?email=ada@example.com`)).json()) as Record<string, unknown>;
+    expect(byEmail.payTo).toBeUndefined();
+    expect((await t.app.request("/settings")).headers.get("cache-control")).toContain("max-age");
+    expect(((await (await t.app.request("/settings")).json()) as { payment: string }).payment).toBe("transfer");
+  });
+
+  it("lists waiting transfers; confirming takes the stock, records the customer and alerts her", async () => {
+    const t = setup({ transfer: true });
+    const { order } = await placed(t, 3);
+    await t.settle();
+    const waiting = (await (await t.app.request("/admin/orders/awaiting", { headers: as("manager") })).json()) as { orders: { id: string }[] };
+    expect(waiting.orders.map((o) => o.id)).toEqual([order.id]);
+    expect((await t.app.request("/admin/orders/awaiting", { headers: as("packer") })).status).toBe(403);
+    expect((await confirm(t, order.id, "packer")).status).toBe(403);
+
+    const res = await confirm(t, order.id);
+    expect(res.status).toBe(200);
+    expect(((await res.json()) as { status: string }).status).toBe("paid");
+    await t.settle();
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 7, reserved: 0 });
+    expect(t.notify.orderPaid).toHaveBeenCalledTimes(1);
+    expect((await t.store.getOrder(order.id))!.paidAt).toBe(T0.toISOString());
+    // Twice is harmless; it doesn't sell the yards again.
+    expect((await confirm(t, order.id)).status).toBe(200);
+    await t.settle();
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 7 });
+    expect(t.notify.orderPaid).toHaveBeenCalledTimes(1);
+    const after = (await (await t.app.request("/admin/orders/awaiting", { headers: as("owner") })).json()) as { orders: unknown[] };
+    expect(after.orders).toEqual([]);
+  });
+
+  it("a late confirmation after the hold ran out still takes the stock if it's there", async () => {
+    const t = setup({ transfer: true });
+    const { order } = await placed(t, 2);
+    t.setNow(new Date("2026-11-14T11:00:00Z"));
+    await runScheduled(t.deps);
+    expect((await t.store.getOrder(order.id))!.status).toBe("cancelled");
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 10, reserved: 0 });
+    expect(((await (await confirm(t, order.id)).json()) as { status: string }).status).toBe("paid");
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 8 });
+  });
+
+  it("cancelling an unpaid transfer gives the yards back; card orders can't be confirmed by hand", async () => {
+    const t = setup({ transfer: true });
+    const { order } = await placed(t, 2);
+    expect(((await (await cancel(t, order.id)).json()) as { status: string }).status).toBe("cancelled");
+    expect(t.store.peekVariant("lace--gold")).toMatchObject({ reserved: 0 });
+    expect((await cancel(t, order.id)).status).toBe(409);
+
+    const card = setup();
+    const res = await checkout(card.app, [{ variantId: "lace--gold", qty: 2 }]);
+    const { orderNumber } = (await res.json()) as { orderNumber: string };
+    const cardOrder = (await card.store.getOrderByNumber(orderNumber))!;
+    expect((await confirm(card, cardOrder.id)).status).toBe(409);
+    expect((await confirm(card, "nope")).status).toBe(404);
   });
 });
 

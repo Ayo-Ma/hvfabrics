@@ -129,7 +129,8 @@ export function createApp(depsFor: (c: Context) => Deps) {
 
   app.get("/settings", async (c) => {
     const s = await depsFor(c).store.getSettings();
-    return c.json({ deliveryZones: s.deliveryZones, policies: s.policies, storeAddress: s.storeAddress }, 200, {
+    const payment = depsFor(c).paymentMode;
+    return c.json({ deliveryZones: s.deliveryZones, policies: s.policies, storeAddress: s.storeAddress, payment }, 200, {
       "Cache-Control": "public, max-age=60",
     });
   });
@@ -198,7 +199,9 @@ export function createApp(depsFor: (c: Context) => Deps) {
     } else if (email && order.customer.email.toLowerCase() !== email.trim().toLowerCase()) {
       return c.json({ message: "Not found" }, 404);
     }
-    return c.json(toPublicOrder(order), 200, { "Cache-Control": "no-store" });
+    // The account to pay into goes only to the customer's own order page (the private reference), not to lookups by email.
+    const payTo = reference && order.payment === "transfer" && order.status === "pending" ? (await deps.store.getSettings()).bankTransfer : undefined;
+    return c.json(toPublicOrder(order, payTo), 200, { "Cache-Control": "no-store" });
   });
 
   /* ---------- Analytics events (Workers Analytics Engine, not Firestore) ---------- */

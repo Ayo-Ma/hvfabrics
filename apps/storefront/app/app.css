@@ -432,3 +432,18 @@ picture:hover > .reveal-img { transform: scale(1.03); }
 .collect-note { padding: 1rem 1.25rem; background: var(--color-grey-50); }
 .checkout-slip-field { padding: 1.5rem 1.25rem 1.75rem; background: var(--color-grey-100); }
 @media (prefers-reduced-motion: reduce) { .zone-tile { transition: none; } }
+
+/* ---------- Pay by transfer (order page) ---------- */
+.transfer-step { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; align-items: start; }
+.transfer-num { display: grid; place-items: center; width: 3rem; height: 3rem; background: var(--color-ink); color: var(--color-paper); font-family: var(--font-display); font-weight: 500; font-size: 1.5rem; line-height: 1; }
+.transfer-wa { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 3.25rem; padding: 0 1.4rem; background: var(--color-yellow); color: var(--color-ink); font-weight: 700; font-size: 1.0625rem; transition: transform 200ms var(--ease-out), background-color 200ms var(--ease-out); }
+.transfer-wa:hover { background: var(--color-yellow-press); transform: translateY(-2px); }
+.transfer-wa:active { transform: scale(0.98); }
+.transfer-wa:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 3px; }
+.transfer-note { border-left: 4px solid var(--color-yellow); padding: 0.9rem 1.1rem; background: var(--color-grey-50); font-size: 1rem; }
+.copy-chip { display: inline-flex; flex: none; align-items: center; gap: 0.35rem; min-height: 2.5rem; padding: 0 0.85rem; border: 1.5px solid var(--color-ink); font-size: 0.9375rem; font-weight: 600; transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out), transform 180ms var(--ease-out); }
+.copy-chip:hover { background: var(--color-ink); color: var(--color-paper); }
+.copy-chip:active { transform: scale(0.96); }
+.copy-chip:focus-visible { outline: 3px solid var(--color-yellow); outline-offset: 2px; }
+.copy-chip[data-done] { background: var(--color-yellow); border-color: var(--color-yellow); color: var(--color-ink); animation: tick 320ms var(--ease-out); }
+@media (prefers-reduced-motion: reduce) { .transfer-wa, .copy-chip { transition: none; animation: none; } .transfer-wa:hover { transform: none; } }

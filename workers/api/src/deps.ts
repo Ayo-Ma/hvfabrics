@@ -43,6 +43,8 @@ export interface Deps {
   searchLimiter?: LimiterLike;
   events?: EventsLike;
   storefrontOrigin: string;
+  /** "transfer": customers pay into the shop's account and she confirms it; "card": Paystack. */
+  paymentMode: "card" | "transfer";
   /** True when serving the placeholder seed data (development only). */
   placeholderData: boolean;
   now: () => Date;

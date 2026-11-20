@@ -39,6 +39,7 @@ export async function loader({ context }: Route.LoaderArgs) {
   return {
     byLine,
     zones: settings.deliveryZones.map((z) => ({ id: z.id, name: z.name, fee: z.fee, eta: z.eta })),
+    transfer: settings.payment === "transfer",
   };
 }
 
@@ -543,22 +544,27 @@ function Question({ q, children }: { q: string; children: React.ReactNode }) {
   );
 }
 
-function Buying({ zones }: { zones: { id: string; name: string; fee: { amount: number; currency: "NGN" | "USD" }; eta: string }[] }) {
+function Buying({ zones, transfer }: { zones: { id: string; name: string; fee: { amount: number; currency: "NGN" | "USD" }; eta: string }[]; transfer: boolean }) {
   return (
     <section aria-labelledby="buying-title" className="relative bg-ink text-paper">
       <div className="mx-auto grid max-w-(--container-page) gap-14 px-(--spacing-gutter) pb-24 pt-24 md:grid-cols-12 md:pb-36 md:pt-0">
         <div className="md:col-span-5 md:pt-36">
           <h2 id="buying-title" className="chapter-title" data-rise>Nothing to worry about</h2>
           <ul className="mt-8 space-y-2 text-lg" data-rise style={{ ["--rise-i" as string]: 1 }}>
-            <li>Your card stays private with Paystack</li>
+            <li>{transfer ? "Pay by bank transfer, straight to our shop" : "Your card stays private with Paystack"}</li>
             <li>Delivered across Nigeria, or collect from our shop in {SHOP_CITIES}</li>
             <li>Know where your order is with its number and your email</li>
           </ul>
           <div className="mt-12 space-y-7" data-rise style={{ ["--rise-i" as string]: 2 }}>
-            <Question q="How do I pay?">At checkout you pay through Paystack. We never see or store your card details.</Question>
+            <Question q="How do I pay?">
+              {transfer
+                ? "Place your order, then transfer the total to the shop account shown on your order page and send the receipt on WhatsApp. We confirm it during shop hours and get your order ready."
+                : "At checkout you pay through Paystack. We never see or store your card details."}
+            </Question>
             <Question q="What if only a few yards are left?">
-              Each fabric shows exactly how many yards are left. When you start paying, your yards are held for 15 minutes so
-              nobody else can buy them.
+              {transfer
+                ? "Each fabric shows exactly how many yards are left. When you place your order, your yards are held for 24 hours while you transfer, so nobody else can buy them."
+                : "Each fabric shows exactly how many yards are left. When you start paying, your yards are held for 15 minutes so nobody else can buy them."}
             </Question>
             <Question q="What does delivery cost?">
               {zones.map((z) => (
@@ -614,7 +620,7 @@ function Buying({ zones }: { zones: { id: string; name: string; fee: { amount: n
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const { byLine, zones } = loaderData;
+  const { byLine, zones, transfer } = loaderData;
   const fabrics = byLine.fabric;
   return (
     <>
@@ -626,7 +632,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       <PriceSheet byLine={byLine} />
       <YourCut fabrics={fabrics} zones={zones} />
       <TheShop />
-      <Buying zones={zones} />
+      <Buying zones={zones} transfer={transfer} />
     </>
   );
 }

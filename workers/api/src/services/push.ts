@@ -33,6 +33,15 @@ export function orderPaidPush(order: Order): PushMessage {
   };
 }
 
+export function transferWaitingPush(order: Order): PushMessage {
+  return {
+    title: `Transfer coming: ${order.number} · ${formatMoney(order.totals.total)}`,
+    body: `${order.customer.name} will send the receipt on WhatsApp. Confirm it in Orders once the money is in.`,
+    url: `/orders/${order.id}`,
+    tag: `order-${order.id}`,
+  };
+}
+
 export class FcmPusher implements Pusher {
   constructor(
     private readonly projectId: string,

@@ -76,6 +76,8 @@ export interface Store {
   setStock(variantId: string, patch: StockPatch): Promise<StockResult>;
   /** Orders in these states, most recently paid first. */
   listOrders(statuses: readonly OrderStatus[], limit: number): Promise<Order[]>;
+  /** Transfer orders still waiting for the money, oldest first. */
+  listAwaitingTransfer(limit: number): Promise<Order[]>;
   /** Orders paid at or after `since` (ISO), most recent first. */
   listPaidSince(since: string, limit: number): Promise<Order[]>;
   /** A move on the orders board (see moveOrder in @hv/core). */

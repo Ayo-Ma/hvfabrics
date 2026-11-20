@@ -30,6 +30,8 @@ export const ROLE_CAN = {
   takings: ["owner", "manager"],
   /** Cancelling a paid order means giving money back: the owner alone (questionnaire Q63). */
   refunds: ["owner"],
+  /** Confirming a bank transfer arrived (or that it never did). */
+  payments: ["owner", "manager"],
 } as const satisfies Record<string, readonly AdminRole[]>;
 
 export function roleCan(role: AdminRole, what: keyof typeof ROLE_CAN): boolean {

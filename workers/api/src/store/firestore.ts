@@ -399,6 +399,24 @@ export class FirestoreStore implements Store {
     return docs.map((d) => OrderSchema.parse(decodeFields(d.fields ?? {})));
   }
 
+  /** Two equality filters only, so Firestore's single-field indexes serve it; sorted here. */
+  async listAwaitingTransfer(limit: number): Promise<Order[]> {
+    const docs = await this.runQuery({
+      from: [{ collectionId: "orders" }],
+      where: {
+        compositeFilter: {
+          op: "AND",
+          filters: [
+            { fieldFilter: { field: { fieldPath: "status" }, op: "EQUAL", value: encodeValue("pending") } },
+            { fieldFilter: { field: { fieldPath: "payment" }, op: "EQUAL", value: encodeValue("transfer") } },
+          ],
+        },
+      },
+      limit,
+    });
+    return docs.map((d) => OrderSchema.parse(decodeFields(d.fields ?? {}))).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  }
+
   async listPaidSince(since: string, limit: number): Promise<Order[]> {
     const docs = await this.runQuery({
       from: [{ collectionId: "orders" }],

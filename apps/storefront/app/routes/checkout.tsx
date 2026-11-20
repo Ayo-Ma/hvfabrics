@@ -19,7 +19,7 @@ export function meta() {
 
 export async function loader({ context }: Route.LoaderArgs) {
   const settings = await getSettings(context.cloudflare.env);
-  return { zones: settings.deliveryZones };
+  return { zones: settings.deliveryZones, transfer: settings.payment === "transfer" };
 }
 
 type FieldErrors = Partial<Record<"name" | "email" | "phone" | "zoneId" | "address" | "city" | "state" | "items", string>>;
@@ -122,7 +122,11 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
   return (
     <div className="mx-auto max-w-(--container-page) px-(--spacing-gutter) pb-24 pt-10 md:pt-14">
       <h1 className="display-size cover-fade">Checkout</h1>
-      <p className="mt-4 text-lg">No account needed. You&rsquo;ll pay on Paystack&rsquo;s secure page.</p>
+      <p className="mt-4 text-lg">
+        {loaderData.transfer
+          ? "No account needed. You pay by bank transfer: the account details come on the next page."
+          : "No account needed. You\u2019ll pay on Paystack\u2019s secure page."}
+      </p>
 
       {actionData?.message && (
         <div role="alert" className="mt-8 flex items-center gap-4 bg-grey-100 p-4">
@@ -225,10 +229,19 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
               </div>
             </div>
             <Button type="submit" className="mt-6 min-h-14 w-full" disabled={submitting || !bag.ready}>
-              <LockIcon /> {submitting ? "Starting secure payment…" : `Pay ${formatMoney(total)}`}
+              <LockIcon />{" "}
+              {loaderData.transfer
+                ? submitting
+                  ? "Placing your order…"
+                  : `Place order · ${formatMoney(total)}`
+                : submitting
+                  ? "Starting secure payment…"
+                  : `Pay ${formatMoney(total)}`}
             </Button>
             <p className="mt-3 text-[15px] text-grey-600">
-              Your items are held for 15 minutes while you pay. Prices and stock are confirmed when you press Pay.{" "}
+              {loaderData.transfer
+                ? "Next you'll see our account details. Your items are held for 24 hours while you transfer. Prices and stock are confirmed when you place the order."
+                : "Your items are held for 15 minutes while you pay. Prices and stock are confirmed when you press Pay."}{" "}
               <Link to="/policies/returns" className="underline underline-offset-4">
                 Returns
               </Link>

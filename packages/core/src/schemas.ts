@@ -108,6 +108,18 @@ export const OrderStatusSchema = z.enum([
 ]);
 export type OrderStatus = z.infer<typeof OrderStatusSchema>;
 
+/** "card" = Paystack; "transfer" = the customer pays into the shop's account and the owner confirms it. */
+export const PaymentMethodSchema = z.enum(["card", "transfer"]);
+export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
+
+/** The account customers pay into when paying by transfer. Shown on the order page only. */
+export const BankTransferSchema = z.object({
+  bank: z.string().trim().min(2).max(60),
+  accountName: z.string().trim().min(2).max(120),
+  accountNumber: z.string().regex(/^\d{10}$/, "A Nigerian account number has 10 digits"),
+});
+export type BankTransfer = z.infer<typeof BankTransferSchema>;
+
 export const OrderItemSchema = z.object({
   productId: id,
   variantId: id,
@@ -143,6 +155,9 @@ export const OrderSchema = z.object({
   totals: z.object({ subtotal: MoneySchema, delivery: MoneySchema, total: MoneySchema }),
   currency: CurrencySchema,
   status: OrderStatusSchema,
+  /** How the customer pays. Absent means card through Paystack (every order before 2026-11-20). */
+  payment: PaymentMethodSchema.optional(),
+  /** Paystack's reference for card orders; for transfer orders the private key of the order's own page. */
   paystackRef: z.string().optional(),
   reservedUntil: isoDate.optional(),
   country: z.string().optional(),
@@ -201,6 +216,8 @@ export const SettingsSchema = z.object({
   storeAddress: z.string(),
   policies: z.object({ delivery: z.string(), returns: z.string(), privacy: z.string() }),
   notificationTargets: z.object({ emails: z.array(z.email()), pushTokens: z.array(z.string()) }),
+  /** Needed when the shop takes payment by bank transfer (PAYMENT_MODE "transfer"). */
+  bankTransfer: BankTransferSchema.optional(),
 });
 export type Settings = z.infer<typeof SettingsSchema>;
 

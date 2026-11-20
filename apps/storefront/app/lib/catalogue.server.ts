@@ -8,7 +8,10 @@ import { apiFetch } from "./api-fetch.server";
  * uses the placeholder seed catalogue; production refuses to serve placeholders.
  */
 
-export type PublicSettings = Pick<Settings, "deliveryZones" | "policies" | "storeAddress">;
+export type PublicSettings = Pick<Settings, "deliveryZones" | "policies" | "storeAddress"> & {
+  /** How customers pay right now. Absent (older API, dev fallback) means card. */
+  payment?: "card" | "transfer";
+};
 
 function apiConnected(env: Env): boolean {
   return Boolean(env.API_URL);

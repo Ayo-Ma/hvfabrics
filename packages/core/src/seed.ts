@@ -113,4 +113,6 @@ export const seedSettings: Settings = {
     privacy: "[TBC: privacy policy]",
   },
   notificationTargets: { emails: [], pushTokens: [] },
+  // Local preview only; the live account is written to settings/store by scripts/update-settings.mjs --bank.
+  bankTransfer: { bank: "[TBC: bank]", accountName: "[TBC: account name]", accountNumber: "0000000000" },
 };

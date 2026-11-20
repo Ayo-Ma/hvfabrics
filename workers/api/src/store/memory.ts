@@ -150,6 +150,14 @@ export class MemoryStore implements Store {
       .map((o) => structuredClone(o));
   }
 
+  async listAwaitingTransfer(limit: number): Promise<Order[]> {
+    return [...this.orders.values()]
+      .filter((o) => o.status === "pending" && o.payment === "transfer")
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+      .slice(0, limit)
+      .map((o) => structuredClone(o));
+  }
+
   async listPaidSince(since: string, limit: number): Promise<Order[]> {
     return [...this.orders.values()]
       .filter((o) => o.paidAt !== undefined && o.paidAt >= since)

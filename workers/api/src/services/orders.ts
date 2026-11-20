@@ -4,7 +4,9 @@ import {
   priceOrder,
   MinimumQuantityError,
   reservationExpiry,
+  transferHoldExpiry,
   variantLabel,
+  type BankTransfer,
   type BagLine,
   type BagProblem,
   type Money,
@@ -15,7 +17,7 @@ import {
 import { z } from "zod";
 import type { Deps } from "../deps";
 import { rebuildLater } from "./catalogue";
-import { orderPaidPush } from "./push";
+import { orderPaidPush, transferWaitingPush } from "./push";
 
 export const CheckoutRequestSchema = CheckoutInputSchema.extend({ callbackBase: z.url() });
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
@@ -49,10 +51,14 @@ export async function startCheckout(
   if (new URL(req.callbackBase).origin !== deps.storefrontOrigin) {
     return { kind: "invalid", message: "Unknown storefront" };
   }
-  if (!deps.paystack) {
+  const transfer = deps.paymentMode === "transfer";
+  if (!transfer && !deps.paystack) {
     return { kind: "unavailable", message: "Payments aren't configured yet (Paystack keys missing)." };
   }
   const settings = await deps.store.getSettings();
+  if (transfer && !settings.bankTransfer) {
+    return { kind: "unavailable", message: "We can't take orders online right now. Please try again later." };
+  }
   const zone = settings.deliveryZones.find((z) => z.id === req.delivery.zoneId);
   if (!zone) return { kind: "invalid", message: "Choose a delivery area." };
 
@@ -95,8 +101,9 @@ export async function startCheckout(
       totals: priced.totals,
       currency: priced.currency,
       status: "pending",
+      ...(transfer ? { payment: "transfer" as const } : {}),
       paystackRef: id,
-      reservedUntil: reservationExpiry(now).toISOString(),
+      reservedUntil: (transfer ? transferHoldExpiry(now) : reservationExpiry(now)).toISOString(),
       ...(geo.country ? { country: geo.country } : {}),
       ...(geo.city ? { city: geo.city } : {}),
       ...(req.source ? { source: req.source } : {}),
@@ -113,6 +120,15 @@ export async function startCheckout(
   if (!created.ok) return { kind: "stock", problems: created.problems };
   const order = created.order;
   rebuildLater(deps, "reservation");
+
+  if (transfer) {
+    // No payment page: the customer goes straight to the order page with the account to pay into.
+    deps.events?.writeDataPoint({ blobs: ["checkout_start", order.number, geo.country ?? ""], doubles: [order.totals.total.amount], indexes: ["checkout_start"] });
+    deps.waitUntil(alertTransferWaiting(deps, order).catch((e: unknown) => deps.log("transfer alert failed", { order: order.number, error: String(e) })));
+    const page = `${req.callbackBase.replace(/\/$/, "")}/${order.number}?reference=${encodeURIComponent(order.paystackRef!)}`;
+    return { kind: "ok", orderNumber: order.number, authorizationUrl: page };
+  }
+  if (!deps.paystack) return { kind: "unavailable", message: "Payments aren't configured yet (Paystack keys missing)." };
 
   try {
     const tx = await deps.paystack.initialize({
@@ -146,6 +162,8 @@ export async function confirmPayment(deps: Deps, reference: string): Promise<Ord
     return null;
   }
   if (order.status !== "pending" && order.status !== "cancelled") return order;
+  // Transfers are confirmed by the owner in the dashboard (confirmTransfer), never by Paystack.
+  if (order.payment === "transfer") return order;
   if (!deps.paystack) return order;
 
   const tx = await deps.paystack.verify(reference);
@@ -160,7 +178,43 @@ export async function confirmPayment(deps: Deps, reference: string): Promise<Ord
     return order;
   }
 
-  const result = await deps.store.markPaid(order.id, tx.paid_at ?? deps.now().toISOString());
+  return recordPayment(deps, order.id, tx.paid_at ?? deps.now().toISOString());
+}
+
+export type TransferOutcome =
+  | { ok: true; order: Order }
+  | { ok: false; status: 404 | 409; message: string };
+
+/**
+ * The owner saw the money arrive in the shop's account: mark the transfer order paid. Same path as a
+ * Paystack payment from here (stock, customer record, alerts), so a late confirmation after the
+ * hold ran out still takes the stock if it's there, or flags the order if it isn't.
+ */
+export async function confirmTransfer(deps: Deps, orderId: string): Promise<TransferOutcome> {
+  const order = await deps.store.getOrder(orderId);
+  if (!order) return { ok: false, status: 404, message: "Not found" };
+  if (order.payment !== "transfer") return { ok: false, status: 409, message: "This order was paid by card; Paystack confirms it." };
+  if (order.refund) return { ok: false, status: 409, message: "This order was refunded." };
+  if (order.status !== "pending" && order.status !== "cancelled") return { ok: true, order };
+  const paid = await recordPayment(deps, order.id, deps.now().toISOString());
+  return paid ? { ok: true, order: paid } : { ok: false, status: 404, message: "Not found" };
+}
+
+/** The money never came: release the held items. */
+export async function cancelTransfer(deps: Deps, orderId: string): Promise<TransferOutcome> {
+  const order = await deps.store.getOrder(orderId);
+  if (!order) return { ok: false, status: 404, message: "Not found" };
+  if (order.payment !== "transfer" || order.status !== "pending") {
+    return { ok: false, status: 409, message: "Only transfer orders still waiting for payment can be cancelled here." };
+  }
+  const cancelled = await deps.store.cancelPending(order.id, deps.now().toISOString());
+  if (!cancelled) return { ok: false, status: 404, message: "Not found" };
+  rebuildLater(deps, "transfer cancelled");
+  return { ok: true, order: cancelled };
+}
+
+async function recordPayment(deps: Deps, orderId: string, paidAt: string): Promise<Order | null> {
+  const result = await deps.store.markPaid(orderId, paidAt);
   if (!result) return null;
   if (result.changed) {
     rebuildLater(deps, "paid");
@@ -174,20 +228,28 @@ export async function confirmPayment(deps: Deps, reference: string): Promise<Ord
 export interface PublicOrder {
   number: string;
   status: OrderStatus;
+  payment: "card" | "transfer";
   createdAt: string;
   paidAt?: string;
+  /** Transfer orders still waiting: when the hold ends, and the account to pay into. */
+  holdUntil?: string;
+  payTo?: BankTransfer;
   items: { title: string; variantLabel: string; qty: number; unitPrice: Money }[];
   totals: Order["totals"];
   deliveryZone: string;
 }
 
 /** What a shopper may see about their order: no address, phone or payment reference. */
-export function toPublicOrder(o: Order): PublicOrder {
+export function toPublicOrder(o: Order, payTo?: BankTransfer): PublicOrder {
+  const waiting = o.payment === "transfer" && o.status === "pending";
   return {
     number: o.number,
     status: o.status,
+    payment: o.payment ?? "card",
     createdAt: o.createdAt,
     ...(o.paidAt ? { paidAt: o.paidAt } : {}),
+    ...(waiting && o.reservedUntil ? { holdUntil: o.reservedUntil } : {}),
+    ...(waiting && payTo ? { payTo } : {}),
     items: o.items.map((i) => ({ title: i.title, variantLabel: i.variantLabel, qty: i.qty, unitPrice: i.unitPrice })),
     totals: o.totals,
     deliveryZone: o.delivery.zone,
@@ -198,6 +260,14 @@ export function toPublicOrder(o: Order): PublicOrder {
  * PLAN.md step 5: push to her phone and email her and the customer. Push goes first and
  * doesn't wait for email. Devices that unsubscribed are dropped from the list.
  */
+/** A transfer order was placed: tell her phone to watch for the money (and the receipt on WhatsApp). */
+async function alertTransferWaiting(deps: Deps, order: Order): Promise<void> {
+  if (!deps.push) return;
+  const settings = await deps.store.getSettings();
+  const r = await deps.push.send(settings.notificationTargets.pushTokens, transferWaitingPush(order));
+  if (r.dead.length) await deps.store.removePushTokens(r.dead);
+}
+
 export async function alertOwner(deps: Deps, order: Order): Promise<void> {
   const settings = await deps.store.getSettings();
   const push = deps.push

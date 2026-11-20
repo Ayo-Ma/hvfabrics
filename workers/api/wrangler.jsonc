@@ -23,7 +23,9 @@
 		// The dashboard PWA; the only origin allowed to call /admin/*.
 		"DASHBOARD_ORIGIN": "http://localhost:5180",
 		// Sender for transactional email (Resend). Must be a verified domain before launch.
-		"EMAIL_FROM": "Harries Vogue <orders@example.com>"
+		"EMAIL_FROM": "Harries Vogue <orders@example.com>",
+		// "card" = Paystack; "transfer" = customers pay into the shop's account (settings/store.bankTransfer) and she confirms it.
+		"PAYMENT_MODE": "card"
 	},
 	// Built catalogue JSON, read by the storefront. Create with: wrangler kv namespace create CATALOGUE
 	// Product photos, uploaded from the dashboard. Create with: wrangler r2 bucket create hv-images
@@ -74,7 +76,8 @@
 				"ENVIRONMENT": "development",
 				"STOREFRONT_ORIGIN": "http://localhost:5173",
 				"DASHBOARD_ORIGIN": "http://localhost:5180",
-				"EMAIL_FROM": "Harries Vogue <onboarding@resend.dev>"
+				"EMAIL_FROM": "Harries Vogue <onboarding@resend.dev>",
+				"PAYMENT_MODE": "card"
 			},
 			"r2_buckets": [{ "binding": "IMAGES", "bucket_name": "hv-images" }],
 			"kv_namespaces": [{ "binding": "CATALOGUE", "id": "e2e-local" }],
@@ -89,7 +92,9 @@
 				"ENVIRONMENT": "production",
 				"STOREFRONT_ORIGIN": "https://hv-storefront.harriesvogueglobal.workers.dev",
 				"DASHBOARD_ORIGIN": "https://hv-dashboard.harriesvogueglobal.workers.dev",
-				"EMAIL_FROM": "Harries Vogue <onboarding@resend.dev>"
+				"EMAIL_FROM": "Harries Vogue <onboarding@resend.dev>",
+				// Bank transfer until Paystack is verified (2026-11-20). Switch to "card" once the live keys are in.
+				"PAYMENT_MODE": "transfer"
 			},
 			// Product photos, uploaded from the dashboard.
 			"r2_buckets": [{ "binding": "IMAGES", "bucket_name": "hv-images" }],

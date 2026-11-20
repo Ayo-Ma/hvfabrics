@@ -12,6 +12,7 @@ export interface Entry {
 
 export const keys = {
   board: "orders:board",
+  awaiting: "orders:awaiting",
   order: (id: string) => `orders:one:${id}`,
   takings: "takings",
   products: "products:all",
@@ -24,6 +25,9 @@ function takingsSince(): string {
 }
 
 export const useBoard = () => useQuery(keys.board, () => api<{ orders: Order[]; at: string }>("/admin/orders"), { every: 30_000 });
+/** Bank-transfer orders waiting for the money (owner and manager). */
+export const useAwaiting = (enabled: boolean) =>
+  useQuery(enabled ? keys.awaiting : null, () => api<{ orders: Order[]; at: string }>("/admin/orders/awaiting"), { every: 30_000 });
 export const useOrder = (id: string) => useQuery(keys.order(id), () => api<Order>(`/admin/orders/${encodeURIComponent(id)}`));
 export const useTakings = (enabled: boolean) =>
   useQuery(enabled ? keys.takings : null, () => api<{ orders: Order[]; at: string }>(`/admin/takings?since=${takingsSince()}`), { every: 60_000 });
@@ -54,6 +58,27 @@ export async function refundOrder(order: Order, input: RefundInput): Promise<Ord
   setData<{ orders: Order[]; at: string }>(keys.board, (b) => b && { ...b, orders: b.orders.filter((o) => o.id !== next.id) });
   invalidate(keys.takings);
   return next;
+}
+
+/** The transfer is in her account: the order becomes paid and lands in New. */
+export async function confirmTransfer(order: Order): Promise<Order> {
+  const next = await api<Order>(`/admin/orders/${order.id}/confirm-transfer`, { body: {} });
+  afterTransfer(next);
+  return next;
+}
+
+/** The money never came: cancel and put the held items back. */
+export async function cancelTransfer(order: Order): Promise<Order> {
+  const next = await api<Order>(`/admin/orders/${order.id}/cancel-transfer`, { body: {} });
+  afterTransfer(next);
+  return next;
+}
+
+function afterTransfer(next: Order) {
+  setData<{ orders: Order[]; at: string }>(keys.awaiting, (b) => b && { ...b, orders: b.orders.filter((o) => o.id !== next.id) });
+  setData<Order>(keys.order(next.id), () => next);
+  invalidate(keys.board);
+  invalidate(keys.takings);
 }
 
 export async function saveProduct(id: string | null, input: ProductInput): Promise<Entry> {

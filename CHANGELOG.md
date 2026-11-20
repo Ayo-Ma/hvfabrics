@@ -9,6 +9,10 @@
 
 ## Phase 1 — MVP (in progress)
 
+- Pay by bank transfer (2026-11-20, until Paystack is verified): `PAYMENT_MODE=transfer` in production. Checkout places the
+  order and holds the items 24 hours; the order page shows the shop's account (from settings/store, never the repo) with
+  copy buttons and a WhatsApp button that sends the receipt message ready-written ("WhatsApp is for receipts only").
+  Dashboard: "Waiting for transfer" list on Orders, with Money received / Not paid (owner and manager).
 - Owner can cancel a paid or packed order and record the bank-transfer refund from the dashboard, choosing whether to
   restock (cut fabric can't go back); owner-only, one transaction, and a late Paystack confirmation can't revive it.
 - Checkout "Send me offers" tick box (off by default); saved on the order and shown in the dashboard.

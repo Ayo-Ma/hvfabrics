@@ -82,6 +82,7 @@ function depsFrom(env: WorkerEnv, ctx: { waitUntil(p: Promise<unknown>): void })
     searchLimiter: env.SEARCH_LIMITER,
     events: env.EVENTS,
     storefrontOrigin: env.STOREFRONT_ORIGIN,
+    paymentMode: env.PAYMENT_MODE === "transfer" ? "transfer" : "card",
     placeholderData: placeholder,
     now: () => new Date(),
     waitUntil: (p) => ctx.waitUntil(p),

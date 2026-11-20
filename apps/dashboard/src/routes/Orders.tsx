@@ -6,7 +6,8 @@ import { PrintIcon, SearchIcon } from "@hv/ui/icons";
 import emptyOrders from "@hv/ui/illustrations/empty-orders.webp";
 import { Button, EmptyLine, ErrorLine, Freshness, PageHeader, Skel, showToast } from "../components/ui";
 import { ApiError } from "../lib/api";
-import { moveOrder, useBoard, type BoardStatus } from "../lib/data";
+import { useMe } from "../lib/auth";
+import { cancelTransfer, confirmTransfer, moveOrder, useAwaiting, useBoard, type BoardStatus } from "../lib/data";
 import { ago, money, qtyText } from "../lib/format";
 import { useNow } from "../lib/now";
 import { printOrder } from "../lib/print";
@@ -26,7 +27,7 @@ const COLUMNS: Column[] = [
 ];
 
 export const FLAG_TEXT: Record<string, string> = {
-  paid_after_expiry_stock_short: "Paid after the 15-minute hold ended and the stock had gone. Contact the customer before packing.",
+  paid_after_expiry_stock_short: "Paid after the hold ended and the stock had gone. Contact the customer before packing.",
 };
 
 export function Orders() {
@@ -61,6 +62,8 @@ export function Orders() {
       />
 
       {board.error && !board.data ? <ErrorLine error={board.error} at={board.at} retry={() => void board.refresh()} /> : null}
+
+      <AwaitingTransfers now={now} />
 
       {board.data && total === 0 && !q ? (
         <div className="panel flex flex-col items-center px-6 py-10 text-center">
@@ -123,6 +126,76 @@ export function Orders() {
         </>
       )}
     </>
+  );
+}
+
+/**
+ * Bank transfers waiting for the money: "Has this one paid?" She checks her bank app (the customer
+ * also sends the receipt on WhatsApp), then confirms it here and the order drops into New.
+ */
+function AwaitingTransfers({ now }: { now: number }) {
+  const me = useMe();
+  const q = useAwaiting(Boolean(me.can.payments));
+  const list = q.data?.orders ?? [];
+  if (!me.can.payments || list.length === 0) return null;
+  return (
+    <section aria-labelledby="awaiting-title" className="panel mb-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-rule px-4 py-3">
+        <h2 id="awaiting-title" className="flex items-baseline gap-2">
+          Waiting for transfer <span className="num text-sm font-normal text-muted">{list.length}</span>
+        </h2>
+        <p className="text-sm text-muted">Check your bank app. Confirm only when the money is in.</p>
+      </div>
+      <ul className="divide-y divide-rule">
+        {list.map((o) => (
+          <AwaitingRow key={o.id} order={o} now={now} />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+export function holdLeft(until: string | undefined, now: number): string {
+  if (!until) return "";
+  const mins = Math.round((Date.parse(until) - now) / 60_000);
+  if (mins <= 0) return "hold ended, items released";
+  return mins < 60 ? `held ${mins} min more` : `held ${Math.round(mins / 60)} h more`;
+}
+
+function AwaitingRow({ order, now }: { order: Order; now: number }) {
+  const [busy, setBusy] = useState(false);
+  const run = async (what: "confirm" | "cancel") => {
+    if (what === "cancel" && !confirm(`Cancel ${order.number}? The held items go back on sale. Only do this if ${order.customer.name} hasn't paid.`)) return;
+    setBusy(true);
+    try {
+      const next = what === "confirm" ? await confirmTransfer(order) : await cancelTransfer(order);
+      showToast(what === "confirm" ? `${next.number} is paid. It's in New, ready to pack.` : `${next.number} cancelled. Items are back on sale.`);
+    } catch (e) {
+      showToast(e instanceof ApiError ? e.message : "Couldn't save. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
+      <div className="min-w-0 flex-1">
+        <Link to={`/orders/${order.id}`} className="hover:underline">
+          <span className="num font-bold">{order.number}</span> <span className="text-muted">·</span> {order.customer.name}
+        </Link>
+        <p className="num mt-0.5 text-xs text-muted">
+          {order.customer.phone} · ordered {ago(order.createdAt, now).toLowerCase()} · {holdLeft(order.reservedUntil, now)}
+        </p>
+      </div>
+      <span className="num text-lg font-bold">{money(order.totals.total)}</span>
+      <div className="flex gap-2">
+        <Button tone="primary" disabled={busy} onClick={() => void run("confirm")}>
+          Money received
+        </Button>
+        <Button tone="ghost" disabled={busy} onClick={() => void run("cancel")}>
+          Not paid
+        </Button>
+      </div>
+    </li>
   );
 }
 

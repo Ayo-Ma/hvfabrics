@@ -14,7 +14,7 @@ import { z } from "zod";
 import type { AdminUser } from "./auth/firebase";
 import type { Deps } from "./deps";
 import { rebuildLater } from "./services/catalogue";
-import { alertOwner } from "./services/orders";
+import { alertOwner, cancelTransfer, confirmTransfer } from "./services/orders";
 import { orderPaidPush } from "./services/push";
 import { seedSampleOrders } from "./services/samples";
 import type { SaveProductResult, StockResult } from "./store/types";
@@ -51,7 +51,7 @@ function savedOrProblem(c: Context, r: SaveProductResult | StockResult) {
     case "held":
       return c.json(
         {
-          message: `${r.held} of this are held by shoppers paying right now. Stock can't go below ${r.held} until they finish (up to 15 minutes).`,
+          message: `${r.held} of this are held for orders still being paid for. Stock can't go below ${r.held} until they're paid or cancelled.`,
           variantId: r.variantId,
           held: r.held,
         },
@@ -90,7 +90,7 @@ export function adminApp(depsFor: (c: Context) => Deps) {
 
   app.get("/me", (c) => {
     const user = c.get("user");
-    const can = (r: AdminRole) => ({ orders: roleCan(r, "orders"), products: roleCan(r, "products"), takings: roleCan(r, "takings"), refunds: roleCan(r, "refunds") });
+    const can = (r: AdminRole) => ({ orders: roleCan(r, "orders"), products: roleCan(r, "products"), takings: roleCan(r, "takings"), refunds: roleCan(r, "refunds"), payments: roleCan(r, "payments") });
     return c.json({ ...user, can: can(user.role), sampleData: c.get("deps").placeholderData });
   });
 
@@ -100,6 +100,22 @@ export function adminApp(depsFor: (c: Context) => Deps) {
     const { store } = c.get("deps");
     const [open, sent] = await Promise.all([store.listOrders(["paid", "packed"], 200), store.listOrders(["shipped"], 30)]);
     return c.json({ orders: [...open, ...sent], at: nowIso(c) }, 200, { "Cache-Control": "no-store" });
+  });
+
+  /** Transfer orders waiting for the money, oldest first: what to look for in the bank app. */
+  app.get("/orders/awaiting", need("payments"), async (c) => {
+    const orders = await c.get("deps").store.listAwaitingTransfer(100);
+    return c.json({ orders, at: nowIso(c) }, 200, { "Cache-Control": "no-store" });
+  });
+
+  app.post("/orders/:id/confirm-transfer", need("payments"), async (c) => {
+    const r = await confirmTransfer(c.get("deps"), param(c, "id"));
+    return r.ok ? c.json(r.order) : c.json({ message: r.message }, r.status);
+  });
+
+  app.post("/orders/:id/cancel-transfer", need("payments"), async (c) => {
+    const r = await cancelTransfer(c.get("deps"), param(c, "id"));
+    return r.ok ? c.json(r.order) : c.json({ message: r.message }, r.status);
   });
 
   app.get("/orders/:id", need("orders"), async (c) => {

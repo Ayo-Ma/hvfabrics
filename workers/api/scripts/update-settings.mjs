@@ -5,7 +5,10 @@
  * from workers/api/scripts/shop-settings.json (the owner's questionnaire answers).
  * Only those fields change: the phones registered for order alerts are kept.
  *
- *   node workers/api/scripts/update-settings.mjs <service-account.json> [--dry-run]
+ *   node workers/api/scripts/update-settings.mjs <service-account.json> [--dry-run] [--bank <bank.json>]
+ *
+ * --bank sets the account customers pay into by transfer, from a private file kept OUTSIDE the repo
+ * (the hv-secrets folder): {"bank": "Opay", "accountName": "...", "accountNumber": "0123456789"}.
  *
  * The shop picks up the change within a minute (catalogue cache). Validated against the same
  * rules as the API before anything is sent.
@@ -15,12 +18,22 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const [file, flag] = process.argv.slice(2);
+const args = process.argv.slice(2);
+const file = args[0];
 if (!file) {
-  console.error("Usage: update-settings.mjs <service-account.json> [--dry-run]");
+  console.error("Usage: update-settings.mjs <service-account.json> [--dry-run] [--bank <bank.json>]");
   process.exit(1);
 }
-const dry = flag === "--dry-run";
+const dry = args.includes("--dry-run");
+const bankFile = args.includes("--bank") ? args[args.indexOf("--bank") + 1] : null;
+if (args.includes("--bank") && !bankFile) throw new Error("--bank needs a file");
+const bank = bankFile ? JSON.parse(readFileSync(bankFile, "utf8")) : null;
+if (bank) {
+  // Same rules as BankTransferSchema in @hv/core.
+  if (typeof bank.bank !== "string" || bank.bank.trim().length < 2) throw new Error("bank: the bank's name, e.g. Opay");
+  if (typeof bank.accountName !== "string" || bank.accountName.trim().length < 2) throw new Error("accountName missing");
+  if (!/^[0-9]{10}$/.test(bank.accountNumber ?? "")) throw new Error("accountNumber must be the 10-digit account number");
+}
 const want = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "shop-settings.json"), "utf8"));
 
 // Same shape the API's SettingsSchema accepts: integer kobo, unique zone ids, real emails.
@@ -52,10 +65,17 @@ const fields = {
   notificationTargets: { mapValue: { fields: { emails: { arrayValue: { values: want.notificationEmails.map(str) } } } } },
 };
 const mask = ["deliveryZones", "storeAddress", "policies", "notificationTargets.emails"];
+if (bank) {
+  fields.bankTransfer = {
+    mapValue: { fields: { bank: str(bank.bank.trim()), accountName: str(bank.accountName.trim()), accountNumber: str(bank.accountNumber) } },
+  };
+  mask.push("bankTransfer");
+}
 
 if (dry) {
   console.log(`Dry run. Would set ${mask.join(", ")}:`);
   for (const z of want.deliveryZones) console.log(`  ${z.name.padEnd(32)} ₦${(z.fee.amount / 100).toLocaleString("en-NG")}  ${z.eta}`);
+  if (bank) console.log(`  Pay into: ${bank.bank}, ${bank.accountName}, ******${bank.accountNumber.slice(-4)}`);
   process.exit(0);
 }
 
@@ -86,4 +106,4 @@ const res = await fetch(url, {
   body: JSON.stringify({ fields }),
 });
 if (!res.ok) throw new Error(`Couldn't update settings/store: ${res.status} ${(await res.text()).slice(0, 300)}`);
-console.log(`Updated settings/store in ${sa.project_id}: ${want.deliveryZones.length} delivery options, address, policies, alert email.`);
+console.log(`Updated settings/store in ${sa.project_id}: ${want.deliveryZones.length} delivery options, address, policies, alert email${bank ? ", transfer account" : ""}.`);
