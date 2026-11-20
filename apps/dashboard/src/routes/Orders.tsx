@@ -139,12 +139,12 @@ function AwaitingTransfers({ now }: { now: number }) {
   const list = q.data?.orders ?? [];
   if (!me.can.payments || list.length === 0) return null;
   return (
-    <section aria-labelledby="awaiting-title" className="panel mb-6">
-      <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-rule px-4 py-3">
+    <section aria-labelledby="awaiting-title" className="panel mb-6 overflow-hidden border-warn-line">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-warn-line bg-warn-bg px-4 py-3">
         <h2 id="awaiting-title" className="flex items-baseline gap-2">
-          Waiting for transfer <span className="num text-sm font-normal text-muted">{list.length}</span>
+          Waiting for transfer <span className="num text-sm font-normal text-warn-ink">{list.length}</span>
         </h2>
-        <p className="text-sm text-muted">Check your bank app. Confirm only when the money is in.</p>
+        <p className="text-sm text-warn-ink">Check your bank app. Confirm only when the money is in.</p>
       </div>
       <ul className="divide-y divide-rule">
         {list.map((o) => (
@@ -187,11 +187,11 @@ function AwaitingRow({ order, now }: { order: Order; now: number }) {
         </p>
       </div>
       <span className="num text-lg font-bold">{money(order.totals.total)}</span>
-      <div className="flex gap-2">
-        <Button tone="primary" disabled={busy} onClick={() => void run("confirm")}>
+      <div className="flex w-full gap-2 sm:w-auto">
+        <Button tone="primary" disabled={busy} className="flex-1 sm:flex-none" onClick={() => void run("confirm")}>
           Money received
         </Button>
-        <Button tone="ghost" disabled={busy} onClick={() => void run("cancel")}>
+        <Button tone="ghost" disabled={busy} className="flex-1 sm:flex-none" onClick={() => void run("cancel")}>
           Not paid
         </Button>
       </div>

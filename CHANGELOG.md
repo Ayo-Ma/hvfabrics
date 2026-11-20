@@ -9,6 +9,11 @@
 
 ## Phase 1 — MVP (in progress)
 
+- Dashboard refresh (2026-11-20): labelled sidebar with who is signed in on desktop, an icon-and-label rail on tablets
+  (they used to get the stretched phone layout), a top bar naming the screen and a bottom bar on phones; softer cards,
+  larger titles, ink highlight for the current screen. Phone fixes: order items no longer squeezed, order actions in
+  full-width rows (main action first), transfer buttons full width, product options in two tidy rows, save bar and
+  toasts placed right at every width. "Waiting for transfer" stands out in yellow.
 - Pay by bank transfer (2026-11-20, until Paystack is verified): `PAYMENT_MODE=transfer` in production. Checkout places the
   order and holds the items 24 hours; the order page shows the shop's account (from settings/store, never the repo) with
   copy buttons and a WhatsApp button that sends the receipt message ready-written ("WhatsApp is for receipts only").

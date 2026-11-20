@@ -156,19 +156,14 @@ export function OrderDetail() {
             <Pill tone={TONE[o.status]}>{BOARD_LABELS[o.status]}</Pill>
           </span>
         }
-        sub={`${o.customer.name} · ${money(o.totals.total)} · paid ${o.paidAt ? dateTime(o.paidAt) : "—"}`}
+        sub={`${o.customer.name} · ${money(o.totals.total)} · ${o.paidAt ? `paid ${dateTime(o.paidAt)}` : `ordered ${dateTime(o.createdAt)}`}`}
         actions={
           <>
-            <Button onClick={() => void printOrder(o, "slip")}>
-              <PrintIcon size={16} /> Slip 80 mm
-            </Button>
-            <Button onClick={() => void printOrder(o, "a4")}>
-              <PrintIcon size={16} /> Invoice A4
-            </Button>
             {next ? (
               <Button
                 tone="primary"
                 disabled={busy}
+                className="w-full sm:w-auto"
                 onClick={async () => {
                   setBusy(true);
                   await move(o, next.to);
@@ -181,7 +176,7 @@ export function OrderDetail() {
             ) : null}
             {me.can.refunds && (o.status === "paid" || o.status === "packed") ? <RefundDialog order={o} onDone={() => void q.refresh()} /> : null}
             {me.can.payments && o.payment === "transfer" && o.status === "pending" ? (
-              <>
+              <span className="flex w-full gap-2 sm:w-auto [&>button]:flex-1 sm:[&>button]:flex-none">
                 <Button
                   tone="primary"
                   disabled={busy}
@@ -217,8 +212,16 @@ export function OrderDetail() {
                 >
                   Not paid
                 </Button>
-              </>
+              </span>
             ) : null}
+            <span className="flex w-full gap-2 sm:w-auto">
+              <Button className="flex-1 sm:flex-none" onClick={() => void printOrder(o, "slip")}>
+                <PrintIcon size={16} /> Slip 80 mm
+              </Button>
+              <Button className="flex-1 sm:flex-none" onClick={() => void printOrder(o, "a4")}>
+                <PrintIcon size={16} /> Invoice A4
+              </Button>
+            </span>
           </>
         }
       />
@@ -255,7 +258,7 @@ export function OrderDetail() {
             <thead className="sr-only sm:not-sr-only">
               <tr className="text-left text-xs text-muted">
                 <th className="px-5 pb-2 font-normal">Item</th>
-                <th className="pb-2 text-right font-normal">Qty</th>
+                <th className="hidden pb-2 text-right font-normal sm:table-cell">Qty</th>
                 <th className="hidden pb-2 text-right font-normal sm:table-cell">Price</th>
                 <th className="px-5 pb-2 text-right font-normal">Total</th>
               </tr>
@@ -266,34 +269,25 @@ export function OrderDetail() {
                   <td className="px-5 py-3">
                     <p className="font-medium">{i.title}</p>
                     <p className="text-xs text-muted">{i.variantLabel}</p>
+                    <p className="num mt-1 text-xs sm:hidden">
+                      <span className="font-bold">{qtyText(i)}</span> <span className="text-muted">× {money(i.unitPrice)}</span>
+                    </p>
                   </td>
-                  <td className="num py-3 text-right font-bold whitespace-nowrap">{qtyText(i)}</td>
+                  <td className="num hidden py-3 text-right font-bold whitespace-nowrap sm:table-cell">{qtyText(i)}</td>
                   <td className="num hidden py-3 text-right text-muted sm:table-cell">{money(i.unitPrice)}</td>
-                  <td className="num px-5 py-3 text-right">{money(multiply(i.unitPrice, i.qty))}</td>
+                  <td className="num px-5 py-3 text-right align-top whitespace-nowrap sm:align-middle">{money(multiply(i.unitPrice, i.qty))}</td>
                 </tr>
               ))}
             </tbody>
-            <tfoot className="text-sm">
-              <tr className="border-t border-rule">
-                <td className="px-5 pt-3 text-muted" colSpan={3}>
-                  Subtotal
-                </td>
-                <td className="num px-5 pt-3 text-right">{money(o.totals.subtotal)}</td>
-              </tr>
-              <tr>
-                <td className="px-5 pt-1 text-muted" colSpan={3}>
-                  Delivery · {o.delivery.zone}
-                </td>
-                <td className="num px-5 pt-1 text-right">{money(o.totals.delivery)}</td>
-              </tr>
-              <tr>
-                <td className="px-5 pt-2 pb-4 font-bold" colSpan={3}>
-                  Total paid
-                </td>
-                <td className="num px-5 pt-2 pb-4 text-right text-[15px] font-bold">{money(o.totals.total)}</td>
-              </tr>
-            </tfoot>
           </table>
+          <dl className="grid grid-cols-[1fr_auto] gap-x-4 border-t border-rule px-5 pt-3 pb-4 text-sm">
+            <dt className="text-muted">Subtotal</dt>
+            <dd className="num text-right">{money(o.totals.subtotal)}</dd>
+            <dt className="mt-1 text-muted">Delivery · {o.delivery.zone}</dt>
+            <dd className="num mt-1 text-right">{money(o.totals.delivery)}</dd>
+            <dt className="mt-2 font-bold">{o.paidAt ? "Total paid" : "Total"}</dt>
+            <dd className="num mt-2 text-right text-[15px] font-bold">{money(o.totals.total)}</dd>
+          </dl>
         </Panel>
 
         <div className="grid gap-4 lg:col-span-4">

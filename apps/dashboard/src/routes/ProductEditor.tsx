@@ -381,7 +381,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
           <Panel title="Options, price and stock" meta={f.line === "fabric" ? "One row per colour" : "One row per size or colour"} flush>
             <ul>
               {f.options.map((o, i) => (
-                <li key={o.key} className="grid grid-cols-2 gap-3 border-t border-rule px-5 py-4 first:border-t-0 sm:grid-cols-[1.2fr_0.8fr_0.9fr_1fr_0.8fr_0.8fr_auto] sm:items-start">
+                <li key={o.key} className="grid grid-cols-2 gap-3 border-t border-rule px-5 py-4 first:border-t-0 sm:grid-cols-3 sm:items-start">
                   <Field label={optionLabel} className="col-span-2 sm:col-span-1">
                     <input className="field" value={o.colour} onChange={(e) => setOption(i, { colour: e.target.value })} />
                   </Field>
@@ -404,7 +404,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
                   <Field label="Low at" error={problems[`low-${i}`]}>
                     <input className={cx("field num", problems[`low-${i}`] && "border-neg")} inputMode="numeric" value={o.lowStockAt} onChange={(e) => setOption(i, { lowStockAt: e.target.value })} />
                   </Field>
-                  <div className="col-span-2 flex justify-end sm:col-span-1 sm:pt-7">
+                  <div className="col-span-2 -mt-1 flex justify-end sm:col-span-3">
                     <Button
                       tone="text"
                       disabled={f.options.length === 1 || o.held > 0}
@@ -412,7 +412,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
                       onClick={() => setF((x) => ({ ...x, options: x.options.filter((_, j) => j !== i) }))}
                       aria-label={`Remove option ${i + 1}`}
                     >
-                      <TrashIcon size={16} /> <span className="sm:hidden">Remove</span>
+                      <TrashIcon size={16} /> Remove
                     </Button>
                   </div>
                 </li>
@@ -466,12 +466,12 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
       </div>
 
       {/* Save bar: above the phone's bottom nav, in the page flow on desktop. */}
-      <div className="sticky bottom-[calc(61px+env(safe-area-inset-bottom))] z-20 -mx-4 mt-6 border-t border-line bg-ground/95 px-4 py-3 sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0">
+      <div className="sticky bottom-[calc(65px+env(safe-area-inset-bottom))] z-20 md:bottom-0 -mx-4 mt-6 border-t border-line bg-ground/95 px-4 py-3 sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0">
         {serverError ? <p role="alert" className="mb-2 text-sm text-neg">{serverError}</p> : null}
         {Object.keys(problems).length ? <p role="alert" className="mb-2 text-sm text-neg">Check the fields marked in red.</p> : null}
         <div className="flex items-center justify-end gap-3">
           {busyUploading ? <span className="text-sm text-muted">Waiting for photos…</span> : null}
-          <Button type="submit" tone="primary" size="lg" disabled={saving || busyUploading} className="min-w-[140px]">
+          <Button type="submit" tone="primary" size="lg" disabled={saving || busyUploading} className="min-w-[140px] flex-1 sm:flex-none">
             {saving ? "Saving…" : id ? "Save changes" : f.status === "live" ? "Save and publish" : "Save draft"}
           </Button>
         </div>

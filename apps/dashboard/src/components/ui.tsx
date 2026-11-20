@@ -51,7 +51,7 @@ export function Pill({ tone = "neutral", children }: { tone?: "neutral" | "pos" 
 
 export function PageHeader({ title, sub, actions }: { title: ReactNode; sub?: ReactNode; actions?: ReactNode }) {
   return (
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+    <header className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 lg:mb-8">
       <div className="min-w-0">
         <h1>{title}</h1>
         {sub ? <p className="mt-1 text-[15px] leading-[22px] text-muted">{sub}</p> : null}
@@ -169,7 +169,7 @@ export function Toaster() {
     () => null,
   );
   return (
-    <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[calc(76px+env(safe-area-inset-bottom))] z-50 flex justify-center px-4 lg:bottom-6">
+    <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[calc(80px+env(safe-area-inset-bottom))] z-50 flex justify-center px-4 md:bottom-6">
       {t ? (
         <div key={t.id} className="toast pointer-events-auto flex max-w-md items-center gap-4 rounded-[var(--radius-card)] bg-text px-4 py-3 text-sm text-paper shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
           <span>{t.text}</span>
