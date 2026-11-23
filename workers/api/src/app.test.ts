@@ -172,7 +172,7 @@ describe("checkout", () => {
   it("refuses more than is available, with the exact problem", async () => {
     const res = await checkout(t.app, [{ variantId: "last--red", qty: 6 }]);
     expect(res.status).toBe(409);
-    expect(await res.json()).toEqual({ problems: [{ variantId: "last--red", kind: "insufficient", available: 5, requested: 6 }] });
+    expect(await res.json()).toEqual({ problems: [{ variantId: "last--red", kind: "insufficient" }] }); // never how many are left
     expect(t.store.peekVariant("last--red")).toMatchObject({ reserved: 0 });
   });
 
@@ -319,14 +319,15 @@ describe("expiry cron", () => {
 });
 
 describe("catalogue and order lookup", () => {
-  it("serves the built catalogue with live availability, without drafts", async () => {
+  it("serves the built catalogue without drafts and without any stock count", async () => {
     const t = setup();
     await checkout(t.app, [{ variantId: "lace--gold", qty: 4 }]);
     await t.settle();
     const res = await t.app.request("/catalogue");
     const cat = (await res.json()) as { products: { id: string; variants: { available: number }[] }[] };
     expect(cat.products.map((p) => p.id).sort()).toEqual(["lace", "last"]);
-    expect(cat.products.find((p) => p.id === "lace")!.variants[0]!.available).toBe(6);
+    expect(cat.products.find((p) => p.id === "lace")!.variants[0]!.available).toBe(100); // 6 are really left
+    expect(await (await t.app.request("/catalogue")).text()).not.toMatch(/"(stock|reserved|lowStock|lowStockAt)"/);
   });
 
   it("looks up orders by reference or email, hiding private fields", async () => {
@@ -602,7 +603,7 @@ describe("products and stock", () => {
     expect(entry.product.id).toBe("emerald-lace");
     expect(entry.variants).toEqual([expect.objectContaining({ id: "emerald-lace--v1", reserved: 0 })]);
     await t.settle();
-    const cat = JSON.parse((await t.deps.kv.get("catalogue:v1"))!) as { products: { id: string }[] };
+    const cat = JSON.parse((await t.deps.kv.get("catalogue:v2"))!) as { products: { id: string }[] };
     expect(cat.products.map((p) => p.id)).toContain("emerald-lace");
 
     const again = await t.app.request("/admin/products", {

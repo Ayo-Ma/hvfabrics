@@ -83,7 +83,7 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
   const [added, setAdded] = useState(false);
   // Always inside what can still be bought, even after the variant or live stock changes.
   const qty = Math.min(Math.max(min, wantedQty), Math.max(min, canAdd));
-  // Fewer yards left than the minimum cut: shown, but it can't be bought online.
+  // The bag already holds the most one order line can take.
   const belowMin = variant.available > 0 && canAdd < min;
 
   const optionKind = product.variants.some((v) => v.size) ? "Size" : product.variants.some((v) => v.colour) ? "Colour" : null;
@@ -154,13 +154,12 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
                 <p className="text-lg font-medium">This {optionKind?.toLowerCase() ?? "piece"} is sold out.</p>
               ) : belowMin ? (
                 <p className="text-lg font-medium">
-                  Only {variant.available} {unitLabel(variant.unit, variant.available)} left, under our {min}-yard minimum. Message us on WhatsApp and
-                  we&rsquo;ll see what we can do.
+                  You already have the most one order can take in your bag.
                 </p>
               ) : isYard ? (
                 <YardTape value={qty} onChange={setQty} available={canAdd || 1} unit={variant.unit} unitPrice={variant.price} />
               ) : (
-                <QuantityStepper value={qty} max={Math.max(1, canAdd)} onChange={setQty} available={variant.available} />
+                <QuantityStepper value={qty} max={Math.max(1, canAdd)} onChange={setQty} />
               )}
             </div>
 
@@ -171,7 +170,7 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
               onClick={addToBag}
               disabled={variant.available === 0 || canAdd < min}
             >
-              {variant.available === 0 ? "Sold out" : canAdd < 1 ? "All available units are in your bag" : added ? (
+              {variant.available === 0 ? "Sold out" : canAdd < min ? "Already in your bag" : added ? (
                 <>
                   <CheckIcon /> Added to bag
                 </>
@@ -348,7 +347,7 @@ function VariantOption({ v, selected, onSelect }: { v: CatalogueVariant; selecte
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
-      aria-label={`${v.size ?? v.colour}${soldOut ? ", sold out" : v.lowStock ? `, only ${v.available} left` : ""}`}
+      aria-label={`${v.size ?? v.colour}${soldOut ? ", sold out" : ""}`}
       className={cx(
         "min-h-11 min-w-12 px-4 text-[15px] font-medium transition-colors",
         selected ? "bg-ink text-paper" : "bg-grey-100 text-ink hover:bg-grey-200",
@@ -365,12 +364,10 @@ function QuantityStepper({
   value,
   max,
   onChange,
-  available,
 }: {
   value: number;
   max: number;
   onChange: (n: number) => void;
-  available: number;
 }) {
   return (
     <div className="flex items-center justify-between gap-4">
@@ -397,7 +394,6 @@ function QuantityStepper({
           <PlusIcon />
         </button>
       </div>
-      <p className="tabular text-[15px] text-grey-600">{available <= 5 ? `Only ${available} left` : `${available} in stock`}</p>
     </div>
   );
 }

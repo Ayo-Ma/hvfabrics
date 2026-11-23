@@ -327,7 +327,7 @@ function PriceSheet({ byLine }: { byLine: Record<Line, CatalogueProduct[]> }) {
         <Scallops />
         <div className="bg-paper px-7 py-14 text-ink sm:px-16">
           <h2 id="sheet-title" className="chapter-title text-center">On the shelf today</h2>
-          <p className="mt-3 text-center text-[15px] text-grey-600">Colours for the day, with what&rsquo;s left on each bolt right now.</p>
+          <p className="mt-3 text-center text-[15px] text-grey-600">Colours for the day.</p>
           {LINES.map((l) =>
             byLine[l].length ? (
               <div key={l} className="mt-14">
@@ -335,7 +335,6 @@ function PriceSheet({ byLine }: { byLine: Record<Line, CatalogueProduct[]> }) {
                 <ul className="mx-auto mt-6 max-w-[420px] space-y-4">
                   {byLine[l].slice(0, 6).map((p) => {
                     const unit = p.variants[0]?.unit ?? "piece";
-                    const left = p.variants.reduce((n, v) => n + v.available, 0);
                     return (
                       <li key={p.id} className="sheet-row">
                         <Link to={`/p/${p.slug}`} className="group flex items-baseline justify-between gap-6">
@@ -345,7 +344,7 @@ function PriceSheet({ byLine }: { byLine: Record<Line, CatalogueProduct[]> }) {
                             <span className="text-grey-600"> / {unitLabel(unit, 1)}</span>
                           </span>
                         </Link>
-                        <p className="text-[15px] text-grey-600">{p.soldOut ? "Sold out" : `${left} ${unitLabel(unit, left)} left`}</p>
+                        <p className="text-[15px] text-grey-600">{p.soldOut ? "Sold out" : "In stock"}</p>
                       </li>
                     );
                   })}
@@ -561,10 +560,10 @@ function Buying({ zones, transfer }: { zones: { id: string; name: string; fee: {
                 ? "Place your order, then transfer the total to the shop account shown on your order page and send the receipt on WhatsApp. We confirm it during shop hours and get your order ready."
                 : "At checkout you pay through Paystack. We never see or store your card details."}
             </Question>
-            <Question q="What if only a few yards are left?">
+            <Question q="Will my yards be kept for me?">
               {transfer
-                ? "Each fabric shows exactly how many yards are left. When you place your order, your yards are held for 24 hours while you transfer, so nobody else can buy them."
-                : "Each fabric shows exactly how many yards are left. When you start paying, your yards are held for 15 minutes so nobody else can buy them."}
+                ? "Yes. When you place your order, your yards are held for 24 hours while you transfer, so nobody else can buy them."
+                : "Yes. When you start paying, your yards are held for 15 minutes so nobody else can buy them."}
             </Question>
             <Question q="What does delivery cost?">
               {zones.map((z) => (

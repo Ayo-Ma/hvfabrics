@@ -1,11 +1,17 @@
 import type { Line, Product, ProductImage, Unit, Variant } from "./schemas";
 import type { Money } from "./money";
+import { minQty } from "./order";
 import { available } from "./stock";
 
 /**
  * The public catalogue: what the Worker builds on publish and caches at the edge.
- * Contains only live products and only what shoppers may see (no raw stock or reservations).
+ * Contains only live products and only what shoppers may see: never a stock count or reservation
+ * (owner's decision 2026-11-23: customers must not know how many yards remain).
  */
+
+/** What the public catalogue says for anything on sale. It is the most one order line can take, not a stock figure. */
+export const PUBLIC_LINE_LIMIT = 100;
+
 export interface CatalogueVariant {
   id: string;
   sku: string;
@@ -13,9 +19,8 @@ export interface CatalogueVariant {
   size?: string;
   unit: Unit;
   price: Money;
-  /** Units that can be bought right now (stock − reserved, never below 0). */
+  /** 0 when it can't be bought (including less than the minimum cut), otherwise PUBLIC_LINE_LIMIT. Never the real count. */
   available: number;
-  lowStock: boolean;
 }
 
 export interface CatalogueProduct {
@@ -42,7 +47,6 @@ export interface Catalogue {
 }
 
 export function toCatalogueVariant(v: Variant): CatalogueVariant {
-  const avail = available(v);
   return {
     id: v.id,
     sku: v.sku,
@@ -50,8 +54,7 @@ export function toCatalogueVariant(v: Variant): CatalogueVariant {
     ...(v.options.size ? { size: v.options.size } : {}),
     unit: v.options.unit,
     price: v.price,
-    available: avail,
-    lowStock: avail > 0 && avail <= v.lowStockAt,
+    available: available(v) >= minQty(v.options.unit) ? PUBLIC_LINE_LIMIT : 0,
   };
 }
 

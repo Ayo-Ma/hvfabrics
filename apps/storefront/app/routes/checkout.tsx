@@ -63,7 +63,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const result = await startCheckout(context.cloudflare.env, parsed.data, callbackBase);
   if (result.ok) throw redirect(result.authorizationUrl);
   if (result.kind === "stock") {
-    return { errors: {}, message: "Some items have just sold out or run low. Your bag has been updated; please check it.", problems: result.problems };
+    return { errors: {}, message: "We can't supply everything in your bag right now.", problems: result.problems };
   }
   return { errors: {}, message: result.message };
 }
@@ -91,11 +91,13 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
   const problems = actionData && "problems" in actionData ? actionData.problems : undefined;
   useEffect(() => {
     for (const p of problems ?? []) {
-      if (p.kind === "insufficient") bag.setQty(p.variantId, p.available);
-      else bag.remove(p.variantId);
+      // Too many asked for: leave it in the bag and name it below, without saying how many we have.
+      if (p.kind !== "insufficient") bag.remove(p.variantId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [problems]);
+
+  const tooMany = bag.items.filter((i) => problems?.some((p) => p.kind === "insufficient" && p.variantId === i.variantId));
 
   if (bag.ready && bag.items.length === 0) {
     return (
@@ -131,7 +133,14 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
       {actionData?.message && (
         <div role="alert" className="mt-8 flex items-center gap-4 bg-grey-100 p-4">
           <img src={paymentFailed} alt="" width={64} height={64} className="size-16 shrink-0" />
-          <p className="text-base font-medium">{actionData.message}</p>
+          <div>
+            <p className="text-base font-medium">{actionData.message}</p>
+            {tooMany.length > 0 && (
+              <p className="mt-1 text-base">
+                Please lower the quantity of {tooMany.map((i) => `${i.title} (${i.variantLabel})`).join(", ")} in your bag and try again.
+              </p>
+            )}
+          </div>
         </div>
       )}
 

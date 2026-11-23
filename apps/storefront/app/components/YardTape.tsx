@@ -5,7 +5,7 @@ import { MinusIcon, PlusIcon } from "@hv/ui";
 /**
  * The yard picker, drawn as a tailor's tape. A native range input sits on top,
  * so drag, tap, arrow keys and screen readers all work; the stepper buttons give
- * exact control for thumbs. Length, price and what's left update together.
+ * exact control for thumbs. Length and price update together.
  */
 export function YardTape({
   value,
@@ -113,7 +113,7 @@ export function YardTape({
           </button>
         </div>
         <p className="tabular text-[15px] text-grey-600">
-          {formatMoney(unitPrice)} per {unitLabel(unit, 1)} · {available} {unitLabel(unit, available)} left
+          {formatMoney(unitPrice)} per {unitLabel(unit, 1)}
         </p>
       </div>
       {min > 1 && <p className="mt-2 text-[15px] text-grey-600">Cut from {min} {unitLabel(unit, min)} up.</p>}

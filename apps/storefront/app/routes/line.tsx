@@ -72,10 +72,8 @@ function fabricFit(p: CatalogueProduct, yards: number): Fit {
   const unit = p.variants[0]?.unit ?? "yard";
   if (p.soldOut) return { fact: "Sold out", short: true };
   if (unit !== "yard") return { fact: `${formatMoney(p.fromPrice)} per ${unitLabel(unit, 1)}`, short: false };
-  const best = Math.max(...p.variants.map((v) => v.available));
   const cheapest = p.variants.filter((v) => v.available > 0).reduce((a, v) => (v.price.amount < a.price.amount ? v : a), p.variants.find((v) => v.available > 0) ?? p.variants[0]!);
-  if (best < yards) return { fact: `Only ${best} ${unitLabel("yard", best)} left · ${formatMoney(cheapest.price)} a yard`, short: true };
-  return { fact: `${formatMoney(multiply(cheapest.price, yards))} for ${yards} yards · ${best} left`, short: false };
+  return { fact: `${formatMoney(multiply(cheapest.price, yards))} for ${yards} yards`, short: false };
 }
 
 function sizeFit(p: CatalogueProduct, size: string | null): Fit {

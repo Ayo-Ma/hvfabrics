@@ -1,5 +1,5 @@
 import { apiFetch } from "./api-fetch.server";
-import type { BagProblem, CheckoutInput, Money, OrderStatus } from "@hv/core";
+import type { PublicBagProblem, CheckoutInput, Money, OrderStatus } from "@hv/core";
 
 /**
  * Contract with the API Worker (workers/api). The storefront never talks to
@@ -23,7 +23,7 @@ export interface PublicOrder {
 
 export type CheckoutResult =
   | { ok: true; orderNumber: string; authorizationUrl: string }
-  | { ok: false; kind: "stock"; problems: BagProblem[] }
+  | { ok: false; kind: "stock"; problems: PublicBagProblem[] }
   | { ok: false; kind: "invalid"; message: string }
   | { ok: false; kind: "unavailable"; message: string };
 
@@ -49,7 +49,7 @@ export async function startCheckout(env: Env, input: CheckoutInput, callbackBase
     return { ok: true, orderNumber: body.orderNumber, authorizationUrl: body.authorizationUrl };
   }
   if (res.status === 409 && body && Array.isArray(body.problems)) {
-    return { ok: false, kind: "stock", problems: body.problems as BagProblem[] };
+    return { ok: false, kind: "stock", problems: body.problems as PublicBagProblem[] };
   }
   if (res.status === 400) {
     return { ok: false, kind: "invalid", message: String(body?.message ?? "Please check your details.") };

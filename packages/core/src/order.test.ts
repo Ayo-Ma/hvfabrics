@@ -103,11 +103,11 @@ describe("CheckoutInputSchema", () => {
 });
 
 describe("seed catalogue", () => {
-  it("is all placeholders, with sold-out and low-stock cases", () => {
+  it("is all placeholders, with sold-out cases and no stock counts", () => {
     const c = seedCatalogue();
     expect(c.products.length).toBeGreaterThan(0);
     expect(c.products.every((p) => p.placeholder && p.title.startsWith("[TBC]"))).toBe(true);
     expect(c.products.some((p) => p.soldOut)).toBe(true);
-    expect(c.products.some((p) => p.variants.some((v) => v.lowStock))).toBe(true);
+    expect(c.products.flatMap((p) => p.variants).every((v) => v.available === 0 || v.available === 100)).toBe(true);
   });
 });

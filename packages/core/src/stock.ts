@@ -26,6 +26,10 @@ export type BagProblem =
   | { variantId: string; kind: "sold_out" }
   | { variantId: string; kind: "insufficient"; available: number; requested: number };
 
+/** What a shopper is told about a bag line: which line and why, never how many are left. */
+export type PublicBagProblem = { variantId: string; kind: BagProblem["kind"] };
+export const toPublicProblem = (p: BagProblem): PublicBagProblem => ({ variantId: p.variantId, kind: p.kind });
+
 /** Checks every bag line against live stock. Duplicate lines for one variant are added together. */
 export function validateBag(
   lines: readonly BagLine[],

@@ -24,6 +24,14 @@ interface CatProduct {
   variants: CatVariant[];
 }
 
+/** The real count is staff-only: the public catalogue never carries it. */
+async function realStock(variantId: string): Promise<number> {
+  const res = await fetch(`${API}/admin/products`, { headers: { Authorization: "Bearer dev:owner" } });
+  const { entries } = (await res.json()) as { entries: { variants: { id: string; stock: number; reserved: number }[] }[] };
+  const v = entries.flatMap((e) => e.variants).find((x) => x.id === variantId)!;
+  return v.stock - v.reserved;
+}
+
 async function catalogue(): Promise<CatProduct[]> {
   const res = await fetch(`${API}/catalogue`);
   return ((await res.json()) as { products: CatProduct[] }).products;
@@ -31,9 +39,10 @@ async function catalogue(): Promise<CatProduct[]> {
 
 test("browse → 5 yards → pay → confirmation → order in the dashboard → stock down", async ({ page }) => {
   const before = await catalogue();
-  const fabric = before.find((p) => p.line === "fabric" && !p.soldOut && p.variants[0]!.available >= 10)!;
+  const counts = await Promise.all(before.map((p) => (p.line === "fabric" && !p.soldOut ? realStock(p.variants[0]!.id) : Promise.resolve(0))));
+  const fabric = before.find((_, i) => counts[i]! >= 10)!;
   expect(fabric, "a fabric with stock in the sample catalogue").toBeTruthy();
-  const variantBefore = fabric.variants[0]!.available;
+  const variantBefore = await realStock(fabric.variants[0]!.id);
 
   // Find it the way a shopper would: the Fabrics page.
   await page.goto(SHOP);
@@ -67,7 +76,7 @@ test("browse → 5 yards → pay → confirmation → order in the dashboard →
   const number = /\/order\/(HV-[A-Z0-9]{6})/.exec(page.url())![1]!;
 
   // Stock: exactly 5 fewer, sold (not just held).
-  await expect.poll(async () => (await catalogue()).find((p) => p.slug === fabric.slug)!.variants[0]!.available).toBe(variantBefore - 5);
+  await expect.poll(() => realStock(fabric.variants[0]!.id)).toBe(variantBefore - 5);
 
   // Her dashboard: the order is in New, and one tap packs it.
   await page.goto(`${DASH}/orders?devRole=packer`);

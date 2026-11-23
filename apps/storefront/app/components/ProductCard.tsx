@@ -7,9 +7,6 @@ export function StockTag({ product }: { product: CatalogueProduct }) {
   if (product.soldOut) {
     return <span className="bg-ink px-2 py-1 text-[13px] font-medium text-paper">Sold out</span>;
   }
-  if (product.variants.some((v) => v.lowStock)) {
-    return <span className="bg-yellow px-2 py-1 text-[13px] font-medium text-ink">Almost gone</span>;
-  }
   return null;
 }
 

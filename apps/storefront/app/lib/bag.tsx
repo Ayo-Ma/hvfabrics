@@ -15,7 +15,7 @@ export interface BagItem {
   unit: Unit;
   unitPrice: Money;
   qty: number;
-  /** Available units when added; the stepper won't go past it. */
+  /** The most one order line can take; the stepper won't go past it. Not a stock figure. */
   max: number;
   image?: ProductImage;
 }

@@ -1,7 +1,7 @@
 import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
-import { PaystackError, WebhookEventSchema, verifyWebhookSignature } from "@hv/core";
+import { PaystackError, WebhookEventSchema, toPublicProblem, verifyWebhookSignature } from "@hv/core";
 import { z } from "zod";
 import { adminApp } from "./admin";
 import type { Deps } from "./deps";
@@ -151,7 +151,7 @@ export function createApp(depsFor: (c: Context) => Deps) {
       case "ok":
         return c.json({ orderNumber: outcome.orderNumber, authorizationUrl: outcome.authorizationUrl });
       case "stock":
-        return c.json({ problems: outcome.problems }, 409);
+        return c.json({ problems: outcome.problems.map(toPublicProblem) }, 409);
       case "invalid":
         return c.json({ message: outcome.message }, 400);
       case "unavailable":

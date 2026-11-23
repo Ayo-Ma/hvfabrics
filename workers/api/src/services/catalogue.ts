@@ -5,8 +5,9 @@ import type { Deps } from "../deps";
  * The catalogue is built from the store and kept in KV, so shoppers never read Firestore
  * (PLAN.md trap 2: Firestore's 50K reads/day). It's rebuilt whenever stock or products change.
  */
-const CATALOGUE_KEY = "catalogue:v1";
-const SEARCH_KEY = "search-index:v1";
+// v2: stock counts removed. The new key means nothing cached with counts is ever served again.
+const CATALOGUE_KEY = "catalogue:v2";
+const SEARCH_KEY = "search-index:v2";
 
 export async function rebuildCatalogue(deps: Deps): Promise<Catalogue> {
   const entries = await deps.store.listCatalogueEntries();
