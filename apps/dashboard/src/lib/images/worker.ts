@@ -3,7 +3,8 @@
  * Resizes one photo to the four agreed widths and encodes each as AVIF and WebP
  * (PLAN.md: 400/800/1200/2000, AVIF + WebP). Runs off the main thread so the form
  * stays responsive on her phone. The browser's own encoder is used when it has one;
- * otherwise the WebAssembly encoders load on first use.
+ * otherwise the WebAssembly encoders load on first use. WebP is made first and reported on its
+ * own: AVIF is slow and memory-hungry on phones, and if it fails the photo still saves as WebP.
  */
 
 export const WIDTHS = [400, 800, 1200, 2000] as const;
@@ -14,6 +15,7 @@ export interface Request {
 
 export type Message =
   | { kind: "progress"; done: number; total: number }
+  | { kind: "webp"; width: number; height: number; files: { name: string; blob: Blob }[] }
   | { kind: "done"; width: number; height: number; files: { name: string; blob: Blob }[] }
   | { kind: "error"; message: string };
 
@@ -67,19 +69,27 @@ self.onmessage = async (e: MessageEvent<Request>) => {
   try {
     const total = WIDTHS.length * 2;
     let done = 0;
-    const files: { name: string; blob: Blob }[] = [];
+    const webps: { name: string; blob: Blob }[] = [];
+    const canvases: [number, OffscreenCanvas][] = [];
     let previous: OffscreenCanvas | ImageBitmap = bitmap;
     // Largest first, each size drawn from the one above it.
     for (const w of [...WIDTHS].reverse()) {
       const canvas = scaled(previous, Math.min(w, bitmap.width));
       previous = canvas;
-      files.push({ name: `${w}.avif`, blob: await avif(canvas) });
-      post({ kind: "progress", done: ++done, total });
-      files.push({ name: `${w}.webp`, blob: await webp(canvas) });
+      canvases.push([w, canvas]);
+      webps.push({ name: `${w}.webp`, blob: await webp(canvas) });
       post({ kind: "progress", done: ++done, total });
     }
     const width = Math.min(2000, bitmap.width);
-    post({ kind: "done", width, height: Math.round((bitmap.height * width) / bitmap.width), files });
+    const height = Math.round((bitmap.height * width) / bitmap.width);
+    post({ kind: "webp", width, height, files: webps });
+
+    const avifs: { name: string; blob: Blob }[] = [];
+    for (const [w, canvas] of canvases) {
+      avifs.push({ name: `${w}.avif`, blob: await avif(canvas) });
+      post({ kind: "progress", done: ++done, total });
+    }
+    post({ kind: "done", width, height, files: [...webps, ...avifs] });
   } catch (err) {
     post({ kind: "error", message: err instanceof Error ? err.message : String(err) });
   } finally {

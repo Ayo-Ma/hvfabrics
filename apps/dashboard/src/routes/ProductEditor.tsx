@@ -348,7 +348,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
                   <ImagePlusIcon size={22} />
                   Add photos
                 </button>
-                <input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={(e) => (onPick(e.target.files), (e.target.value = ""))} />
+                <input ref={fileInput} type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif" multiple hidden onChange={(e) => (onPick(e.target.files), (e.target.value = ""))} />
               </li>
             </ul>
           </Panel>

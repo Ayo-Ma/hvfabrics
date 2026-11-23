@@ -52,9 +52,6 @@ export function resolveImage(img: ProductImage, imageBase: string): ResolvedImag
     alt: img.alt,
     width: img.width,
     height: img.height,
-    sources: [
-      { type: "image/avif", srcSet: set("avif") },
-      { type: "image/webp", srcSet: set("webp") },
-    ],
+    sources: [...(img.avif === false ? [] : [{ type: "image/avif", srcSet: set("avif") }]), { type: "image/webp", srcSet: set("webp") }],
   };
 }

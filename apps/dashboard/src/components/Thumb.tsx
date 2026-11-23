@@ -18,7 +18,7 @@ export function Thumb({ image, size = 48, className }: { image: ProductImage | u
   const base = `${IMAGE_BASE}/${image.key}`;
   return (
     <picture className="contents">
-      <source type="image/avif" srcSet={`${base}/400.avif 400w`} sizes={`${size}px`} />
+      {image.avif === false ? null : <source type="image/avif" srcSet={`${base}/400.avif 400w`} sizes={`${size}px`} />}
       <img src={`${base}/400.webp`} srcSet={`${base}/400.webp 400w`} sizes={`${size}px`} alt="" width={size} height={h} loading="lazy" className={box} style={{ width: size, height: h }} />
     </picture>
   );

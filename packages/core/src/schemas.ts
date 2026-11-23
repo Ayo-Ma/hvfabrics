@@ -37,6 +37,8 @@ export const ProductImageSchema = z.object({
   alt: z.string().min(1).max(250),
   width: z.number().int().positive(),
   height: z.number().int().positive(),
+  /** false: this photo was saved as WebP only, because the phone couldn't make AVIF. */
+  avif: z.literal(false).optional(),
 });
 export type ProductImage = z.infer<typeof ProductImageSchema>;
 
