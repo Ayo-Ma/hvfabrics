@@ -66,17 +66,17 @@ export function Stock() {
       </div>
 
       <div className="panel">
-        <div className="hidden grid-cols-[1fr_110px_90px_200px] gap-4 px-5 pt-3 pb-2 text-xs text-muted md:grid">
-          <span>Product and option</span>
+        <div className="hidden gap-x-4 px-5 pt-3 pb-2 text-xs text-muted lg:grid lg:grid-cols-[56px_minmax(0,1fr)_112px_72px_176px]">
+          <span className="col-span-2">Product and option</span>
           <span className="text-right">Left to sell</span>
           <span className="text-right">Held now</span>
-          <span className="text-center">In stock</span>
+          <span className="text-right">In stock</span>
         </div>
         <ul>
           {!q.data ? (
             [0, 1, 2].map((i) => (
-              <li key={i} className="flex items-center gap-4 border-t border-rule px-5 py-3 first:border-t-0 md:first:border-t">
-                <Skel w={36} h={45} />
+              <li key={i} className="flex items-center gap-4 border-t border-rule px-5 py-3 first:border-t-0 lg:first:border-t">
+                <Skel w={56} h={70} />
                 <Skel w="40%" />
               </li>
             ))
@@ -129,41 +129,44 @@ function StockRow({ row }: { row: Row }) {
   const step = (by: number) => later(String(Math.max(v.reserved, (Number(value) || 0) + by)));
 
   return (
-    <li className="grid grid-cols-[36px_1fr_auto] items-center gap-x-4 gap-y-2 border-t border-rule px-5 py-3 first:border-t-0 md:grid-cols-[36px_1fr_110px_90px_200px] md:first:border-t">
-      <Thumb image={entry.product.images[0]} size={36} />
+    <li className="grid grid-cols-[56px_minmax(0,1fr)] gap-x-4 gap-y-3 border-t border-rule px-4 py-4 first:border-t-0 sm:px-5 lg:grid-cols-[56px_minmax(0,1fr)_112px_72px_176px] lg:items-center lg:first:border-t">
+      <Thumb image={entry.product.images[0]} size={56} className="row-span-2 self-start lg:row-span-1 lg:self-center" />
       <div className="min-w-0">
         <Link to={`/products/${entry.product.id}`} className="block truncate font-medium hover:underline">
           {entry.product.title}
         </Link>
-        <p className="flex items-center gap-2 truncate text-xs text-muted">
-          {label}
+        <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
+          <span className="min-w-0 truncate">{label}</span>
           {state === "sold_out" ? <Pill tone="neg">Sold out</Pill> : state === "low" ? <Pill tone="warn">Low · mark {v.lowStockAt}</Pill> : null}
         </p>
       </div>
-      <p className={cx("num text-right text-[15px] font-bold", state === "sold_out" && "text-neg")}>
-        {available} <span className="text-xs font-normal text-muted">{unitLabel(v.options.unit, available)}</span>
-      </p>
-      <p className="num hidden text-right text-muted md:block">{v.reserved > 0 ? v.reserved : "—"}</p>
-      <div className="col-span-3 flex items-center justify-end gap-2 md:col-span-1 md:justify-center">
-        <span className="mr-auto text-xs text-muted md:hidden">{v.reserved > 0 ? `${v.reserved} held now · in stock` : "In stock"}</span>
-        <button type="button" aria-label={`One less ${label}`} onClick={() => step(-1)} className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-control)] border border-control hover:border-text">
-          <MinusIcon size={16} />
-        </button>
-        <input
-          aria-label={`${entry.product.title} ${label} in stock`}
-          inputMode="numeric"
-          value={value}
-          onChange={(e) => later(e.target.value)}
-          onBlur={(e) => void commit(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && void commit((e.target as HTMLInputElement).value)}
-          className="field num h-10 w-20 text-center"
-        />
-        <button type="button" aria-label={`One more ${label}`} onClick={() => step(1)} className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-control)] border border-control hover:border-text">
-          <PlusIcon size={16} />
-        </button>
-        <span aria-live="polite" className="w-12 text-xs text-muted">
-          {status.kind === "saving" ? "Saving" : status.kind === "saved" ? "Saved" : ""}
-        </span>
+      <div className="col-start-2 flex items-center justify-between gap-3 lg:contents">
+        <div className="min-w-0 lg:text-right">
+          <p className={cx("num text-[15px] font-bold whitespace-nowrap", state === "sold_out" && "text-neg")}>
+            {available} <span className="text-xs font-normal text-muted">{unitLabel(v.options.unit, available)}</span>
+          </p>
+          <p aria-live="polite" className="h-4 text-xs leading-4 whitespace-nowrap text-muted">
+            {status.kind === "saving" ? "Saving…" : status.kind === "saved" ? "Saved" : v.reserved > 0 ? <span className="lg:hidden">{v.reserved} held</span> : null}
+          </p>
+        </div>
+        <p className="num hidden text-right text-muted lg:block">{v.reserved > 0 ? v.reserved : "—"}</p>
+        <div className="flex flex-none items-center gap-1.5 lg:justify-self-end">
+          <button type="button" aria-label={`One less ${label}`} onClick={() => step(-1)} className="flex h-10 w-10 flex-none items-center justify-center rounded-[var(--radius-control)] border border-control hover:border-text">
+            <MinusIcon size={16} />
+          </button>
+          <input
+            aria-label={`${entry.product.title} ${label} in stock`}
+            inputMode="numeric"
+            value={value}
+            onChange={(e) => later(e.target.value)}
+            onBlur={(e) => void commit(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && void commit((e.target as HTMLInputElement).value)}
+            className="field num h-10 w-16 px-1 text-center"
+          />
+          <button type="button" aria-label={`One more ${label}`} onClick={() => step(1)} className="flex h-10 w-10 flex-none items-center justify-center rounded-[var(--radius-control)] border border-control hover:border-text">
+            <PlusIcon size={16} />
+          </button>
+        </div>
       </div>
       {status.kind === "error" ? (
         <p role="alert" className="col-span-full text-right text-xs text-neg">
