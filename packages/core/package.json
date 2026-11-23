@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./image-format": "./src/image-format.ts",
     "./seed": "./src/seed.ts"
   },
   "scripts": {

@@ -12,7 +12,8 @@
 - Stock counts hidden from customers (2026-11-23, owner's decision): no yards or pieces left on any page, no "Almost gone"
   tag, and the public catalogue and checkout errors no longer carry a count. Less than the minimum cut shows as Sold out.
 - Product photos (2026-11-23): JPG, PNG, WebP, AVIF and HEIC accepted where the device can read them; if AVIF encoding
-  fails or takes too long the photo saves as WebP instead of failing.
+  fails or takes too long the photo saves as WebP instead of failing. The upload check now accepts AVIF files that name
+  the format as a compatible brand, and a browser encoder's output is verified before it is used.
 - Dashboard Stock screen rebuilt so photos, text, counts and controls line up at every width.
 
 - Dashboard refresh (2026-11-20): labelled sidebar with who is signed in on desktop, an icon-and-label rail on tablets

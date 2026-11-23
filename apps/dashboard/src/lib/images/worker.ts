@@ -7,6 +7,8 @@
  * own: AVIF is slow and memory-hungry on phones, and if it fails the photo still saves as WebP.
  */
 
+import { IMAGE_HEADER_BYTES, looksLike } from "@hv/core/image-format";
+
 export const WIDTHS = [400, 800, 1200, 2000] as const;
 
 export interface Request {
@@ -38,10 +40,14 @@ function scaled(src: ImageBitmap | OffscreenCanvas, width: number): OffscreenCan
   return out;
 }
 
-async function native(canvas: OffscreenCanvas, type: string, quality: number): Promise<Blob | null> {
+async function native(canvas: OffscreenCanvas, ext: "avif" | "webp", quality: number): Promise<Blob | null> {
+  const type = `image/${ext}`;
   try {
     const blob = await canvas.convertToBlob({ type, quality });
-    return blob.type === type ? blob : null; // unsupported types silently come back as PNG
+    if (blob.type !== type) return null; // unsupported types silently come back as PNG
+    // Some browsers label the result correctly but write another format; use our encoder then.
+    const head = new Uint8Array(await blob.slice(0, IMAGE_HEADER_BYTES).arrayBuffer());
+    return looksLike(ext, head) ? blob : null;
   } catch {
     return null;
   }
@@ -50,14 +56,14 @@ async function native(canvas: OffscreenCanvas, type: string, quality: number): P
 const pixels = (c: OffscreenCanvas) => c.getContext("2d")!.getImageData(0, 0, c.width, c.height);
 
 async function webp(c: OffscreenCanvas): Promise<Blob> {
-  const own = await native(c, "image/webp", 0.82);
+  const own = await native(c, "webp", 0.82);
   if (own) return own;
   const { default: encode } = await import("@jsquash/webp/encode");
   return new Blob([await encode(pixels(c), { quality: 82 })], { type: "image/webp" });
 }
 
 async function avif(c: OffscreenCanvas): Promise<Blob> {
-  const own = await native(c, "image/avif", 0.6);
+  const own = await native(c, "avif", 0.6);
   if (own) return own;
   const { default: encode } = await import("@jsquash/avif/encode");
   // speed 8 keeps a 2000 px photo to a few seconds on a mid-range phone.

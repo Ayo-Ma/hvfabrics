@@ -10,6 +10,7 @@ import {
   type AdminRole,
   type ROLE_CAN,
 } from "@hv/core";
+import { looksLike } from "@hv/core/image-format";
 import { z } from "zod";
 import type { AdminUser } from "./auth/firebase";
 import type { Deps } from "./deps";
@@ -31,13 +32,6 @@ const IMAGE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
 const IMAGE_FILE = /^(400|800|1200|2000)\.(avif|webp)$/;
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 const MAX_TAKINGS_DAYS = 62;
-
-/** Checks the file really is what its name says: WebP is RIFF….WEBP, AVIF is an ISO-BMFF "ftyp" box with an avif brand. */
-export function looksLike(ext: "avif" | "webp", bytes: Uint8Array): boolean {
-  const ascii = (from: number, to: number) => String.fromCharCode(...bytes.subarray(from, to));
-  if (ext === "webp") return bytes.length > 12 && ascii(0, 4) === "RIFF" && ascii(8, 12) === "WEBP";
-  return bytes.length > 12 && ascii(4, 8) === "ftyp" && ["avif", "avis"].includes(ascii(8, 12));
-}
 
 function savedOrProblem(c: Context, r: SaveProductResult | StockResult) {
   if (r.ok) return null;
