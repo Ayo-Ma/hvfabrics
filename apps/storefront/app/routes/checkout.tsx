@@ -60,7 +60,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   // The API appends "/<order number>"; Paystack then appends ?reference=… on return.
   const callbackBase = new URL("/order", request.url).toString();
-  const result = await startCheckout(context.cloudflare.env, parsed.data, callbackBase);
+  const result = await startCheckout(context.cloudflare.env, parsed.data, callbackBase, request);
   if (result.ok) throw redirect(result.authorizationUrl);
   if (result.kind === "stock") {
     return { errors: {}, message: "We can't supply everything in your bag right now.", problems: result.problems };

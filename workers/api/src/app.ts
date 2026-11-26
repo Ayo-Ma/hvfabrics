@@ -10,11 +10,32 @@ import { CheckoutRequestSchema, confirmPayment, startCheckout, toPublicOrder } f
 
 type Cf = { country?: string; city?: string };
 
+/**
+ * The shopper behind a request. Public requests always carry Cloudflare's own cf-connecting-ip, which
+ * callers can't forge. Requests from the storefront's service binding have none, so the storefront
+ * passes the shopper's address in X-HV-Client-IP; it is trusted only when cf-connecting-ip is absent,
+ * which can't happen on a request from the internet. Without it, every shopper shared one limit.
+ */
+function viaBinding(c: Context): boolean {
+  return !c.req.header("cf-connecting-ip");
+}
+
 function clientKey(c: Context): string {
-  return c.req.header("cf-connecting-ip") ?? c.req.header("x-forwarded-for") ?? "unknown";
+  return c.req.header("cf-connecting-ip") ?? c.req.header("x-hv-client-ip") ?? "unknown";
 }
 
 function geoOf(c: Context): Cf {
+  if (viaBinding(c)) {
+    const country = c.req.header("x-hv-client-country");
+    const city = c.req.header("x-hv-client-city");
+    let decoded: string | undefined;
+    try {
+      decoded = city ? decodeURIComponent(city).slice(0, 80) : undefined;
+    } catch {
+      decoded = undefined;
+    }
+    return { ...(country && /^[A-Z]{2}$/.test(country) ? { country } : {}), ...(decoded ? { city: decoded } : {}) };
+  }
   const cf = (c.req.raw as Request & { cf?: Cf }).cf;
   return { ...(cf?.country ? { country: cf.country } : {}), ...(cf?.city ? { city: cf.city } : {}) };
 }

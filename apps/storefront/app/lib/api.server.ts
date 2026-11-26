@@ -31,7 +31,21 @@ export function apiConnected(env: Env): boolean {
   return Boolean(env.API_URL);
 }
 
-export async function startCheckout(env: Env, input: CheckoutInput, callbackBase: string): Promise<CheckoutResult> {
+/**
+ * Who the shopper is, for the API's per-shopper limits. Through the service binding the API sees the
+ * storefront, not the shopper, so without this every shopper would share one limit.
+ */
+function shopperHeaders(shopper: Request): Record<string, string> {
+  const cf = (shopper as Request & { cf?: { country?: string; city?: string } }).cf;
+  const ip = shopper.headers.get("cf-connecting-ip");
+  return {
+    ...(ip ? { "X-HV-Client-IP": ip } : {}),
+    ...(cf?.country ? { "X-HV-Client-Country": cf.country } : {}),
+    ...(cf?.city ? { "X-HV-Client-City": encodeURIComponent(cf.city) } : {}),
+  };
+}
+
+export async function startCheckout(env: Env, input: CheckoutInput, callbackBase: string, shopper: Request): Promise<CheckoutResult> {
   if (!apiConnected(env)) {
     return {
       ok: false,
@@ -41,7 +55,7 @@ export async function startCheckout(env: Env, input: CheckoutInput, callbackBase
   }
   const res = await apiFetch(env, "/checkout", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...shopperHeaders(shopper) },
     body: JSON.stringify({ ...input, callbackBase }),
   });
   const body = (await res.json().catch(() => null)) as Record<string, unknown> | null;
