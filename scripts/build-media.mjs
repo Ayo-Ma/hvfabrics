@@ -14,7 +14,7 @@ const SRC = join(root, "assets", "photography");
 const OUT = join(root, "apps", "storefront", "public", "media");
 const MANIFEST = join(root, "apps", "storefront", "app", "lib", "media.json");
 const WIDTHS = [400, 800, 1200, 2000];
-const GROUPS = ["campaign", "banners", "products"];
+const GROUPS = ["home", "campaign", "banners", "products"];
 
 function walk(dir) {
   if (!existsSync(dir)) return [];

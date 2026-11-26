@@ -8,8 +8,8 @@ When a file arrives, put it at the path shown and tick it here.
 | Asset | Path | Placeholder in use | Needed for |
 | --- | --- | --- | --- |
 | Product photos (front, drape, macro per product) | `photography/products/<line>/<slug>/01.jpg …` | `placeholders/placeholder-product.svg` | Phase 1 — every product page |
-| Home hero images (fabrics, lingerie, ready-to-wear) | `photography/campaign/hero-<line>.jpg` | `placeholders/placeholder-hero.svg` | Phase 1 — home |
-| Category tiles | `photography/campaign/tile-<line>.jpg` | `placeholders/placeholder-hero.svg` | Phase 1 — home |
+| New homepage photographs (2026-11-26): hero, three category cards, hands, wholesale background | `photography/home/*.jpg` (prompts: `GENERATION_PROMPTS.md` section 1A) | older campaign photographs; the Ankara card shows a type-only swatch | Phase 1 — home |
+| Ankara line banner | `photography/banners/line-ankara-banner.jpg` | none (not shown yet) | Ankara page, later |
 | Default share image | `brand/social/og-default-1200x630.jpg` | none yet (falls back to the logo) | Phase 1 — link previews |
 | Per-line share images | `brand/social/og-<line>-1200x630.jpg` | none | Phase 1 |
 | Shop and founder photos | `photography/campaign/about-*.jpg` | none | Phase 1 — About |

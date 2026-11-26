@@ -1,6 +1,6 @@
 # Harries Vogue — image generation brief for Codex
 
-You are producing the photography for the Harries Vogue website: a Lagos shop (Abule Egba) selling lace and fabrics by the yard, lingerie and ready-to-wear. Each prompt below fills **one exact slot** in the new design ("split stage": one large photograph stays fixed on half the screen while the reading column scrolls, and changes chapter by chapter: the bolt → the yard → the cut → the occasion).
+You are producing the photography for the Harries Vogue website: a global wholesale and retail house selling fabrics by the yard, Ankara prints and ready-to-wear, with showrooms in Ilorin and Abeokuta, Nigeria. **Start with section 1A (the new homepage, 2026-11-26).** Sections 2 onward are the earlier set: their lingerie slots are retired. Each prompt below fills **one exact slot** in the new design ("split stage": one large photograph stays fixed on half the screen while the reading column scrolls, and changes chapter by chapter: the bolt → the yard → the cut → the occasion).
 
 Work through the slots in order. Save each image at the path given. When all are done, run the build step at the end. Do not invent extra slots, and do not put text, logos or watermarks into any image.
 
@@ -69,10 +69,48 @@ Harries Vogue sells the full range of ladies' fabrics, not only lace. Across the
 | --- | --- |
 | Format | JPEG, quality 95, sRGB. Do not upscale small images. |
 | Size | At least the pixel size stated for the slot (long edge 2400 px or more for full-bleed slots). |
-| Folder | `assets/photography/campaign/` for campaign and editorial; `assets/photography/products/<line>/<slug>/` for product stand-ins; `assets/photography/banners/` for banners; `assets/brand/social/` for the share image. |
+| Folder | `assets/photography/home/` for the new homepage (section 1A); `assets/photography/campaign/` for campaign and editorial; `assets/photography/products/<line>/<slug>/` for product stand-ins; `assets/photography/banners/` for banners; `assets/brand/social/` for the share image. |
 | Name | Exactly the file name given in each slot. Lowercase, hyphens. |
 | Variations | Generate 3 per slot, keep the best as the main file, keep the others as `<name>-alt1.jpg`, `<name>-alt2.jpg` so the art director can swap. |
 | Record | Append one line per kept image to `assets/photography/MANIFEST.md`: slot id, file, the model/tool used, date, and "AI-generated". |
+
+---
+
+## 1A. NEW (2026-11-26): the new homepage — generate these first
+
+The homepage was rebuilt around the owner's new copy: Harries Vogue is a **global wholesale and retail house** for **fabrics, Ankara prints and ready-to-wear**, with showrooms in **Ilorin and Abeokuta**. Lingerie is no longer sold (it became Ankara), so skip every lingerie slot further down. Until each image below exists, the site shows an older photograph in its place; as soon as the file is saved and `corepack pnpm images` has run, the new image appears by itself.
+
+**Mood for this set:** confident, generous, international. Think a premium textile house's lookbook (rich colour, real light, real hands, abundance of cloth), photographed in Nigeria. Fabric-led: silk, satin, chiffon, jacquard, corduroy and Ankara wax print. **No lace in this set** (lace is kept for wedding and aso-ebi pages only). Every image follows section 0 above.
+
+Save to `assets/photography/home/` (new folder). Three variations each, as in section 1.
+
+### HV-HOME-HERO — the hero: bolts, drape and one finished piece
+- **File:** `assets/photography/home/hero.jpg` · **Size:** 2400 × 3000 (4:5, portrait) · **Where it sits:** the right half of the first screen on desktop (cropped to the full height), and a wide band across the top on phones (cropped to about 16:9 from the middle), so keep the subject in the centre band.
+- **Prompt:** Sunlit editorial photograph on a Hasselblad X2D 100C with an XCD 55mm f/2.5 at f/4, inside a bright Nigerian textile showroom with warm off-white plastered walls and pale wooden shelving, late-morning daylight from a tall window on the left, soft haze in the air. In the foreground and middle, generous stacks of folded fabric bolts in rich colours: bold Ankara wax prints (crisp cotton, slight waxy sheen, fine crackle and slight registration offsets of real wax printing) in deep indigo, terracotta, emerald and marigold yellow (#FDCE02, one accent bolt only); beside them a length of fluid ivory silk chiffon is lifted and floating mid-air as if just unfurled, catching the light, translucent where it overlaps itself. To the right, a dress form wears a sleek, tailored black ready-to-wear midi dress in heavy matte crepe with a clean neckline. No people's faces. Textures must read at 100% zoom: the weave of the cotton, the pebbled matte of the crepe, the sheer layers of the chiffon. Natural colour close to Kodak Portra 400, true blacks, gentle highlight roll-off, fine grain. Abundant but orderly, premium, international. No text, no labels, no logos, no signage.
+
+### HV-HOME-CATEGORY-FABRICS — "Premium fabrics" card (the large one)
+- **File:** `assets/photography/home/category-fabrics.jpg` · **Size:** 2400 × 3000 (4:5) · **Where it sits:** the big card on the left of a black section; text sits under it, not on it.
+- **Prompt:** Overhead-angled still life on a Fujifilm GFX100 II with a GF 80mm f/1.7 at f/5.6, on a matte black tabletop, soft directional window light from the upper left. Three generous lengths of fabric laid in overlapping diagonal waves: fluid champagne silk chiffon (sheer, light passing through its layers), a textured ivory-and-gold woven jacquard whose pattern appears and disappears with the light, and a structured chocolate-brown wide-wale corduroy with clear ridges and a soft pile sheen. Edges fall off the table edge with true weight. One small marigold-yellow (#FDCE02) tailor's chalk lies on the corduroy as the only accent. Crisp focus across the fabrics, fine grain, true dyed-textile colours, deep blacks. No text, no labels, no logos.
+
+### HV-HOME-CATEGORY-ANKARA — "Authentic Ankara" card
+- **File:** `assets/photography/home/category-ankara.jpg` · **Size:** 2400 × 1500 (16:10, landscape) · **Where it sits:** top right card on desktop, full width on phones; text under it.
+- **Prompt:** Editorial photograph on a Sony A1 with an FE 35mm f/1.4 GM at f/4, on a wooden cutting table in a Nigerian fabric shop, warm daylight. Neat stacks of folded Ankara wax-print fabric in six bold, distinct designs (large concentric circles, cowrie motifs, geometric diamonds, floral bursts) in indigo, terracotta, emerald, black and cream with one marigold-yellow (#FDCE02) bolt; the top piece is half unfolded toward the camera showing crisp pressed pleats that hold their shape. Real wax-print character: slight waxy sheen, fine crackle lines, small colour registration offsets, the print visible on both sides at the folds. A pair of black-handled tailor's shears rests on the side. Shallow depth of field falling off toward the back stacks. Colour close to Fuji Pro 400H, fine grain. No text, no labels, no logos, no brand selvedge printing.
+
+### HV-HOME-CATEGORY-RTW — "Ready-to-wear" card
+- **File:** `assets/photography/home/category-rtw.jpg` · **Size:** 2400 × 1500 (16:10, landscape) · **Where it sits:** bottom right card on desktop, full width on phones; text under it. Keep the woman in the right two-thirds.
+- **Prompt:** Fashion editorial on a Hasselblad X2D 100C with an XCD 90mm f/2.5 at f/2.8, a light-filled Nigerian apartment with warm off-white walls and a polished concrete floor, soft afternoon window light. A Nigerian woman in her early thirties with deep brown skin and short natural hair walks mid-stride toward the camera's right, relaxed half-smile, wearing a tailored ready-to-wear two-piece in deep emerald silk satin (wide-leg trousers with a sharp crease and a softly draped wrap top), the satin showing a bright moving highlight along the folds and deep smooth shadows. Gold hoop earrings that match. Real skin per section 0: visible pores, fine vellus hair catching the light, natural sheen on the cheekbones, never airbrushed, never lightened. Calm plain wall on the left third. Natural colour, fine grain. No text, no logos.
+
+### HV-HOME-STORY-HANDS — "The Harries Vogue standard" (hands inspecting fabric)
+- **File:** `assets/photography/home/story-hands.jpg` · **Size:** 2400 × 3000 (4:5) · **Where it sits:** the left half of a split screen on desktop (full height), a 4:3 band on phones; the headline sits beside it, not on it.
+- **Prompt:** Close-up documentary photograph on a Fujifilm GFX100 II with a GF 120mm f/4 Macro at f/5.6, warm side light from a window. Two hands of a Nigerian woman in her forties with deep brown skin hold a length of fabric up to the light to inspect it: one hand pinches and rubs the cloth between thumb and forefinger to feel the weave, the other lets it fall so the drape shows. The fabric is a heavy sapphire-blue silk satin on the outside turning to show its crepe back at the fold. Real hands per section 0: five fingers, natural knuckles, short neat natural nails, fine skin texture, the satin deforming correctly where pressed. Background: soft, out-of-focus shelves of folded cloth in muted tones. One thin marigold-yellow (#FDCE02) tape measure hangs over the wrist. Fine grain, true colour. No text, no logos.
+
+### HV-HOME-WHOLESALE-TEXTURE — the wholesale banner background
+- **File:** `assets/photography/home/wholesale-texture.jpg` · **Size:** 2800 × 1575 (16:9) · **Where it sits:** full-width background behind white text, darkened by the site to about 45% brightness, so it must stay calm and low-contrast with no single bright spot in the left half.
+- **Prompt:** Wide atmospheric photograph on a Sony A1 with an FE 24mm f/1.4 GM at f/2.8 inside a Nigerian fabric warehouse at dusk: long rows of tightly wound fabric bales and rolled bolts on tall wooden racks receding into soft darkness, warm tungsten light pooling from the right, the colours of the cloth deep and muted (wine, navy, bottle green, ochre, black). Shallow depth of field so the racks melt into soft texture toward the left. Even, low-contrast, rich, quiet. No people, no text, no labels, no logos, no signage.
+
+### HV-BANNER-ANKARA — replaces HV-BANNER-LINGERIE (optional, for the Ankara page later)
+- **File:** `assets/photography/banners/line-ankara-banner.jpg` · **Size:** 2800 × 1167 (12:5)
+- **Prompt:** Wide editorial banner on a Hasselblad X2D 100C with an XCD 38mm f/2.5 at f/4 in a sunlit Nigerian courtyard with a warm terracotta wall: three Nigerian women of different ages and builds (twenties, thirties, fifties; deep and medium-deep brown skin) stand together laughing, each in a different tailored outfit cut from bold Ankara wax print (a structured peplum top and pencil skirt, a wide-sleeved boubou, a fitted jumpsuit), prints in indigo, emerald and terracotta, one marigold-yellow (#FDCE02) head tie. Real skin and hands per section 0; prints with real wax-print crackle and registration. Calm wall on the left third for text. No text, no logos.
 
 ---
 
@@ -116,7 +154,7 @@ Square 1:1. The subject is centred with even breathing room; the background is a
 
 > Still-life fabric photograph on a Fujifilm GFX100 II with a GF 110mm f/2 at f/8, 1/125s, ISO 100, studio strobe through a large octabox from upper left with a white fill card on the right. Six lengths of fabric draped side by side over a hidden horizontal bar against a warm off-white (#FAFAF7) seamless paper backdrop, falling in deep natural folds to soft pools on the floor: champagne silk satin with a liquid moving highlight, blush chiffon floating in sheer layers, a bold indigo-and-ochre ankara wax print, royal-blue george with gold metallic embroidery, burgundy velvet with deep pile that darkens in the folds, and ivory French lace with clear stones. Each reads unmistakably as its own fabric; loose threads at one cut edge. Soft natural shadows on the backdrop. Centred composition with even space around. True textile colour, fine grain, crisp but not oversharpened. No people, no text, no labels, no logos, not CGI.
 
-### HV-LINE-LINGERIE
+### HV-LINE-LINGERIE (retired 2026-11-26: lingerie became Ankara; skip)
 - **File:** `assets/photography/campaign/line-lingerie.jpg` · **Size:** 2400 × 2400
 
 > Tasteful lingerie editorial on a Hasselblad X2D with an XCD 80mm f/1.9 at f/2.8, 1/200s, ISO 100, soft north-window light. A Nigerian woman in her late twenties with deep brown skin, seated on the edge of an unmade linen bed in a sunlit Lagos apartment, wearing a black lace bralette and matching high-waisted brief with a sheer lace robe in warm ivory falling off one shoulder; the image is elegant and editorial, not explicit, framed from collarbone to mid-thigh with her face turned towards the window in soft profile. The lace pattern is crisp and readable against her skin; straps sit with real tension and slight indentation. Skin rendered with full real texture: visible pores on the shoulder and décolletage, fine body hair catching the backlight, natural tonal variation, soft sheen on the collarbone; professional light retouching only. Warm off-white walls and linen in the background, softly out of focus. Centred, calm composition. Portra-like grade, fine grain. Not explicit, no nudity, no text, no logos, no plastic skin, no warped hands, not CGI.
@@ -161,7 +199,7 @@ Landscape 12:5, subject on the right half, calm left half for the page title.
 
 > Wide interior photograph on a Fujifilm GFX100 II with a GF 32-64mm at 40mm, f/5.6, ISO 400. A woman's hands (deep brown, natural nails) unroll a bolt of wine-red duchess satin across a long wooden cutting table in a Lagos fabric shop; the satin cascades over the table edge on the right half of the frame in stiff, glossy folds, beside a loosely piled length of ivory chiffon and a folded stack of ankara prints. Bolts of silk, crepe, george and velvet on dark shelves behind, softly out of focus. The left half is calm: plain off-white wall and the near end of the table in soft light. Portra-like grade, fine grain. No text, no logos, no signs, not CGI.
 
-### HV-BANNER-LINGERIE
+### HV-BANNER-LINGERIE (retired 2026-11-26; see HV-BANNER-ANKARA in section 1A)
 - **File:** `assets/photography/banners/line-lingerie-banner.jpg` · **Size:** 3000 × 1250
 
 > Still life on a Hasselblad X2D with an XCD 90mm at f/4, soft window light from the right. On warm ivory linen, a black lace bralette and matching brief laid flat beside a folded ivory silk robe and a single marigold-yellow (#FDCE02) satin ribbon, arranged on the right half of the frame; the lace pattern crisp, the silk with soft directional sheen and real creases. Left half: plain linen texture, calm. No person. No tags, no text, no logos, not CGI.

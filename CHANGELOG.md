@@ -9,6 +9,23 @@
 
 ## Phase 1 — MVP (in progress)
 
+- New homepage and line pages (2026-11-26, owner's copy): global wholesale and retail positioning; hero, three
+  category cards, the wholesale and global advantage, new arrivals with quick add, the Harries Vogue standard, a
+  wholesale concierge (WhatsApp or email quote) and questions answered on the site. New menu and announcement bar;
+  local details (showrooms, hours, dispatch) moved to the footer. Where the copy disagreed with the owner's
+  questionnaire, the questionnaire wins (shipping abroad is arranged on WhatsApp; no named couriers or opening days).
+- Lingerie became Ankara (2026-11-26): line, menu, search, dashboard; /lingerie redirects to /ankara; anything
+  stored as "lingerie" reads as Ankara. Ankara is cut by the yard like other fabric.
+- Line pages: shoppers choose Grid (default), Large or Shelf, remembered in a cookie; the shop's own sort menu,
+  filters (in stock, price, colour, size, how it's sold, fibre) in a sidebar on desktop and a sheet on phones,
+  instant and kept in the URL. Every dropdown and checkbox on the shop and in the dashboard is now the shop's own
+  (shared accessible Listbox in @hv/ui).
+- Cloth starts at 2 yards everywhere (was a 5-yard default on the shelf and product pages).
+- Checkout under load: the storefront now passes each shopper's address to the API, so the order and search limits
+  apply per shopper instead of one limit shared by the whole site. Phone numbers are accepted in more forms
+  (234…, +234 0…, 00 44…, missing leading 0, dots and brackets). Catalogue cache keys moved to v3.
+- New image prompts for the homepage in `assets/GENERATION_PROMPTS.md` section 1A; `corepack pnpm images` also
+  builds `assets/photography/home/`.
 - Stock counts hidden from customers (2026-11-23, owner's decision): no yards or pieces left on any page, no "Almost gone"
   tag, and the public catalogue and checkout errors no longer carry a count. Less than the minimum cut shows as Sold out.
 - Product photos (2026-11-23): JPG, PNG, WebP, AVIF and HEIC accepted where the device can read them; if AVIF encoding
