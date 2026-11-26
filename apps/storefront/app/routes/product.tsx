@@ -79,7 +79,7 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
   const inBag = bag.items.find((i) => i.variantId === variant.id)?.qty ?? 0;
   const canAdd = Math.max(0, variant.available - inBag);
   const min = minQty(variant.unit);
-  const [wantedQty, setQty] = useState(variant.unit === "yard" ? Math.min(loaderData.yards ?? 5, Math.max(min, variant.available)) : 1);
+  const [wantedQty, setQty] = useState(variant.unit === "yard" ? Math.min(loaderData.yards ?? min, Math.max(min, variant.available)) : 1);
   const [added, setAdded] = useState(false);
   // Always inside what can still be bought, even after the variant or live stock changes.
   const qty = Math.min(Math.max(min, wantedQty), Math.max(min, canAdd));
@@ -212,7 +212,7 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
                   )}
                 </dl>
               )}
-              {product.line !== "fabric" && (
+              {product.line === "rtw" && (
                 <p className="mt-4 flex gap-3 text-[15px]">
                   <RulerIcon className="shrink-0" />
                   <span>Sizes S, M and L. Want it made to measure? <a className="underline underline-offset-4" href={SHOP.whatsapp} target="_blank" rel="noopener">Message us</a>.</span>

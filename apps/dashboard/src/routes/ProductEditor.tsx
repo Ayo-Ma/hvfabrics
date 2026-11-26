@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactNode } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { LINES, LINE_LABELS, slugify, type Line, type Product, type ProductImage, type ProductInput, type Unit } from "@hv/core";
-import { cx } from "@hv/ui";
+import { Listbox, cx, type ListboxOption } from "@hv/ui";
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon, ImagePlusIcon, PlusIcon, TrashIcon } from "@hv/ui/icons";
 import { Button, ErrorLine, PageHeader, Panel, Skel, showToast } from "../components/ui";
 import { Thumb } from "../components/Thumb";
@@ -54,7 +54,15 @@ interface Form {
   options: OptionRow[];
 }
 
-const defaultUnit = (line: Line): Unit => (line === "fabric" ? "yard" : "piece");
+const UNIT_OPTIONS: ListboxOption<Unit>[] = [
+  { value: "yard", label: "Yard" },
+  { value: "bundle", label: "Bundle" },
+  { value: "piece", label: "Piece" },
+];
+
+/** Fabrics and Ankara are cut by the yard; ready-to-wear is sold by the piece. */
+const isCloth = (line: Line) => line !== "rtw";
+const defaultUnit = (line: Line): Unit => (isCloth(line) ? "yard" : "piece");
 
 function blankOption(line: Line, key = "v1"): OptionRow {
   return { key, colour: "", size: "", unit: defaultUnit(line), price: "", stock: "", lowStockAt: "20", sku: "", held: 0 };
@@ -269,7 +277,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
   };
 
   const busyUploading = uploads.some((u) => !u.error);
-  const optionLabel = f.line === "fabric" ? "Colour" : "Colour (optional)";
+  const optionLabel = isCloth(f.line) ? "Colour" : "Colour (optional)";
 
   return (
     <form
@@ -378,7 +386,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
             </div>
           </Panel>
 
-          <Panel title="Options, price and stock" meta={f.line === "fabric" ? "One row per colour" : "One row per size or colour"} flush>
+          <Panel title="Options, price and stock" meta={isCloth(f.line) ? "One row per colour" : "One row per size or colour"} flush>
             <ul>
               {f.options.map((o, i) => (
                 <li key={o.key} className="grid grid-cols-2 gap-3 border-t border-rule px-5 py-4 first:border-t-0 sm:grid-cols-3 sm:items-start">
@@ -389,11 +397,16 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
                     <input className="field" value={o.size} onChange={(e) => setOption(i, { size: e.target.value })} />
                   </Field>
                   <Field label="Sold by">
-                    <select className="field" value={o.unit} onChange={(e) => setOption(i, { unit: e.target.value as Unit })}>
-                      <option value="yard">Yard</option>
-                      <option value="bundle">Bundle</option>
-                      <option value="piece">Piece</option>
-                    </select>
+                    <Listbox
+                      label="Sold by"
+                      hideLabel
+                      value={o.unit}
+                      onChange={(unit) => setOption(i, { unit })}
+                      options={UNIT_OPTIONS}
+                      buttonClassName="field"
+                      listClassName="dash-list"
+                      optionClassName="dash-option"
+                    />
                   </Field>
                   <Field label={`Price per ${o.unit} (₦)`} error={problems[`price-${i}`]}>
                     <input className={cx("field num", problems[`price-${i}`] && "border-neg")} inputMode="decimal" value={o.price} onChange={(e) => setOption(i, { price: e.target.value })} />
@@ -420,7 +433,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
             </ul>
             <div className="border-t border-rule px-5 py-3">
               <Button tone="text" onClick={addOption}>
-                <PlusIcon size={16} /> Add another {f.line === "fabric" ? "colour" : "option"}
+                <PlusIcon size={16} /> Add another {isCloth(f.line) ? "colour" : "option"}
               </Button>
             </div>
           </Panel>
@@ -443,7 +456,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
               <input className="field" value={f.slug} onChange={(e) => setF((x) => ({ ...x, slug: slugify(e.target.value), slugTouched: true }))} placeholder={slugify(f.title || "product")} />
             </Field>
           </Panel>
-          {f.line === "fabric" ? (
+          {isCloth(f.line) ? (
             <Panel title="Fabric details" meta="Optional">
               <div className="grid gap-4">
                 <Field label="Fibre">

@@ -18,7 +18,7 @@ export function meta() {
     { title: "Our shops · Harries Vogue" },
     {
       name: "description",
-      content: `Eight years selling fabric, lingerie and ready-to-wear. Visit Harries Vogue in ${SHOP_CITIES}, open ${SHOP.hours}, or order online and collect for free.`,
+      content: `Eight years selling fabric, Ankara and ready-to-wear. Visit Harries Vogue in ${SHOP_CITIES}, open ${SHOP.hours}, or order online and collect for free.`,
     },
   ];
 }

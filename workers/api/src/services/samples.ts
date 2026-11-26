@@ -19,11 +19,11 @@ interface Sample {
 
 const SAMPLES: Sample[] = [
   { name: "Sample · Adaeze Okafor", lines: [{ variantId: "seed-fabric-1--v1", qty: 5 }], hoursAgo: 0.4, status: "paid", zone: "lagos" },
-  { name: "Sample · Funmi Adeyemi", lines: [{ variantId: "seed-fabric-1--v1", qty: 3 }, { variantId: "seed-lingerie-1--v2", qty: 1 }], hoursAgo: 2.2, status: "paid", zone: "lagos" },
+  { name: "Sample · Funmi Adeyemi", lines: [{ variantId: "seed-fabric-1--v1", qty: 3 }, { variantId: "seed-ankara-1--v2", qty: 6 }], hoursAgo: 2.2, status: "paid", zone: "lagos" },
   { name: "Sample · Chioma Eze", lines: [{ variantId: "seed-fabric-4--v2", qty: 6 }], hoursAgo: 5.5, status: "paid", zone: "abuja" },
   { name: "Sample · Bola Martins", lines: [{ variantId: "seed-rtw-1--v2", qty: 1 }], hoursAgo: 20, status: "packed", zone: "lagos" },
   { name: "Sample · Ngozi Bello", lines: [{ variantId: "seed-fabric-2--v1", qty: 4 }], hoursAgo: 30, status: "packed", zone: "abuja" },
-  { name: "Sample · Kemi Lawal", lines: [{ variantId: "seed-lingerie-3--v1", qty: 2 }], hoursAgo: 52, status: "shipped", zone: "lagos" },
+  { name: "Sample · Kemi Lawal", lines: [{ variantId: "seed-ankara-2--v1", qty: 2 }], hoursAgo: 52, status: "shipped", zone: "lagos" },
   { name: "Sample · Amaka Nwosu", lines: [{ variantId: "seed-fabric-4--v1", qty: 10 }], hoursAgo: 75, status: "shipped", zone: "abuja" },
   { name: "Sample · Tola Ibrahim", lines: [{ variantId: "seed-rtw-3--v1", qty: 1 }], hoursAgo: 190, status: "delivered", zone: "lagos" },
 ];

@@ -6,8 +6,8 @@ import type { Deps } from "../deps";
  * (PLAN.md trap 2: Firestore's 50K reads/day). It's rebuilt whenever stock or products change.
  */
 // v2: stock counts removed. The new key means nothing cached with counts is ever served again.
-const CATALOGUE_KEY = "catalogue:v2";
-const SEARCH_KEY = "search-index:v2";
+const CATALOGUE_KEY = "catalogue:v3";
+const SEARCH_KEY = "search-index:v3";
 
 export async function rebuildCatalogue(deps: Deps): Promise<Catalogue> {
   const entries = await deps.store.listCatalogueEntries();

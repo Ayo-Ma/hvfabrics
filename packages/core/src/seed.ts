@@ -22,15 +22,15 @@ const specs: SeedSpec[] = [
   { line: "fabric", n: 2, unit: "yard", variants: [{ colour: "Colour A", price: 1_500_000, stock: 25 }] },
   { line: "fabric", n: 3, unit: "bundle", variants: [{ colour: "Colour A", price: 5_000_000, stock: 0 }] },
   { line: "fabric", n: 4, unit: "yard", variants: [{ colour: "Colour A", price: 800_000, stock: 60 }, { colour: "Colour B", price: 800_000, stock: 12 }] },
-  { line: "lingerie", n: 1, unit: "piece", variants: [{ size: "S", price: 1_200_000, stock: 5 }, { size: "M", price: 1_200_000, stock: 8 }, { size: "L", price: 1_200_000, stock: 0 }] },
-  { line: "lingerie", n: 2, unit: "piece", variants: [{ size: "M", price: 1_800_000, stock: 2 }, { size: "L", price: 1_800_000, stock: 6 }] },
-  { line: "lingerie", n: 3, unit: "piece", variants: [{ size: "One size", price: 900_000, stock: 15 }] },
+  { line: "ankara", n: 1, unit: "yard", variants: [{ colour: "Colour A", price: 600_000, stock: 48 }, { colour: "Colour B", price: 600_000, stock: 18 }] },
+  { line: "ankara", n: 2, unit: "yard", variants: [{ colour: "Colour A", price: 750_000, stock: 30 }] },
+  { line: "ankara", n: 3, unit: "bundle", variants: [{ colour: "Colour A", price: 3_600_000, stock: 6 }] },
   { line: "rtw", n: 1, unit: "piece", variants: [{ size: "8", price: 3_500_000, stock: 3 }, { size: "10", price: 3_500_000, stock: 4 }, { size: "12", price: 3_500_000, stock: 1 }] },
   { line: "rtw", n: 2, unit: "piece", variants: [{ size: "10", price: 4_200_000, stock: 0 }, { size: "12", price: 4_200_000, stock: 0 }] },
   { line: "rtw", n: 3, unit: "piece", variants: [{ size: "8", price: 2_800_000, stock: 9 }, { size: "14", price: 2_800_000, stock: 9 }] },
 ];
 
-const lineWord: Record<Line, string> = { fabric: "Fabric", lingerie: "Lingerie", rtw: "Ready-to-wear" };
+const lineWord: Record<Line, string> = { fabric: "Fabric", ankara: "Ankara", rtw: "Ready-to-wear" };
 
 /**
  * Generated design stand-ins (assets/photography/products, served by the storefront from /media) so

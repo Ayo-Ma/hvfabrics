@@ -24,7 +24,8 @@ const index = buildSearchIndex(
     product("lace", "Emerald Sequin Lace", "fabric", { attributes: { fibre: "Polyester" } }),
     product("ankara", "Sunrise Ankara", "fabric"),
     product("wax", "Blue Wax Print", "fabric"),
-    product("bralette", "Ivory Lace Bralette", "lingerie"),
+    product("bralette", "Ivory Lace Bralette", "rtw"),
+    product("kente", "Gold Kente Print", "ankara"),
     product("gown", "Evening Gown", "rtw"),
   ],
   "v1",
@@ -52,9 +53,9 @@ describe("search", () => {
     expect(ids("sequin lcae")).toEqual(["lace"]);
   });
 
-  it("applies synonyms: ankara = wax print, bra = lingerie", () => {
-    expect(ids("ankara").sort()).toEqual(["ankara", "wax"]);
-    expect(ids("wax print").sort()).toEqual(["ankara", "wax"]);
+  it("applies synonyms: ankara = wax print, and finds the Ankara line by name", () => {
+    expect(ids("ankara").sort()).toEqual(["ankara", "kente", "wax"]);
+    expect(ids("wax print").sort()).toEqual(["ankara", "kente", "wax"]);
     expect(ids("bra")).toContain("bralette");
   });
 
@@ -64,7 +65,7 @@ describe("search", () => {
   });
 
   it("searches by line name", () => {
-    expect(ids("ready to wear")).toEqual(["gown"]);
+    expect(ids("ready to wear").sort()).toEqual(["bralette", "gown"]);
   });
 });
 

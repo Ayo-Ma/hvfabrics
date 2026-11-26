@@ -8,12 +8,11 @@ import { LINE_LABELS } from "./schemas";
 
 /**
  * Synonym groups. Any term in a group matches the others.
- * PLAN.md examples: ankara = wax print, bra = lingerie.
+ * PLAN.md example: ankara = wax print.
  * Extend from the questions in her WhatsApp and Instagram DMs.
  */
 export const SYNONYM_GROUPS: readonly (readonly string[])[] = [
-  ["ankara", "wax print", "wax"],
-  ["lingerie", "bra"],
+  ["ankara", "wax print", "wax", "african print"],
 ];
 
 export interface SearchDoc {

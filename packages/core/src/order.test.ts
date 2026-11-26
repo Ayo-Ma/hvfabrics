@@ -94,8 +94,17 @@ describe("CheckoutInputSchema", () => {
     const r = CheckoutInputSchema.parse(valid);
     expect(r.customer.phone).toBe("08031234567");
   });
+  it("accepts the ways people write a Nigerian or foreign number", () => {
+    const phoneOf = (phone: string) => CheckoutInputSchema.parse({ ...valid, customer: { ...valid.customer, phone } }).customer.phone;
+    for (const p of ["08118206598", "0811 820 6598", "0811-820-6598", "+234 811 820 6598", "2348118206598", "+234 0811 820 6598", "(0811) 820.6598", "811 820 6598", "002348118206598", " 0811 820 6598 "]) {
+      expect(phoneOf(p)).toBe("08118206598");
+    }
+    expect(phoneOf("+44 7700 900123")).toBe("+447700900123");
+    expect(phoneOf("0044 7700 900123")).toBe("+447700900123");
+  });
   it("rejects bad input", () => {
     expect(CheckoutInputSchema.safeParse({ ...valid, items: [] }).success).toBe(false);
+    expect(CheckoutInputSchema.safeParse({ ...valid, customer: { ...valid.customer, phone: "0811 820" } }).success).toBe(false);
     expect(CheckoutInputSchema.safeParse({ ...valid, items: [{ variantId: "a--1", qty: 0 }] }).success).toBe(false);
     expect(CheckoutInputSchema.safeParse({ ...valid, customer: { ...valid.customer, phone: "123" } }).success).toBe(false);
     expect(CheckoutInputSchema.safeParse({ ...valid, customer: { ...valid.customer, email: "x" } }).success).toBe(false);

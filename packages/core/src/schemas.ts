@@ -6,13 +6,14 @@ z.config({ jitless: true });
 
 /** Firestore data model from PLAN.md. Every API input and stored document is validated with these. */
 
-export const LINES = ["fabric", "lingerie", "rtw"] as const;
-export const LineSchema = z.enum(LINES);
-export type Line = z.infer<typeof LineSchema>;
+/** Lingerie became Ankara on 2026-11-26 (owner's decision); anything still stored as "lingerie" reads as Ankara. */
+export const LINES = ["fabric", "ankara", "rtw"] as const;
+export const LineSchema = z.preprocess((v) => (v === "lingerie" ? "ankara" : v), z.enum(LINES));
+export type Line = (typeof LINES)[number];
 
 export const LINE_LABELS: Record<Line, string> = {
   fabric: "Fabrics",
-  lingerie: "Lingerie",
+  ankara: "Ankara",
   rtw: "Ready-to-Wear",
 };
 
@@ -63,7 +64,7 @@ export const ProductSchema = z.object({
 export type Product = z.infer<typeof ProductSchema>;
 
 /**
- * Unit: PLAN.md lists yard and bundle. "piece" is added for lingerie and
+ * Unit: PLAN.md lists yard and bundle. "piece" is added for
  * ready-to-wear sold by the item — to be confirmed by Malik.
  */
 export const UnitSchema = z.enum(["yard", "bundle", "piece"]);
@@ -231,12 +232,26 @@ export type Admin = z.infer<typeof AdminSchema>;
 
 /* ---------------- API inputs ---------------- */
 
-/** Nigerian numbers (0803…, +234803…) and international numbers with a + prefix. */
+/**
+ * Turns the ways people write a phone number into one form: Nigerian numbers as 0803…, everything
+ * else as +<country><number>. Accepts spaces, dots, dashes and brackets, 234… without the +,
+ * +234 0803… (the 0 kept by habit), 00 instead of +, and 803… with the leading 0 left off.
+ */
+export function normalisePhone(raw: string): string {
+  let v = raw.trim().replace(/[\s().-]/g, "");
+  if (v.startsWith("00")) v = `+${v.slice(2)}`;
+  if (/^234\d{10,11}$/.test(v)) v = `+${v}`;
+  const ng = /^\+2340?(\d{10})$/.exec(v);
+  if (ng) return `0${ng[1]}`;
+  if (/^[789]\d{9}$/.test(v)) return `0${v}`;
+  return v;
+}
+
+/** Nigerian numbers (0803…) and international numbers with a + prefix, after normalisePhone. */
 const phone = z
   .string()
-  .trim()
-  .transform((v) => v.replace(/[\s()-]/g, ""))
-  .pipe(z.string().regex(/^(\+\d{8,15}|0\d{10})$/, "Enter a valid phone number"));
+  .transform(normalisePhone)
+  .pipe(z.string().regex(/^(\+[1-9]\d{7,14}|0\d{10})$/, "Enter a valid phone number"));
 
 export const BagLineSchema = z.object({
   variantId: variantIdSchema,

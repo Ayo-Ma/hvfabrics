@@ -35,7 +35,7 @@ export default function SearchPage({ loaderData }: Route.ComponentProps) {
       <h1 className="text-4xl tracking-(--tracking-display)">Search</h1>
       <Form method="get" role="search" className="mt-6 flex max-w-2xl">
         <label htmlFor="q" className="sr-only">
-          Search fabrics, lingerie and ready-to-wear
+          Search fabrics, Ankara and ready-to-wear
         </label>
         <input
           id="q"

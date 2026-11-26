@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@hv/ui/tokens.css";
+@source "../../../packages/ui/src";
 
 /*
  * Dashboard roles — "Achromatic ledger" (design-taste-frontend app sheet, seed 2114315845),
@@ -122,6 +123,61 @@
   }
   .field:focus {
     border-color: var(--color-text);
+  }
+  /* The shared dropdown (@hv/ui Listbox), dressed like the other fields. */
+  .dash-list {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    padding: 4px;
+    box-shadow: 0 12px 32px -12px rgb(10 10 10 / 0.25);
+  }
+  .dash-option {
+    min-height: 40px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .dash-option[data-active] {
+    background: var(--color-raised);
+  }
+  .dash-option[aria-selected="true"] {
+    font-weight: 600;
+  }
+  /* Custom checkbox: the real input stays for keyboard and screen readers (sr-only, peer). */
+  .dash-check {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--color-control);
+    border-radius: 5px;
+    background: var(--color-surface);
+    transition: background-color 120ms, border-color 120ms;
+  }
+  .dash-check::after {
+    content: "";
+    width: 9px;
+    height: 5px;
+    border: solid var(--color-text);
+    border-width: 0 0 2px 2px;
+    transform: translateY(-1px) rotate(-45deg) scale(0);
+    transition: transform 120ms;
+  }
+  .peer:checked + .dash-check {
+    background: var(--color-yellow, #fdce02);
+    border-color: var(--color-text);
+  }
+  .peer:checked + .dash-check::after {
+    transform: translateY(-1px) rotate(-45deg) scale(1);
+  }
+  .peer:focus-visible + .dash-check {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+  input[type="search"]::-webkit-search-cancel-button {
+    appearance: none;
   }
   .label {
     display: block;

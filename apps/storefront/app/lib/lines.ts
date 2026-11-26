@@ -3,7 +3,7 @@ import { LINE_LABELS, type Line } from "@hv/core";
 /** URL segment for each product line. */
 export const LINE_PATHS: Record<Line, string> = {
   fabric: "/fabrics",
-  lingerie: "/lingerie",
+  ankara: "/ankara",
   rtw: "/ready-to-wear",
 };
 
@@ -12,14 +12,21 @@ export function lineFromPath(pathname: string): Line | undefined {
   return (Object.keys(LINE_PATHS) as Line[]).find((l) => LINE_PATHS[l] === seg);
 }
 
-/**
- * One line per product line saying what's in it. Kept factual until she supplies copy.
- * [TBC] marks text that needs her wording.
- */
+/** One line per product line saying what's in it (owner's homepage copy, 2026-11-26). */
 export const LINE_INTROS: Record<Line, string> = {
-  fabric: "For the outfit people ask about. Silk, satin, chiffon, lace, ankara and more.",
-  lingerie: "The part nobody sees, and you feel all day. [TBC: owner to confirm]",
-  rtw: "For when the day is close and your tailor is fully booked. Made-to-measure too: message us on WhatsApp. [TBC: owner to confirm]",
+  fabric: "From fluid chiffons and textured jacquards to structured corduroy. Sourced by the yard or in bulk bales for designers, tailors and fabric retailers.",
+  ankara: "Vibrant wax prints, rich motifs and fade-resistant cottons that hold crisp pleats and turn heads across every continent.",
+  rtw: "Effortless, tailored pieces cut from our finest textiles. Designed for the woman who wants standout style without the wait.",
 };
+
+/** What the menu calls each line (owner's copy). */
+export const LINE_MENU: Record<Line, string> = {
+  fabric: "Shop Fabrics",
+  ankara: "Ankara Prints",
+  rtw: "Ready-to-Wear",
+};
+
+/** Lines cut from the bolt, sold by the yard. */
+export const isCloth = (line: Line) => line !== "rtw";
 
 export { LINE_LABELS };

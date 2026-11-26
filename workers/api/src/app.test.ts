@@ -603,7 +603,7 @@ describe("products and stock", () => {
     expect(entry.product.id).toBe("emerald-lace");
     expect(entry.variants).toEqual([expect.objectContaining({ id: "emerald-lace--v1", reserved: 0 })]);
     await t.settle();
-    const cat = JSON.parse((await t.deps.kv.get("catalogue:v2"))!) as { products: { id: string }[] };
+    const cat = JSON.parse((await t.deps.kv.get("catalogue:v3"))!) as { products: { id: string }[] };
     expect(cat.products.map((p) => p.id)).toContain("emerald-lace");
 
     const again = await t.app.request("/admin/products", {

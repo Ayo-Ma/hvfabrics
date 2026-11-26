@@ -75,8 +75,9 @@ function RefundDialog({ order, onDone }: { order: NonNullable<ReturnType<typeof 
             Send {money(order.totals.total)} to {order.customer.name} by bank transfer, then confirm here. The order moves to Cancelled and
             stops counting in money in. This can&rsquo;t be undone.
           </p>
-          <label className="flex items-start gap-3 text-sm">
-            <input type="checkbox" checked={restock} onChange={(e) => setRestock(e.target.checked)} className="mt-0.5 size-4 accent-[var(--color-yellow)]" />
+          <label className="flex cursor-pointer items-start gap-3 text-sm">
+            <input type="checkbox" checked={restock} onChange={(e) => setRestock(e.target.checked)} className="peer sr-only" />
+            <span aria-hidden="true" className="dash-check mt-0.5" />
             <span>
               <span className="font-medium">Put the items back in stock</span>
               <span className="block text-muted">Leave unticked if the fabric has already been cut.</span>
