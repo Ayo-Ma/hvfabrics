@@ -1,32 +1,22 @@
 import { Link } from "react-router";
 import { LINES } from "@hv/core";
 import { LINE_LABELS, LINE_PATHS } from "~/lib/lines";
-import { Media } from "./Media";
 import { Wordmark } from "./Logo";
 import { SHOP, SHOP_CITIES } from "~/lib/shop";
 
 /**
- * The footer is the last photograph: the aso-ebi group at golden hour, darkened evenly so paper
- * type reads anywhere on it, with the name across the bottom at full width. The local details
+ * The footer: a plain ink ground (clear to read at any size), the name across the bottom at full
+ * width. The local details
  * (showrooms, hours, how orders travel) live here so the top of every page stays global.
  */
 export function Footer() {
   return (
     <footer className="relative isolate overflow-hidden bg-ink text-paper">
-      <Media
-        slot="campaign/footer-owambe"
-        alt=""
-        sizes="100vw"
-        ratio="16 / 9"
-        tone="dark"
-        className="absolute inset-0 -z-10 size-full"
-        imgClassName="brightness-[0.55]"
-      />
-      <div className="mx-auto flex min-h-[88svh] max-w-(--container-page) flex-col justify-between gap-16 px-(--spacing-gutter) pb-6 pt-12 md:min-h-svh">
+      <div className="mx-auto flex max-w-(--container-page) flex-col justify-between gap-20 px-(--spacing-gutter) pb-6 pt-16 lg:pt-20">
         <div className="grid gap-x-6 gap-y-10 text-base sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-3">
-            <p className="font-display text-2xl font-medium uppercase leading-none tracking-[0.01em]">Harries Vogue</p>
-            <p className="mt-3 max-w-[30ch] text-grey-100">Global wholesale &amp; retail fabrics, Ankara &amp; ready-to-wear.</p>
+            <p className="text-2xl font-bold tracking-[-0.03em]">Harries Vogue</p>
+            <p className="mt-3 max-w-[30ch] text-grey-300">Global wholesale &amp; retail fabrics, Ankara &amp; ready-to-wear.</p>
           </div>
 
           <nav aria-labelledby="footer-shop" className="lg:col-span-2">
@@ -53,13 +43,13 @@ export function Footer() {
               {SHOP.shops.map((s) => (
                 <li key={s.id}>
                   <span className="block font-semibold">{s.city} showroom</span>
-                  <span className="block text-grey-100">{s.address}</span>
-                  <span className="block text-grey-100">Open {SHOP.hours}</span>
+                  <span className="block text-grey-300">{s.address}</span>
+                  <span className="block text-grey-300">Open {SHOP.hours}</span>
                 </li>
               ))}
               <li>
                 <span className="block font-semibold">Dispatch</span>
-                <span className="block text-grey-100">Across Nigeria by Speedaf and park dispatch. Abroad by arrangement on WhatsApp.</span>
+                <span className="block text-grey-300">Across Nigeria by Speedaf and park dispatch. Abroad by arrangement on WhatsApp.</span>
               </li>
             </ul>
           </div>

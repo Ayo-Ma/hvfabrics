@@ -350,6 +350,7 @@ function VariantOption({ v, selected, onSelect }: { v: CatalogueVariant; selecte
       aria-label={`${v.size ?? v.colour}${soldOut ? ", sold out" : ""}`}
       className={cx(
         "min-h-11 min-w-12 px-4 text-[15px] font-medium transition-colors",
+        "rounded-full",
         selected ? "bg-ink text-paper" : "bg-grey-100 text-ink hover:bg-grey-200",
         soldOut && "text-grey-500 line-through decoration-1",
         soldOut && selected && "text-grey-300",
@@ -371,7 +372,7 @@ function QuantityStepper({
 }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <div className="flex items-center bg-grey-100">
+      <div className="flex items-center overflow-hidden rounded-full bg-grey-100">
         <button
           type="button"
           className="grid size-12 place-items-center hover:bg-grey-200 disabled:text-grey-300"

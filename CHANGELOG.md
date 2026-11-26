@@ -9,6 +9,10 @@
 
 ## Phase 1 — MVP (in progress)
 
+- Redesign (2026-11-26, owner's references: drop.code, OMÉ, Ameya): bold sentence-case headlines in Satoshi
+  instead of Futura capitals; light header with the logo and a single-line menu; soft grey hero panel with the shop's
+  seal; arched doors into each line; new arrivals as grey tiles with pill tabs and a round + to add; the promise as a
+  photo panel; rounded buttons, chips, tiles and fields across the shop; a plain ink footer. Colours unchanged.
 - New homepage and line pages (2026-11-26, owner's copy): global wholesale and retail positioning; hero, three
   category cards, the wholesale and global advantage, new arrivals with quick add, the Harries Vogue standard, a
   wholesale concierge (WhatsApp or email quote) and questions answered on the site. New menu and announcement bar;

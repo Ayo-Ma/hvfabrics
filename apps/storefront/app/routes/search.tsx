@@ -44,7 +44,7 @@ export default function SearchPage({ loaderData }: Route.ComponentProps) {
           defaultValue={q}
           autoFocus={!q}
           placeholder="Silk, satin, lace, ankara…"
-          className="min-h-14 flex-1 bg-grey-100 px-4 text-lg placeholder:text-grey-500"
+          className="min-h-14 flex-1 rounded-full bg-grey-100 px-6 text-lg placeholder:text-grey-500"
         />
         <button type="submit" className="grid min-h-14 w-14 place-items-center bg-ink text-paper hover:bg-grey-800">
           <SearchIcon title="Search" />

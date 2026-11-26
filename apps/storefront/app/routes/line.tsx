@@ -388,10 +388,10 @@ function LargeCard({ product, priority }: { product: CatalogueProduct; priority:
   return (
     <article className="large-card group">
       <Link to={`/p/${product.slug}`} className="block">
-        <div className="relative aspect-[4/5] overflow-hidden bg-grey-100">
+        <div className="tile-media">
           {image ? <ProductImage image={image} sizes="(min-width: 1024px) 38vw, 100vw" priority={priority} className={cx("product-card-img size-full object-cover", product.soldOut && "opacity-60")} /> : null}
           {detail && !product.soldOut ? <ProductImage image={detail} sizes="(min-width: 1024px) 38vw, 100vw" className="product-card-alt absolute inset-0 size-full object-cover" /> : null}
-          <span className="absolute left-3 top-3"><StockTag product={product} /></span>
+          <StockTag product={product} />
         </div>
       </Link>
       <div className="mt-4 flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
@@ -475,7 +475,7 @@ function Shelf({ products, cloth, initialYards }: { products: CatalogueProduct[]
                 <Link to={linkFor(p)} className="group block" onMouseEnter={() => setShown(i)} onFocus={() => setShown(i)}>
                   <div className={cx("specimen-tile", fieldOf(i))}>
                     {image ? <ProductImage image={image} sizes={isDouble(i) ? "(min-width: 1024px) 40vw, 100vw" : "(min-width: 1024px) 20vw, 50vw"} priority={i < 2} className="specimen-img" /> : null}
-                    <span className="absolute left-3 top-3"><StockTag product={p} /></span>
+                    <StockTag product={p} />
                   </div>
                   <h2 className="specimen-name">
                     <span className="specimen-name-text">{p.title}</span>

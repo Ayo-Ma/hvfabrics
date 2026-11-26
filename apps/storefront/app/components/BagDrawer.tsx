@@ -33,7 +33,7 @@ export function BagDrawer() {
           <h2 id="bag-title" className="text-2xl">
             Your bag
           </h2>
-          <button type="button" onClick={bag.close} className="grid size-11 place-items-center hover:bg-grey-100">
+          <button type="button" onClick={bag.close} className="grid size-11 place-items-center rounded-full hover:bg-grey-100">
             <CloseIcon title="Close bag" />
           </button>
         </div>
@@ -56,7 +56,7 @@ export function BagDrawer() {
             <ul className="flex-1 space-y-6 overflow-y-auto px-6 py-2">
               {bag.items.map((item) => (
                 <li key={item.variantId} className="grid grid-cols-[88px_1fr] gap-4">
-                  <Link to={`/p/${item.slug}`} onClick={bag.close} className="block bg-grey-100">
+                  <Link to={`/p/${item.slug}`} onClick={bag.close} className="block overflow-hidden rounded-xl bg-grey-100">
                     {item.image && (
                       <ProductImage image={item.image} sizes="88px" className="aspect-[4/5] w-full object-cover" />
                     )}
@@ -72,7 +72,7 @@ export function BagDrawer() {
                       {item.variantLabel} · {formatMoney(item.unitPrice)} per {unitLabel(item.unit, 1)}
                     </p>
                     <div className="mt-3 flex items-center gap-4">
-                      <div className="flex items-center bg-grey-100">
+                      <div className="flex items-center overflow-hidden rounded-full bg-grey-100">
                         <button
                           type="button"
                           className="grid size-10 place-items-center hover:bg-grey-200 disabled:text-grey-300"

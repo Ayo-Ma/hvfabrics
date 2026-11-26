@@ -231,7 +231,7 @@ export default function Checkout({ loaderData, actionData }: Route.ComponentProp
                 </ul>
                 <p className="slip-row mt-5"><span>Subtotal</span><i /><span className="tabular">{formatMoney(bag.subtotal)}</span></p>
                 <p className="slip-row"><span>{zone?.id.startsWith("pickup") ? "Collection" : "Delivery"}</span><i /><span key={zone?.id ?? "none"} className="tabular tick">{!zone ? "Choose above" : feeLabel(zone)}</span></p>
-                <p className="mt-6 flex items-center justify-between gap-4 bg-ink px-4 py-3 text-lg font-bold text-paper">
+                <p className="mt-6 flex items-center justify-between gap-4 rounded-xl bg-ink px-4 py-3 text-lg font-bold text-paper">
                   <span>Total</span>
                   <span key={total.amount} className="tabular tick">{formatMoney(total)}</span>
                 </p>

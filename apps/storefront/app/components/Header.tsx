@@ -13,22 +13,27 @@ const MENU = [
   { to: "/about", label: "About Us" },
 ];
 
-function MenuLink({ to, label, className }: { to: string; label: string; className: (active: boolean) => string }) {
+function MenuLink({ to, label, className }: { to: string; label: string; className?: string }) {
   // "/#wholesale" is a place on the home page, never "the page you're on".
   if (to.includes("#")) {
     return (
-      <Link to={to} className={className(false)}>
+      <Link to={to} className={className}>
         {label}
       </Link>
     );
   }
   return (
-    <NavLink to={to} className={({ isActive }) => className(isActive)}>
+    <NavLink to={to} className={({ isActive }) => cx(className, isActive && "is-on")}>
       {label}
     </NavLink>
   );
 }
 
+/**
+ * Header (2026-11-26 redesign, after drop.code): a thin ink announcement line, then a white bar with
+ * the menu on the left, the logo in the middle and search and bag on the right. On phones the menu
+ * becomes a row of pills under the logo, so every destination stays one tap away.
+ */
 export function Header() {
   const bag = useBag();
   return (
@@ -40,46 +45,38 @@ export function Header() {
         <span aria-hidden="true" className="announce-dot" />
         <span>Showrooms in {SHOP_CITIES.replace(" and ", " & ")}</span>
       </p>
-      <header className="sticky top-0 z-30 bg-ink text-paper">
+      <header className="site-header sticky top-0 z-30">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:bg-yellow focus:px-4 focus:py-2 focus:text-ink"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-full focus:bg-yellow focus:px-4 focus:py-2 focus:text-ink"
         >
           Skip to content
         </a>
-        <div className="mx-auto flex h-16 max-w-(--container-page) items-center gap-6 px-(--spacing-gutter)">
-          <Link to="/" className="shrink-0 text-yellow" aria-label="Harries Vogue home">
-            <Lockup className="block h-9 w-auto [&>svg]:h-full [&>svg]:w-auto" />
-          </Link>
-
-          <nav aria-label="Shop" className="ml-auto hidden lg:block">
-            <ul className="flex items-center gap-7 text-[15px] font-medium">
+        <div className="mx-auto grid h-16 max-w-(--container-page) grid-cols-[1fr_auto_1fr] items-center gap-4 xl:grid-cols-[auto_1fr_auto] xl:gap-10 px-(--spacing-gutter)">
+          <nav aria-label="Shop" className="site-nav hidden justify-self-center xl:block">
+            <ul className="flex items-center gap-7 whitespace-nowrap">
               {MENU.map((m) => (
                 <li key={m.to}>
-                  <MenuLink
-                    to={m.to}
-                    label={m.label}
-                    className={(active) =>
-                      cx(
-                        "relative py-2 transition-colors duration-(--duration-fast) hover:text-yellow",
-                        active && "after:absolute after:inset-x-0 after:-bottom-0.5 after:h-[3px] after:bg-yellow",
-                      )
-                    }
-                  />
+                  <MenuLink to={m.to} label={m.label} />
                 </li>
               ))}
             </ul>
           </nav>
+          <span className="xl:hidden" />
 
-          <div className="ml-auto flex items-center gap-1 lg:ml-4">
-            <Link to="/search" className="grid size-11 place-items-center transition-colors duration-(--duration-fast) hover:text-yellow">
+          <Link to="/" className="justify-self-center text-ink xl:order-first xl:justify-self-start" aria-label="Harries Vogue home">
+            <Lockup className="block h-8 w-auto sm:h-9 [&>svg]:h-full [&>svg]:w-auto" />
+          </Link>
+
+          <div className="flex items-center justify-self-end gap-1">
+            <Link to="/search" className="icon-btn">
               <SearchIcon title="Search" />
             </Link>
             <button
               type="button"
               onClick={bag.open}
               data-bag-target
-              className="relative grid size-11 place-items-center transition-colors duration-(--duration-fast) hover:text-yellow"
+              className="icon-btn relative"
               aria-label={`Bag, ${bag.count} ${bag.count === 1 ? "item" : "items"}`}
             >
               <BagIcon />
@@ -96,12 +93,11 @@ export function Header() {
           </div>
         </div>
 
-        {/* Phone and tablet: every destination stays one tap away instead of hiding in a menu. */}
-        <nav aria-label="Shop (mobile)" className="lg:hidden">
-          <ul className="no-scrollbar flex gap-6 overflow-x-auto px-(--spacing-gutter) pb-3 text-[15px] font-medium">
+        <nav aria-label="Shop (mobile)" className="mobile-nav xl:hidden">
+          <ul className="no-scrollbar flex gap-2 overflow-x-auto px-(--spacing-gutter) pb-3">
             {MENU.map((m) => (
               <li key={m.to} className="shrink-0">
-                <MenuLink to={m.to} label={m.label} className={(active) => cx("block py-1", active ? "text-yellow" : "text-paper")} />
+                <MenuLink to={m.to} label={m.label} />
               </li>
             ))}
           </ul>

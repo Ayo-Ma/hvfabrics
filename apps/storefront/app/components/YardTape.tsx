@@ -33,7 +33,7 @@ export function YardTape({
   return (
     <div>
       <div className="flex items-end justify-between gap-4">
-        <label htmlFor={id} className="font-display text-4xl font-medium uppercase">
+        <label htmlFor={id} className="text-4xl font-bold tracking-[-0.03em]">
           <span className="tabular">{value}</span> {unitLabel(unit, value)}
         </label>
         <p className="tabular pb-1 text-xl font-semibold" aria-live="polite">
@@ -95,7 +95,7 @@ export function YardTape({
         <div className="flex items-center">
           <button
             type="button"
-            className="grid size-12 place-items-center bg-grey-100 transition-colors hover:bg-grey-200 disabled:text-grey-300"
+            className="grid size-12 place-items-center rounded-full bg-grey-100 transition-colors hover:bg-grey-200 disabled:text-grey-300"
             onClick={() => set(value - 1)}
             disabled={value <= min}
             aria-label={`One ${unitLabel(unit, 1)} less`}
@@ -104,7 +104,7 @@ export function YardTape({
           </button>
           <button
             type="button"
-            className="grid size-12 place-items-center bg-grey-100 transition-colors hover:bg-grey-200 disabled:text-grey-300"
+            className="grid size-12 place-items-center rounded-full bg-grey-100 transition-colors hover:bg-grey-200 disabled:text-grey-300"
             onClick={() => set(value + 1)}
             disabled={value >= max}
             aria-label={`One ${unitLabel(unit, 1)} more`}

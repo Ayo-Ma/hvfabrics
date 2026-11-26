@@ -29,7 +29,7 @@ pnpm workspaces + Turborepo. Run pnpm via `corepack pnpm …` (pnpm is not insta
 
 ## Brand
 - Black `#0A0A0A`, Off-white `#FAFAF7`, Harries Yellow `#FDCE02` (accent only: primary buttons with black text, focus rings, tags). Never yellow text on a light background.
-- Headlines in Futura (decided 2026-11-18): set via `--font-display` ("HV Display"), currently Jost (free, Futura-style) until a Futura PT web licence is bought; display headings in capitals, Medium. Satoshi Regular/Medium/Bold for body and UI. Logo is the only serif element.
+- Headlines (decided 2026-11-26, replacing Futura capitals of 2026-11-18): bold sentence case in Satoshi, tight tracking; layout after the owner's drop.code / OMÉ / Ameya references (white pages, soft grey tiles, pills, rounded fields). Satoshi Regular/Medium/Bold for body and UI. Logo is the only serif element.
 - Header uses `assets/brand/logo/hv-lockup-horizontal.svg`.
 
 ## Secrets

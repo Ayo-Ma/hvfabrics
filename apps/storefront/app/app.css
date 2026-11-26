@@ -604,3 +604,158 @@ input:-webkit-autofill { -webkit-box-shadow: 0 0 0 1000px var(--color-grey-100) 
 @media (prefers-reduced-motion: reduce) {
   .pillar-img, .pillar-swatch > span, .product-card-img, .product-card-alt, .product-card-name, .quick-add, .check-box, .check-box::after, .switch, .switch::after, .view-opt, .size-chip { transition: none; }
 }
+
+/* =====================================================================
+   2026-11-26 redesign (owner's choice, after the drop.code / OMÉ / Ameya references):
+   bold sentence-case headlines in Satoshi instead of Futura capitals, white pages, soft grey
+   tiles, rounded shapes, more breathing room. Harries Vogue colours are unchanged:
+   ink, off-white, and yellow only for the primary action, tags and focus.
+   These rules come last, so they win over the older ones above.
+   ===================================================================== */
+:root { --font-display: var(--font-sans); --tile: #efefeb; --round: 22px; --round-lg: 28px; }
+:root { --hdr: 7.25rem; }
+@media (min-width: 1280px) { :root { --hdr: 4rem; } }
+
+.display-size, .chapter-title, .way-title, .figure, .hero-title, .product-title, .checkout-legend,
+.large-card-title, .about-hero-title, .pin-word, .yards-value, .yards-lead, .talk-number, .pillar-swatch {
+  font-family: var(--font-sans); font-weight: 700; text-transform: none; letter-spacing: -0.035em;
+}
+.display-size { font-size: clamp(2.5rem, 1.6rem + 3.2vw, 4.5rem); line-height: 1.02; }
+.chapter-title { font-size: clamp(2rem, 1.5rem + 1.8vw, 3.25rem); line-height: 1.05; }
+.way-title { font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem); line-height: 1.1; letter-spacing: -0.02em; }
+.group:hover .way-title, .group:focus-visible .way-title { letter-spacing: -0.02em; }
+.product-title { font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.9rem); line-height: 1.06; }
+.checkout-legend { font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.85rem); line-height: 1.1; letter-spacing: -0.02em; }
+.large-card-title { font-size: clamp(1.35rem, 1.15rem + 0.7vw, 1.75rem); line-height: 1.1; letter-spacing: -0.02em; }
+.about-hero-title { letter-spacing: -0.03em; line-height: 1.05; }
+.yards-value, .yards-lead { letter-spacing: -0.02em; }
+.yards-unit { letter-spacing: 0; }
+.cover-line { padding-bottom: 0.1em; margin-bottom: -0.1em; }
+body { font-size: 1.0625rem; }
+
+/* Shapes: pills for actions and chips, soft rounded tiles and fields. */
+.bar-btn, .quick-add, .chip, .size-chip, .active-chip, .copy-chip, .transfer-wa, .about-btn, .yards-btn, .view-switch, .view-opt, .door { border-radius: 9999px; }
+.zone-tile, .collect-note, .checkout-slip-field, .spec-label, .transfer-note, .sf-list, .gallery-thumb { border-radius: 16px; }
+.gallery-stage, .specimen-tile, .shelf-stage-tile { border-radius: var(--round); overflow: hidden; }
+.sf-option { border-radius: 10px; }
+.check-box { border-radius: 7px; }
+.transfer-num { border-radius: 9999px; }
+.filter-sheet { border-radius: 24px 24px 0 0; }
+@media (min-width: 640px) { .filter-sheet { border-radius: 24px 0 0 24px; } }
+.collection-bar { background: rgb(250 250 247 / 0.92); }
+.field-a, .field-b, .field-c { background: var(--tile); }
+.selvedge { display: none; }
+
+/* Header: white, the logo in the middle, the menu on the left (drop.code). */
+.site-header { background: var(--color-paper); color: var(--color-ink); border-bottom: 1px solid var(--color-grey-100); }
+.site-nav a { position: relative; padding: 0.5rem 0; font-size: 0.9375rem; font-weight: 500; color: var(--color-grey-700); transition: color var(--duration-fast); }
+.site-nav a:hover, .site-nav a.is-on { color: var(--color-ink); }
+.site-nav a.is-on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: var(--color-ink); }
+.icon-btn { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border-radius: 9999px; transition: background-color var(--duration-fast); }
+.icon-btn:hover { background: var(--color-grey-50); }
+.icon-btn:focus-visible { outline: 3px solid var(--color-yellow); outline-offset: 1px; }
+.announce { background: var(--color-ink); font-size: 0.8125rem; padding-block: 0.6rem; }
+.mobile-nav a { display: inline-flex; min-height: 2.5rem; align-items: center; padding: 0 1rem; border-radius: 9999px; background: var(--color-grey-50); font-size: 0.9375rem; font-weight: 600; white-space: nowrap; }
+.mobile-nav a.is-on { background: var(--color-ink); color: var(--color-paper); }
+
+/* ---------- Home ---------- */
+.home-wrap { max-width: var(--container-page); margin-inline: auto; padding-inline: var(--spacing-gutter); }
+.hero { position: relative; display: grid; overflow: hidden; border-radius: var(--round-lg); background: var(--tile); }
+.hero-copy { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center; padding: 2.25rem 1.5rem 3.5rem; }
+.hero-h1 { font-weight: 700; letter-spacing: -0.045em; line-height: 0.98; font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.6rem); text-wrap: balance; }
+.hero-sub { display: flex; gap: 0.85rem; align-items: flex-start; margin-top: 1.75rem; max-width: 34rem; font-size: 1.125rem; line-height: 1.55; color: var(--color-grey-700); }
+.hero-spark { flex: none; width: 14px; height: 14px; margin-top: 0.45em; border-radius: 9999px; background: var(--color-yellow); box-shadow: 0 0 0 4px rgb(253 206 2 / 0.25); }
+.hero-photo { position: relative; min-height: 22rem; }
+.hero-photo picture, .hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; }
+@media (min-width: 1024px) {
+  .hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); min-height: min(46rem, calc(100svh - 8.5rem)); }
+  .hero-copy { padding: 4rem 3rem 4.5rem 4rem; }
+  .hero-photo { min-height: 0; }
+}
+/* The seal: the shop's name around the monogram, sitting on the hero's lower edge. */
+.seal { position: relative; z-index: 2; display: grid; width: 7.5rem; height: 7.5rem; margin: -3.75rem auto 0; place-items: center; border-radius: 9999px; background: #fff; box-shadow: 0 10px 30px -14px rgb(10 10 10 / 0.35); }
+.seal svg.seal-ring { position: absolute; inset: 0.4rem; width: calc(100% - 0.8rem); height: calc(100% - 0.8rem); }
+.seal-mark { width: 2.6rem; height: 2.6rem; overflow: hidden; border-radius: 9999px; }
+.seal-mark svg { width: 100%; height: 100%; }
+@media (prefers-reduced-motion: no-preference) { .seal svg.seal-ring { animation: spin 40s linear infinite; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.sec { padding-block: 5.5rem; }
+@media (min-width: 1024px) { .sec { padding-block: 7rem; } }
+.sec-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem 2rem; }
+.sec-title { font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; font-size: clamp(1.9rem, 1.4rem + 1.8vw, 3rem); }
+.sec-lead { max-width: 40rem; font-size: 1.125rem; line-height: 1.6; color: var(--color-grey-700); }
+
+/* Arches (Ameya): one arch per way in. */
+.arches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 0.9rem; }
+@media (min-width: 1024px) { .arches { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; } }
+.arch-frame { position: relative; overflow: hidden; aspect-ratio: 3 / 4; border-radius: 999px 999px var(--round) var(--round); background: var(--tile); }
+.arch-frame picture, .arch-frame img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.arch-frame img { transition: transform 900ms var(--ease-out); }
+.arch:hover .arch-frame img, .arch:focus-visible .arch-frame img { transform: scale(1.05); }
+.arch-type { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.15em; background: var(--color-ink); color: var(--color-paper); font-weight: 700; letter-spacing: -0.04em; font-size: clamp(1.8rem, 1.2rem + 2.2vw, 3rem); line-height: 1; }
+.arch-type span:nth-child(2) { color: var(--color-yellow); }
+.arch-type span:nth-child(3) { color: transparent; -webkit-text-stroke: 1.2px var(--color-paper); }
+.arch-label { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 1rem; font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.015em; }
+.arch-label svg { transition: transform var(--duration-base) var(--ease-out); }
+.arch:hover .arch-label svg { transform: translateX(4px); }
+.arch-text { margin-top: 0.35rem; font-size: 0.9875rem; line-height: 1.55; color: var(--color-grey-600); }
+
+/* Pill tabs (drop.code). */
+.pills { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.3rem; border-radius: 9999px; background: var(--color-grey-50); }
+.pill { min-height: 2.5rem; padding: 0 1.1rem; border-radius: 9999px; font-size: 0.9375rem; font-weight: 600; color: var(--color-grey-700); transition: background-color var(--duration-fast), color var(--duration-fast); }
+.pill:hover { color: var(--color-ink); }
+.pill[aria-selected="true"] { background: var(--color-yellow); color: var(--color-ink); }
+.pill:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 2px; }
+
+/* Product tiles (drop.code): soft grey tile, round + to add, name and price under it. */
+.tile-card { position: relative; }
+.tile-media { position: relative; overflow: hidden; aspect-ratio: 4 / 5; border-radius: var(--round); background: var(--tile); }
+.tile-media picture, .tile-media img { width: 100%; height: 100%; }
+.tile-plus { position: absolute; top: 0.7rem; right: 0.7rem; z-index: 2; display: grid; width: 2.6rem; height: 2.6rem; place-items: center; border-radius: 9999px; background: #fff; color: var(--color-ink); box-shadow: 0 4px 14px -6px rgb(10 10 10 / 0.35); transition: background-color 180ms var(--ease-out), transform 180ms var(--ease-out); }
+.tile-plus:hover { background: var(--color-yellow); transform: scale(1.06); }
+.tile-plus:active { transform: scale(0.94); }
+.tile-plus:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 2px; }
+.tile-plus.is-added { background: var(--color-success); color: #fff; }
+.tile-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; margin-top: 0.85rem; }
+.tile-name { min-width: 0; font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+.tile-price { flex: none; font-size: 0.9875rem; font-weight: 600; }
+.tile-sub { margin-top: 0.15rem; font-size: 0.875rem; color: var(--color-grey-600); }
+.tile-flag { position: absolute; left: 0.7rem; top: 0.7rem; z-index: 2; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: var(--color-ink); color: var(--color-paper); }
+
+/* Advantages: four soft tiles. */
+.adv { display: grid; gap: 0.9rem; }
+@media (min-width: 640px) { .adv { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .adv { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.adv-item { padding: 1.75rem 1.5rem; border-radius: var(--round); background: var(--tile); }
+.adv-icon { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 9999px; background: #fff; }
+
+/* The promise (OMÉ): photograph and words side by side in one rounded panel. */
+.promise { display: grid; overflow: hidden; border-radius: var(--round-lg); background: var(--color-ink); color: var(--color-paper); }
+.promise-photo { position: relative; min-height: 20rem; }
+.promise-photo picture, .promise-photo img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.promise-copy { padding: 2.75rem 1.75rem 3rem; }
+@media (min-width: 1024px) { .promise { grid-template-columns: 1fr 1fr; min-height: 38rem; } .promise-copy { padding: 4.5rem 4rem; display: flex; flex-direction: column; justify-content: center; } }
+.promise .eyebrow { color: var(--color-yellow); }
+
+/* Wholesale: a light panel with the quote actions. */
+.wholesale { display: grid; gap: 2rem; padding: 2.75rem 1.75rem; border-radius: var(--round-lg); background: var(--tile); }
+@media (min-width: 1024px) { .wholesale { grid-template-columns: 1.1fr 1fr; align-items: end; gap: 4rem; padding: 4.5rem 4rem; } }
+.btn-outline { display: inline-flex; min-height: 3.25rem; align-items: center; gap: 0.5rem; padding: 0 1.4rem; border-radius: 9999px; border: 1.5px solid var(--color-ink); font-weight: 600; transition: background-color var(--duration-fast), color var(--duration-fast); }
+.btn-outline:hover { background: var(--color-ink); color: var(--color-paper); }
+.btn-outline:focus-visible { outline: 3px solid var(--color-yellow); outline-offset: 2px; }
+
+/* Questions: rounded rows. */
+.faq-list { display: grid; gap: 0.6rem; }
+.faq-row { border-radius: 18px; background: var(--color-grey-50); padding: 0.4rem 1.25rem; }
+.faq-row summary { min-height: 3.5rem; }
+.faq-row[open] { background: var(--tile); }
+.faq-row summary:hover { color: var(--color-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .arch-frame img, .tile-plus, .pill { transition: none; }
+}
+
+/* Fields: soft rounded corners everywhere on the shop. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]), textarea { border-radius: 14px; }
+input[type="search"] { border-radius: 9999px; }
