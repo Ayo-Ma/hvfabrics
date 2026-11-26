@@ -22,7 +22,7 @@ test.describe("storefront", () => {
   const pages: [string, string][] = [
     ["home", "/"],
     ["fabrics", "/fabrics"],
-    ["lingerie", "/lingerie"],
+    ["ankara", "/ankara"],
     ["ready-to-wear", "/ready-to-wear"],
     ["search", "/search?q=fabric"],
     ["search, no results", "/search?q=zzzzqqq"],
@@ -36,6 +36,33 @@ test.describe("storefront", () => {
       await scan(page, label);
     });
   }
+
+  test("collection layouts, sort menu and filter sheet", async ({ page }) => {
+    // Every tap first, scans last: axe scrolls containers while it checks contrast and leaves them moved.
+    await page.goto(`${SHOP}/fabrics`);
+    await page.getByRole("button", { name: /Sort by/ }).click();
+    await expect(page.getByRole("listbox")).toBeVisible();
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/sort=price-asc/);
+    await page.getByRole("radio", { name: "Shelf" }).click();
+    await page.getByRole("button", { name: /^Filter/ }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.getByRole("switch", { name: "In stock only" }).click();
+    await expect(page).toHaveURL(/stock=1/);
+    await page.getByRole("button", { name: /^Show \d+ results?$/ }).click();
+    await expect(page.getByRole("dialog")).toBeHidden();
+
+    await page.getByRole("button", { name: /^Filter/ }).click();
+    await scan(page, "filter sheet");
+    await page.keyboard.press("Escape");
+    await scan(page, "Shelf layout");
+    await page.getByRole("radio", { name: "Large" }).click();
+    await scan(page, "Large layout");
+    await page.getByRole("radio", { name: "Grid" }).click();
+    await page.getByRole("button", { name: /Sort by/ }).click();
+    await scan(page, "grid, filters on, sort menu open");
+  });
 
   test("product page, bag drawer and checkout", async ({ page }) => {
     const cat = (await (await fetch(`${API}/catalogue`)).json()) as { products: { slug: string; soldOut: boolean }[] };

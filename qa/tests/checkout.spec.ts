@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 /**
  * PLAN.md Phase 1 acceptance, automated:
- *  - a customer finds a fabric, chooses 5 yards, pays and sees a confirmation, without help;
+ *  - a customer finds a fabric, takes the 2 yards it starts at, pays and sees a confirmation, without help;
  *  - the paid order appears in her dashboard and moves New → Packed;
  *  - stock goes down by exactly what was bought;
  *  - a sold-out variant shows "Sold out" and can't be bought.
@@ -37,7 +37,7 @@ async function catalogue(): Promise<CatProduct[]> {
   return ((await res.json()) as { products: CatProduct[] }).products;
 }
 
-test("browse → 5 yards → pay → confirmation → order in the dashboard → stock down", async ({ page }) => {
+test("browse → 2 yards → pay → confirmation → order in the dashboard → stock down", async ({ page }) => {
   const before = await catalogue();
   const counts = await Promise.all(before.map((p) => (p.line === "fabric" && !p.soldOut ? realStock(p.variants[0]!.id) : Promise.resolve(0))));
   const fabric = before.find((_, i) => counts[i]! >= 10)!;
@@ -46,13 +46,13 @@ test("browse → 5 yards → pay → confirmation → order in the dashboard →
 
   // Find it the way a shopper would: the Fabrics page.
   await page.goto(SHOP);
-  await page.getByRole("link", { name: /^Fabrics/ }).first().click();
+  await page.getByRole("link", { name: /^Shop Fabrics$/ }).first().click();
   await expect(page).toHaveURL(/\/fabrics/);
   await page.getByRole("link", { name: fabric.title }).first().click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(fabric.title);
 
-  // 5 yards is the default on the tape. Adding flies the item to the bag icon; the shopper then opens the bag.
-  await expect(page.getByLabel(/yards?/i).first()).toHaveValue("5");
+  // Cloth starts at 2 yards (the owner's minimum), so that is the tape's default. Adding flies the item to the bag icon; the shopper then opens the bag.
+  await expect(page.getByLabel(/yards?/i).first()).toHaveValue("2");
   await page.waitForLoadState("networkidle"); // tap after the page is interactive, as a person would
   await page.getByRole("button", { name: /add to bag/i }).click();
   await expect(page.getByRole("button", { name: /added to bag/i })).toBeVisible();
@@ -75,14 +75,14 @@ test("browse → 5 yards → pay → confirmation → order in the dashboard →
   await expect(page.getByRole("heading", { name: "Order confirmed" })).toBeVisible();
   const number = /\/order\/(HV-[A-Z0-9]{6})/.exec(page.url())![1]!;
 
-  // Stock: exactly 5 fewer, sold (not just held).
-  await expect.poll(() => realStock(fabric.variants[0]!.id)).toBe(variantBefore - 5);
+  // Stock: exactly 2 fewer, sold (not just held).
+  await expect.poll(() => realStock(fabric.variants[0]!.id)).toBe(variantBefore - 2);
 
   // Her dashboard: the order is in New, and one tap packs it.
   await page.goto(`${DASH}/orders?devRole=packer`);
   const card = page.getByRole("listitem").filter({ hasText: number });
   await expect(card).toBeVisible();
-  await expect(card).toContainText("5 yards");
+  await expect(card).toContainText("2 yards");
   await card.getByRole("button", { name: "Mark packed" }).click();
   await expect(page.getByText(`${number} moved to Packed`)).toBeVisible();
 });

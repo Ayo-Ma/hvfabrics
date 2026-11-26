@@ -85,7 +85,7 @@ export function PayByTransfer({ order }: { order: PublicOrder & { payTo: NonNull
             <p className="font-semibold">WhatsApp is for receipts only.</p>
             <p className="mt-1">
               Questions about fabric, delivery or returns are answered here:{" "}
-              <Link to="/#buying-title" className="underline underline-offset-4">
+              <Link to="/#questions" className="underline underline-offset-4">
                 common questions
               </Link>
               ,{" "}

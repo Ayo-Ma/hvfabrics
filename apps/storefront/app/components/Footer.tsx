@@ -7,8 +7,8 @@ import { SHOP, SHOP_CITIES } from "~/lib/shop";
 
 /**
  * The footer is the last photograph: the aso-ebi group at golden hour, darkened evenly so paper
- * type reads anywhere on it, with the name across the bottom at full width. Without the photograph
- * it falls back to the ink ground.
+ * type reads anywhere on it, with the name across the bottom at full width. The local details
+ * (showrooms, hours, how orders travel) live here so the top of every page stays global.
  */
 export function Footer() {
   return (
@@ -20,43 +20,51 @@ export function Footer() {
         ratio="16 / 9"
         tone="dark"
         className="absolute inset-0 -z-10 size-full"
-        imgClassName="brightness-[0.62]"
+        imgClassName="brightness-[0.55]"
       />
-      <div className="mx-auto flex min-h-[88svh] max-w-(--container-page) flex-col justify-between gap-16 px-(--spacing-gutter) pb-6 pt-10 md:min-h-svh">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-8 text-base md:grid-cols-4">
-          <nav aria-labelledby="footer-shop">
-            <h2 id="footer-shop" className="font-sans text-base font-bold tracking-normal">Shop</h2>
+      <div className="mx-auto flex min-h-[88svh] max-w-(--container-page) flex-col justify-between gap-16 px-(--spacing-gutter) pb-6 pt-12 md:min-h-svh">
+        <div className="grid gap-x-6 gap-y-10 text-base sm:grid-cols-2 lg:grid-cols-12">
+          <div className="lg:col-span-3">
+            <p className="font-display text-2xl font-medium uppercase leading-none tracking-[0.01em]">Harries Vogue</p>
+            <p className="mt-3 max-w-[30ch] text-grey-100">Global wholesale &amp; retail fabrics, Ankara &amp; ready-to-wear.</p>
+          </div>
+
+          <nav aria-labelledby="footer-shop" className="lg:col-span-2">
+            <h2 id="footer-shop" className="font-sans text-base font-bold tracking-normal">Quick links</h2>
             <ul className="mt-3 space-y-2">
               {LINES.map((l) => (
                 <li key={l}>
                   <Link className="footer-link" to={LINE_PATHS[l]}>{LINE_LABELS[l]}</Link>
                 </li>
               ))}
-              <li><Link className="footer-link" to="/search">Search</Link></li>
-            </ul>
-          </nav>
-          <nav aria-labelledby="footer-orders">
-            <h2 id="footer-orders" className="font-sans text-base font-bold tracking-normal">Orders</h2>
-            <ul className="mt-3 space-y-2">
-              <li><Link className="footer-link" to="/about">Our shops</Link></li>
+              <li><Link className="footer-link" to="/policies/delivery">Shipping &amp; delivery rates</Link></li>
+              <li><Link className="footer-link" to="/#wholesale">Wholesale</Link></li>
               <li><Link className="footer-link" to="/track">Track an order</Link></li>
-              <li><Link className="footer-link" to="/policies/delivery">Delivery</Link></li>
               <li><Link className="footer-link" to="/policies/returns">Returns</Link></li>
               <li><Link className="footer-link" to="/policies/privacy">Privacy</Link></li>
             </ul>
           </nav>
-          <div>
+
+          <div className="lg:col-span-4">
             <h2 className="font-sans text-base font-bold tracking-normal">
-              <Link className="footer-link" to="/about">Visit a shop</Link>
+              <Link className="footer-link" to="/about">Visit our showrooms</Link>
             </h2>
-            <ul className="mt-3 space-y-2">
+            <ul className="mt-3 space-y-4">
               {SHOP.shops.map((s) => (
-                <li key={s.id}>{s.address}</li>
+                <li key={s.id}>
+                  <span className="block font-semibold">{s.city} showroom</span>
+                  <span className="block text-grey-100">{s.address}</span>
+                  <span className="block text-grey-100">Open {SHOP.hours}</span>
+                </li>
               ))}
+              <li>
+                <span className="block font-semibold">Dispatch</span>
+                <span className="block text-grey-100">Across Nigeria by Speedaf and park dispatch. Abroad by arrangement on WhatsApp.</span>
+              </li>
             </ul>
-            <p className="mt-2">Open {SHOP.hours}</p>
           </div>
-          <div>
+
+          <div className="lg:col-span-3">
             <h2 className="font-sans text-base font-bold tracking-normal">Talk to us</h2>
             <ul className="mt-3 space-y-2">
               <li><a className="footer-link" href={SHOP.whatsapp} rel="noopener" target="_blank">WhatsApp {SHOP.phone.display}</a></li>

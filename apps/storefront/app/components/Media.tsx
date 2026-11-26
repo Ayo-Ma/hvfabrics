@@ -17,6 +17,7 @@ export function hasMedia(slot: string): boolean {
 
 export function Media({
   slot,
+  fallback,
   alt,
   sizes,
   priority = false,
@@ -27,6 +28,8 @@ export function Media({
 }: {
   /** e.g. "campaign/stage-01-hero" (path under assets/photography without the extension) */
   slot: string;
+  /** A photograph that already exists, shown until `slot` has been generated. */
+  fallback?: string;
   alt: string;
   sizes: string;
   priority?: boolean;
@@ -36,7 +39,8 @@ export function Media({
   className?: string;
   imgClassName?: string;
 }) {
-  const entry = MANIFEST[slot];
+  const shown = slot in MANIFEST ? slot : fallback && fallback in MANIFEST ? fallback : slot;
+  const entry = MANIFEST[shown];
   if (!entry) {
     return (
       <div
@@ -47,7 +51,7 @@ export function Media({
       />
     );
   }
-  const base = `/media/${slot}`;
+  const base = `/media/${shown}`;
   const set = (ext: string) => entry.widths.map((w) => `${base}/${w}.${ext} ${w}w`).join(", ");
   const fallbackWidth = entry.widths.includes(800) ? 800 : entry.widths[entry.widths.length - 1]!;
   return (
