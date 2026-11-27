@@ -20,7 +20,7 @@ import {
 import { decodeFields, encodeFields, encodeValue, type FsFields } from "./firestore-codec";
 import type { GoogleAuth } from "./google-auth";
 import { planCancel,
-  planRefund, planMove, planPayment, planProductSave, planReservation, planStock, variantIdsOf, withPushToken } from "./logic";
+  planRefund, planMove, planPayment, planProductSave, planReservation, planStock, markHeld, variantIdsOf, withPushToken } from "./logic";
 import {
   customerId,
   type CreateOrderResult,
@@ -229,7 +229,7 @@ export class FirestoreStore implements Store {
       }
       const plan = planReservation(lines, found);
       if (!plan.ok) return { result: plan, writes: [] };
-      const order = makeOrder(found);
+      const order = markHeld(makeOrder(found), plan.held);
       return {
         result: { ok: true, order, soldOutNow: plan.soldOutNow },
         writes: [...plan.reserved.map((v) => this.variantWrite(v)), this.write(`orders/${order.id}`, order)],

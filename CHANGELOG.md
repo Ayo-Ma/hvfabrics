@@ -9,6 +9,9 @@
 
 ## Phase 1 — MVP (in progress)
 
+- Orders always go through (2026-11-27, owner): checkout no longer refuses a bag for stock. What's in stock is held;
+  an order for more is accepted and flagged "Ordered more than was in stock" in the dashboard, with each short line
+  recording how many were held. Only a product taken off sale stops an order (it's removed from the bag).
 - Ankara by the piece (2026-11-27, owner): Ankara comes in 6-yard pieces and is sold one piece at a time; prices
   read "per piece (6 yards)"; new Ankara defaults to piece in the dashboard; the 34 live Ankara products were
   switched from yard to piece (a mesh priced per yard stays by the yard). Homepage photography (hero, category doors,

@@ -28,6 +28,7 @@ const COLUMNS: Column[] = [
 
 export const FLAG_TEXT: Record<string, string> = {
   paid_after_expiry_stock_short: "Paid after the hold ended and the stock had gone. Contact the customer before packing.",
+  ordered_beyond_stock: "Ordered more than was in stock. Check you can supply the full amount before packing, or contact the customer.",
 };
 
 export function Orders() {

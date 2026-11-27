@@ -2,7 +2,7 @@ import type { RefundInput } from "@hv/core";
 import type { RefundPlan } from "./logic";
 import type { BagLine, Customer, Order, OrderStatus, Product, ProductInput, Settings, StockPatch, Variant } from "@hv/core";
 import { byPaidDesc, planCancel,
-  planRefund, planMove, planPayment, planProductSave, planReservation, planStock, variantIdsOf, withPushToken } from "./logic";
+  planRefund, planMove, planPayment, planProductSave, planReservation, planStock, markHeld, variantIdsOf, withPushToken } from "./logic";
 import {
   customerId,
   type CreateOrderResult,
@@ -60,7 +60,7 @@ export class MemoryStore implements Store {
     }
     const plan = planReservation(lines, found);
     if (!plan.ok) return plan;
-    const order = makeOrder(found);
+    const order = markHeld(makeOrder(found), plan.held);
     for (const v of plan.reserved) this.variants.get(v.id)!.variant = v;
     this.orders.set(order.id, structuredClone(order));
     return { ok: true, order, soldOutNow: plan.soldOutNow };

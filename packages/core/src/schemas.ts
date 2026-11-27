@@ -131,6 +131,11 @@ export const OrderItemSchema = z.object({
   /** How it's sold, so the cutting list can say "5 yards". Absent on orders made before 2026-11-13. */
   unit: UnitSchema.optional(),
   qty: z.number().int().positive(),
+  /**
+   * Set only when the customer ordered more than was in stock (owner, 2026-11-27: orders always go
+   * through): how many were held from stock. The rest is for the owner to source or settle.
+   */
+  held: z.number().int().nonnegative().optional(),
   unitPrice: MoneySchema,
 });
 export type OrderItem = z.infer<typeof OrderItemSchema>;

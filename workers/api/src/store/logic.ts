@@ -29,21 +29,55 @@ import { customerId, MAX_PUSH_TOKENS, type Entry, type MoveResult, type SaveProd
 export function planReservation(
   lines: BagLine[],
   found: Map<string, VariantWithProduct>,
-): { ok: true; merged: BagLine[]; reserved: Variant[]; soldOutNow: boolean } | { ok: false; problems: BagProblem[] } {
+): { ok: true; merged: BagLine[]; reserved: Variant[]; held: Map<string, number>; soldOutNow: boolean } | { ok: false; problems: BagProblem[] } {
   // Draft or archived products can't be bought even if a stale bag still holds them.
   const buyable = new Map(
     [...found].filter(([, v]) => v.productStatus === "live").map(([id, v]) => [id, v.variant] as const),
   );
+  // Owner, 2026-11-27: never turn an order away for stock. Hold what's there; an order that asks for more
+  // goes through flagged, and she sources or settles the rest. Only unknown or withdrawn products stop it.
   const check = validateBag(lines, buyable);
-  if (!check.ok) return check;
-  const reserved = check.merged.map((l) => reserve(buyable.get(l.variantId)!, l.qty));
+  if (!check.ok) {
+    const missing = check.problems.filter((p) => p.kind === "not_found");
+    if (missing.length) return { ok: false, problems: missing };
+  }
+  const merged = new Map<string, number>();
+  for (const l of lines) merged.set(l.variantId, (merged.get(l.variantId) ?? 0) + l.qty);
+  const held = new Map<string, number>();
+  const reserved: Variant[] = [];
+  for (const [variantId, qty] of merged) {
+    const v = buyable.get(variantId)!;
+    const h = Math.min(qty, available(v));
+    held.set(variantId, h);
+    if (h > 0) reserved.push(reserve(v, h));
+  }
   // The shop window shows only "in stock" or "sold out", so it needs rebuilding only when this order
   // leaves a variant below its smallest sale (on sale day most orders change nothing a shopper sees).
   const soldOutNow = reserved.some((v) => available(v) < minQty(v.options.unit));
-  return { ok: true, merged: check.merged, reserved, soldOutNow };
+  return { ok: true, merged: [...merged].map(([variantId, qty]) => ({ variantId, qty })), reserved, held, soldOutNow };
 }
 
 export const SHORTFALL_FLAG = "paid_after_expiry_stock_short";
+/** The customer ordered more than was in stock; each short line carries `held`. */
+export const BEYOND_STOCK_FLAG = "ordered_beyond_stock";
+
+/** Records on the order how much of each line stock could cover, and flags it when that's not all. */
+export function markHeld(order: Order, held: Map<string, number>): Order {
+  const left = new Map(held);
+  let short = false;
+  const items = order.items.map((i) => {
+    const h = Math.min(i.qty, left.get(i.variantId) ?? i.qty);
+    left.set(i.variantId, (left.get(i.variantId) ?? i.qty) - h);
+    if (h >= i.qty) return i;
+    short = true;
+    return { ...i, held: h };
+  });
+  if (!short) return order;
+  return { ...order, items, flags: [...new Set([...(order.flags ?? []), BEYOND_STOCK_FLAG])] };
+}
+
+/** How many units of this line are held from stock. */
+const heldOf = (i: { qty: number; held?: number | undefined }) => i.held ?? i.qty;
 
 export function planPayment(
   order: Order,
@@ -64,7 +98,8 @@ export function planPayment(
       continue;
     }
     if (order.status === "pending") {
-      updated.push(commitSale(v, item.qty));
+      if (heldOf(item) > 0) updated.push(commitSale(v, heldOf(item)));
+      if (heldOf(item) < item.qty) flags.add(BEYOND_STOCK_FLAG);
     } else if (available(v) >= item.qty) {
       // The hold expired before Paystack confirmed, but the stock is still there: take it now.
       updated.push({ ...v, stock: v.stock - item.qty });
@@ -118,7 +153,7 @@ export function planCancel(
   if (order.status !== "pending") return { changed: false };
   const updated = order.items.flatMap((i) => {
     const v = variants.get(i.variantId);
-    return v ? [release(v, i.qty)] : [];
+    return v && heldOf(i) > 0 ? [release(v, heldOf(i))] : [];
   });
   return { changed: true, order: { ...order, status: "cancelled", cancelledAt: at }, variants: updated };
 }
@@ -140,7 +175,7 @@ export function planRefund(order: Order | null, variants: Map<string, Variant>, 
   const updated = restock
     ? order.items.flatMap((i) => {
         const v = variants.get(i.variantId);
-        return v ? [{ ...v, stock: v.stock + i.qty }] : [];
+        return v && heldOf(i) > 0 ? [{ ...v, stock: v.stock + heldOf(i) }] : [];
       })
     : [];
   const refund: Refund = {

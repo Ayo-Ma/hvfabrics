@@ -112,9 +112,13 @@ describe("FirestoreStore transactions", () => {
       status: "pending",
       createdAt: "2026-11-13T10:00:00Z",
     }));
-    // Second attempt saw 8 reserved by someone else: only 2 left, so 3 is refused.
-    expect(r).toEqual({ ok: false, problems: [{ variantId: "lace--gold", kind: "insufficient", available: 2, requested: 3 }] });
-    expect(commits).toBe(1);
+    // Second attempt saw 8 reserved by someone else: only 2 left, so 2 are held and the order is flagged.
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.order.items[0]).toMatchObject({ qty: 3, held: 2 });
+      expect(r.order.flags).toContain("ordered_beyond_stock");
+    }
+    expect(commits).toBe(2);
   });
 });
 

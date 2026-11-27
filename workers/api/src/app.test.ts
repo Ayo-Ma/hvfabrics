@@ -169,11 +169,26 @@ describe("checkout", () => {
     expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 10, reserved: 5 });
   });
 
-  it("refuses more than is available, with the exact problem", async () => {
+  it("takes an order for more than is in stock: holds what's there and flags the rest for the owner", async () => {
     const res = await checkout(t.app, [{ variantId: "last--red", qty: 6 }]);
-    expect(res.status).toBe(409);
-    expect(await res.json()).toEqual({ problems: [{ variantId: "last--red", kind: "insufficient" }] }); // never how many are left
-    expect(t.store.peekVariant("last--red")).toMatchObject({ reserved: 0 });
+    expect(res.status).toBe(200);
+    const { orderNumber } = (await res.json()) as { orderNumber: string };
+    const order = (await t.store.getOrderByNumber(orderNumber)) as Order;
+    expect(order.flags).toContain("ordered_beyond_stock");
+    expect(order.items[0]).toMatchObject({ qty: 6, held: 5 });
+    expect(t.store.peekVariant("last--red")).toMatchObject({ stock: 5, reserved: 5 });
+    // Cancelled: only what was held goes back.
+    await t.store.cancelPending(order.id, "2026-11-27T12:00:00Z");
+    expect(t.store.peekVariant("last--red")).toMatchObject({ stock: 5, reserved: 0 });
+  });
+
+  it("a paid order beyond stock sells what was held and stays flagged", async () => {
+    const res = await checkout(t.app, [{ variantId: "last--red", qty: 7 }]);
+    const { orderNumber } = (await res.json()) as { orderNumber: string };
+    const order = (await t.store.getOrderByNumber(orderNumber)) as Order;
+    const paid = await t.store.markPaid(order.id, "2026-11-27T12:00:00Z");
+    expect(paid?.order.flags).toContain("ordered_beyond_stock");
+    expect(t.store.peekVariant("last--red")).toMatchObject({ stock: 0, reserved: 0 });
   });
 
   it("refuses draft products and unknown variants", async () => {
@@ -218,12 +233,10 @@ describe("checkout", () => {
     expect(t.store.peekVariant("lace--gold")).toMatchObject({ stock: 10, reserved: 0 });
   });
 
-  it("never oversells: 20 concurrent buyers of 2 yards, 5 yards on the bolt", async () => {
+  it("20 concurrent buyers of 2 yards, 5 yards on the bolt: every order goes through, stock is never held twice", async () => {
     const results = await Promise.all(Array.from({ length: 20 }, () => checkout(t.app, [{ variantId: "last--red", qty: 2 }])));
-    const statuses = results.map((r) => r.status);
-    expect(statuses.filter((s) => s === 200)).toHaveLength(2);
-    expect(statuses.filter((s) => s === 409)).toHaveLength(18);
-    expect(t.store.peekVariant("last--red")).toMatchObject({ stock: 5, reserved: 4 });
+    expect(results.map((r) => r.status).every((s) => s === 200)).toBe(true);
+    expect(t.store.peekVariant("last--red")).toMatchObject({ stock: 5, reserved: 5 });
   });
 });
 

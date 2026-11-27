@@ -63,7 +63,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const result = await startCheckout(context.cloudflare.env, parsed.data, callbackBase, request);
   if (result.ok) throw redirect(result.authorizationUrl);
   if (result.kind === "stock") {
-    return { errors: {}, message: "We can't supply everything in your bag right now.", problems: result.problems };
+    return { errors: {}, message: "An item in your bag was just taken off sale, so we've removed it. Check your bag and place your order again.", problems: result.problems };
   }
   return { errors: {}, message: result.message };
 }
