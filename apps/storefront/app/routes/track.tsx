@@ -6,6 +6,7 @@ import { apiConnected, lookupOrder } from "~/lib/api.server";
 import { Button } from "~/components/Button";
 import { OrderDetails } from "~/components/OrderDetails";
 import { StateMessage } from "~/components/StateMessage";
+import { PayToSlip } from "~/components/PayByTransfer";
 
 export function meta() {
   return [{ title: "Track an order · Harries Vogue" }, { name: "robots", content: "noindex" }];
@@ -19,7 +20,8 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   const parsed = TrackOrderInputSchema.safeParse({ number, email });
   if (!parsed.success) return { state: "invalid" as const, number, email };
   if (!apiConnected(context.cloudflare.env)) return { state: "unavailable" as const, number, email };
-  const order = await lookupOrder(context.cloudflare.env, parsed.data.number.toUpperCase(), { email: parsed.data.email });
+  const order = await lookupOrder(context.cloudflare.env, parsed.data.number.toUpperCase(), { email: parsed.data.email }).catch(() => undefined);
+  if (order === undefined) return { state: "retry" as const, number, email };
   return order ? { state: "found" as const, number, email, order } : { state: "missing" as const, number, email };
 }
 
@@ -54,7 +56,18 @@ export default function Track({ loaderData }: Route.ComponentProps) {
       </div>
 
       <div className="mt-12">
+        {loaderData.state === "found" && loaderData.order.status === "pending" && loaderData.order.payTo ? (
+          <section className="mx-auto mb-12 max-w-md" aria-labelledby="payto-title">
+            <p className="mb-4 text-lg">We&rsquo;re waiting for your transfer. Pay into this account with your order number as the narration, then send the receipt on WhatsApp.</p>
+            <PayToSlip order={{ ...loaderData.order, payTo: loaderData.order.payTo }} />
+          </section>
+        ) : null}
         {loaderData.state === "found" && <OrderDetails order={loaderData.order} />}
+        {loaderData.state === "retry" && (
+          <StateMessage illustration={noResults} title="Couldn't check just now" headingLevel={2}>
+            Your order is safe. Tap Track again in a moment.
+          </StateMessage>
+        )}
         {loaderData.state === "missing" && (
           <StateMessage illustration={noResults} title="No order found" headingLevel={2}>
             Check the number and email match your receipt.

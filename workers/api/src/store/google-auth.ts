@@ -57,18 +57,38 @@ export class GoogleAuth {
     private readonly fetchImpl: typeof fetch = (...args: Parameters<typeof fetch>) => fetch(...args),
   ) {}
 
+  private pending: Promise<string> | null = null;
+
+  /** Simultaneous requests in one isolate share one exchange; a passing failure is retried once. */
   async accessToken(): Promise<string> {
     const now = Math.floor(Date.now() / 1000);
     if (this.token && this.token.expiresAt - 60 > now) return this.token.value;
-    const assertion = await signJwt(this.sa, now);
-    const res = await this.fetchImpl(TOKEN_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }),
+    this.pending ??= this.exchange().finally(() => {
+      this.pending = null;
     });
-    if (!res.ok) throw new Error(`Google token exchange failed: ${res.status} ${await res.text()}`);
-    const body = z.object({ access_token: z.string(), expires_in: z.number() }).parse(await res.json());
-    this.token = { value: body.access_token, expiresAt: now + body.expires_in };
-    return body.access_token;
+    return this.pending;
+  }
+
+  private async exchange(): Promise<string> {
+    let last: unknown;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const now = Math.floor(Date.now() / 1000);
+        const assertion = await signJwt(this.sa, now);
+        const res = await this.fetchImpl(TOKEN_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }),
+        });
+        if (!res.ok) throw new Error(`Google token exchange failed: ${res.status} ${await res.text()}`);
+        const body = z.object({ access_token: z.string(), expires_in: z.number() }).parse(await res.json());
+        this.token = { value: body.access_token, expiresAt: now + body.expires_in };
+        return body.access_token;
+      } catch (e) {
+        last = e;
+        await new Promise((r) => setTimeout(r, 150 + Math.random() * 150));
+      }
+    }
+    throw last;
   }
 }

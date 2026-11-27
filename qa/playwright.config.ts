@@ -11,6 +11,8 @@ const root = "..";
 
 export default defineConfig({
   testDir: "./tests",
+  // Transfer mode has its own stack: playwright.transfer.config.ts.
+  testIgnore: /transfer\.spec\.ts/,
   timeout: 90_000,
   expect: { timeout: 15_000 },
   fullyParallel: false,

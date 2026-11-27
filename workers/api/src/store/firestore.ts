@@ -51,7 +51,12 @@ type Write = { update: { name: string; fields: FsFields } } | { delete: string }
 
 class TxConflict extends Error {}
 
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 8;
+const READ_RETRIES = 3;
+/** Backoff with jitter, so many shoppers retrying at once spread out. */
+const pause = (attempt: number) => new Promise((r) => setTimeout(r, 80 * 2 ** attempt + Math.random() * 80));
+/** Settings (zones, bank details, policies) change rarely: each isolate reads them at most once a minute. */
+const SETTINGS_TTL_MS = 60_000;
 
 export class FirestoreStore implements Store {
   private readonly root: string;
@@ -76,18 +81,40 @@ export class FirestoreStore implements Store {
       .join("/")}`;
   }
 
+  /**
+   * One REST call. Reads (and beginTransaction/rollback) are retried on Google's passing errors
+   * (429, 5xx, a dropped connection), so one blip doesn't fail a shopper's page. A commit is never
+   * retried here: it may have landed, and transact() decides what happens next.
+   */
   private async call<T>(url: string, body?: unknown, method = body === undefined ? "GET" : "POST"): Promise<T> {
-    const res = await this.fetchImpl(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${await this.auth.accessToken()}`,
-        "Content-Type": "application/json",
-      },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    });
-    if (res.status === 409) throw new TxConflict(await res.text());
-    if (!res.ok) throw new Error(`Firestore ${method} ${url.replace(this.base, "")}: ${res.status} ${await res.text()}`);
-    return (await res.json()) as T;
+    const retry = !url.endsWith(":commit");
+    for (let attempt = 0; ; attempt++) {
+      let res: Response;
+      try {
+        res = await this.fetchImpl(url, {
+          method,
+          headers: {
+            Authorization: `Bearer ${await this.auth.accessToken()}`,
+            "Content-Type": "application/json",
+          },
+          ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+        });
+      } catch (e) {
+        if (retry && attempt < READ_RETRIES) {
+          await pause(attempt);
+          continue;
+        }
+        throw e;
+      }
+      if (res.status === 409) throw new TxConflict(await res.text());
+      if (retry && attempt < READ_RETRIES && (res.status === 429 || res.status >= 500)) {
+        await res.body?.cancel();
+        await pause(attempt);
+        continue;
+      }
+      if (!res.ok) throw new Error(`Firestore ${method} ${url.replace(this.base, "")}: ${res.status} ${await res.text()}`);
+      return (await res.json()) as T;
+    }
   }
 
   private async batchGet(names: string[], transaction?: string): Promise<Map<string, Record<string, unknown>>> {
@@ -126,7 +153,7 @@ export class FirestoreStore implements Store {
         lastError = e;
         await this.call(`${this.base}:rollback`, { transaction }).catch(() => undefined);
         if (!(e instanceof TxConflict)) throw e;
-        await new Promise((r) => setTimeout(r, 20 * 2 ** attempt + Math.random() * 20));
+        await new Promise((r) => setTimeout(r, 25 * 2 ** attempt + Math.random() * 60));
       }
     }
     throw new Error(`Firestore transaction kept conflicting: ${String(lastError)}`);
@@ -164,11 +191,22 @@ export class FirestoreStore implements Store {
     });
   }
 
-  async getSettings() {
-    const docs = await this.batchGet([this.name("settings/store")]);
-    const raw = docs.get(this.name("settings/store"));
-    if (!raw) throw new Error("settings/store is missing in Firestore");
-    return SettingsSchema.parse(raw);
+  private settingsMemo: { at: number; value: Promise<Settings> } | null = null;
+
+  async getSettings(): Promise<Settings> {
+    const hit = this.settingsMemo;
+    if (hit && Date.now() - hit.at < SETTINGS_TTL_MS) return structuredClone(await hit.value);
+    const value = (async () => {
+      const docs = await this.batchGet([this.name("settings/store")]);
+      const raw = docs.get(this.name("settings/store"));
+      if (!raw) throw new Error("settings/store is missing in Firestore");
+      return SettingsSchema.parse(raw);
+    })();
+    this.settingsMemo = { at: Date.now(), value };
+    value.catch(() => {
+      if (this.settingsMemo?.value === value) this.settingsMemo = null; // never keep a failure
+    });
+    return structuredClone(await value);
   }
 
   async createPendingOrder(lines: BagLine[], makeOrder: (v: Map<string, VariantWithProduct>) => Order): Promise<CreateOrderResult> {
@@ -193,7 +231,7 @@ export class FirestoreStore implements Store {
       if (!plan.ok) return { result: plan, writes: [] };
       const order = makeOrder(found);
       return {
-        result: { ok: true, order },
+        result: { ok: true, order, soldOutNow: plan.soldOutNow },
         writes: [...plan.reserved.map((v) => this.variantWrite(v)), this.write(`orders/${order.id}`, order)],
       };
     });
@@ -460,6 +498,7 @@ export class FirestoreStore implements Store {
 
   private async updateSettings(change: (s: Settings) => void): Promise<void> {
     const name = this.name("settings/store");
+    this.settingsMemo = null;
     await this.transact<void>(async (read) => {
       const raw = (await read([name])).get(name);
       if (!raw) throw new Error("settings/store is missing in Firestore");

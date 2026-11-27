@@ -63,7 +63,7 @@ export class MemoryStore implements Store {
     const order = makeOrder(found);
     for (const v of plan.reserved) this.variants.get(v.id)!.variant = v;
     this.orders.set(order.id, structuredClone(order));
-    return { ok: true, order };
+    return { ok: true, order, soldOutNow: plan.soldOutNow };
   }
 
   async markPaid(orderId: string, paidAt: string): Promise<MarkPaidResult | null> {

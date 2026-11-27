@@ -216,12 +216,14 @@ export function createApp(depsFor: (c: Context) => Deps) {
     if (!order) return c.json({ message: "Not found" }, 404);
     if (reference) {
       if (order.paystackRef !== reference) return c.json({ message: "Not found" }, 404);
-      if (order.status === "pending") order = (await confirmPayment(deps, reference)) ?? order;
+      // Transfers are confirmed by the owner, so there's nothing to ask Paystack: one read per check.
+      if (order.status === "pending" && order.payment !== "transfer") order = (await confirmPayment(deps, reference)) ?? order;
     } else if (email && order.customer.email.toLowerCase() !== email.trim().toLowerCase()) {
       return c.json({ message: "Not found" }, 404);
     }
-    // The account to pay into goes only to the customer's own order page (the private reference), not to lookups by email.
-    const payTo = reference && order.payment === "transfer" && order.status === "pending" ? (await deps.store.getSettings()).bankTransfer : undefined;
+    // A transfer still awaited carries the shop's account, so a customer who closed the page can find it again
+    // (own order page, or Track an order with the number and their email). It's the account every buyer is given.
+    const payTo = order.payment === "transfer" && order.status === "pending" ? (await deps.store.getSettings()).bankTransfer : undefined;
     return c.json(toPublicOrder(order, payTo), 200, { "Cache-Control": "no-store" });
   });
 

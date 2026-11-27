@@ -42,12 +42,14 @@
 			"remote": true
 		}
 	],
+	// Per shopper per minute. Generous: many Nigerian phones share one carrier address (CGNAT), so a
+	// tight limit would turn away real shoppers on sale day. Checkout stock is still checked per order.
 	"ratelimits": [
 		{
 			"name": "CHECKOUT_LIMITER",
 			"namespace_id": "1001",
 			"simple": {
-				"limit": 10,
+				"limit": 30,
 				"period": 60
 			}
 		},
@@ -55,7 +57,7 @@
 			"name": "SEARCH_LIMITER",
 			"namespace_id": "1002",
 			"simple": {
-				"limit": 120,
+				"limit": 600,
 				"period": 60
 			}
 		}
@@ -109,7 +111,7 @@
 					"name": "CHECKOUT_LIMITER",
 					"namespace_id": "1001",
 					"simple": {
-						"limit": 10,
+						"limit": 30,
 						"period": 60
 					}
 				},
@@ -117,7 +119,7 @@
 					"name": "SEARCH_LIMITER",
 					"namespace_id": "1002",
 					"simple": {
-						"limit": 120,
+						"limit": 600,
 						"period": 60
 					}
 				}

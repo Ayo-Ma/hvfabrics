@@ -2,6 +2,7 @@ import {
   add,
   available,
   commitSale,
+  minQty,
   release,
   reserve,
   validateBag,
@@ -28,7 +29,7 @@ import { customerId, MAX_PUSH_TOKENS, type Entry, type MoveResult, type SaveProd
 export function planReservation(
   lines: BagLine[],
   found: Map<string, VariantWithProduct>,
-): { ok: true; merged: BagLine[]; reserved: Variant[] } | { ok: false; problems: BagProblem[] } {
+): { ok: true; merged: BagLine[]; reserved: Variant[]; soldOutNow: boolean } | { ok: false; problems: BagProblem[] } {
   // Draft or archived products can't be bought even if a stale bag still holds them.
   const buyable = new Map(
     [...found].filter(([, v]) => v.productStatus === "live").map(([id, v]) => [id, v.variant] as const),
@@ -36,7 +37,10 @@ export function planReservation(
   const check = validateBag(lines, buyable);
   if (!check.ok) return check;
   const reserved = check.merged.map((l) => reserve(buyable.get(l.variantId)!, l.qty));
-  return { ok: true, merged: check.merged, reserved };
+  // The shop window shows only "in stock" or "sold out", so it needs rebuilding only when this order
+  // leaves a variant below its smallest sale (on sale day most orders change nothing a shopper sees).
+  const soldOutNow = reserved.some((v) => available(v) < minQty(v.options.unit));
+  return { ok: true, merged: check.merged, reserved, soldOutNow };
 }
 
 export const SHORTFALL_FLAG = "paid_after_expiry_stock_short";

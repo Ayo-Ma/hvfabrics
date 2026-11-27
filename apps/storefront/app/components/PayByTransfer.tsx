@@ -29,20 +29,7 @@ export function PayByTransfer({ order }: { order: PublicOrder & { payTo: NonNull
 
         <aside className="md:col-span-5 md:col-start-8 md:row-span-2 md:row-start-1" aria-labelledby="payto-title">
           <div className="md:sticky md:top-24">
-            <div className="checkout-slip-field">
-              <div className="slip bg-paper px-6 pb-12 pt-7 text-base">
-                <h2 id="payto-title" className="text-[15px] text-grey-600">
-                  Pay into
-                </h2>
-                <dl className="mt-3">
-                  <Row label="Amount" value={amount} copy={String(order.totals.total.amount / 100)} big />
-                  <Row label="Bank" value={order.payTo.bank} />
-                  <Row label="Account name" value={order.payTo.accountName} />
-                  <Row label="Account number" value={order.payTo.accountNumber} copy={order.payTo.accountNumber} big />
-                  <Row label="Narration" value={order.number} copy={order.number} />
-                </dl>
-              </div>
-            </div>
+            <PayToSlip order={order} />
           </div>
         </aside>
 
@@ -101,6 +88,27 @@ export function PayByTransfer({ order }: { order: PublicOrder & { payTo: NonNull
           </div>
         </div>
 
+      </div>
+    </div>
+  );
+}
+
+/** The account to pay into, with copy buttons. Also shown on Track an order while the transfer is awaited. */
+export function PayToSlip({ order }: { order: PublicOrder & { payTo: NonNullable<PublicOrder["payTo"]> } }) {
+  const amount = formatMoney(order.totals.total);
+  return (
+    <div className="checkout-slip-field">
+      <div className="slip bg-paper px-6 pb-12 pt-7 text-base">
+        <h2 id="payto-title" className="text-[15px] text-grey-600">
+          Pay into
+        </h2>
+        <dl className="mt-3">
+          <Row label="Amount" value={amount} copy={String(order.totals.total.amount / 100)} big />
+          <Row label="Bank" value={order.payTo.bank} />
+          <Row label="Account name" value={order.payTo.accountName} />
+          <Row label="Account number" value={order.payTo.accountNumber} copy={order.payTo.accountNumber} big />
+          <Row label="Narration" value={order.number} copy={order.number} />
+        </dl>
       </div>
     </div>
   );

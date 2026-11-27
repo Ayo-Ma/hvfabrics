@@ -119,7 +119,7 @@ export async function startCheckout(
 
   if (!created.ok) return { kind: "stock", problems: created.problems };
   const order = created.order;
-  rebuildLater(deps, "reservation");
+  if (created.soldOutNow !== false) rebuildLater(deps, "reservation");
 
   if (transfer) {
     // No payment page: the customer goes straight to the order page with the account to pay into.
@@ -178,7 +178,7 @@ export async function confirmPayment(deps: Deps, reference: string): Promise<Ord
     return order;
   }
 
-  return recordPayment(deps, order.id, tx.paid_at ?? deps.now().toISOString());
+  return recordPayment(deps, order.id, tx.paid_at ?? deps.now().toISOString(), order.status === "cancelled");
 }
 
 export type TransferOutcome =
@@ -196,7 +196,7 @@ export async function confirmTransfer(deps: Deps, orderId: string): Promise<Tran
   if (order.payment !== "transfer") return { ok: false, status: 409, message: "This order was paid by card; Paystack confirms it." };
   if (order.refund) return { ok: false, status: 409, message: "This order was refunded." };
   if (order.status !== "pending" && order.status !== "cancelled") return { ok: true, order };
-  const paid = await recordPayment(deps, order.id, deps.now().toISOString());
+  const paid = await recordPayment(deps, order.id, deps.now().toISOString(), order.status === "cancelled");
   return paid ? { ok: true, order: paid } : { ok: false, status: 404, message: "Not found" };
 }
 
@@ -213,11 +213,15 @@ export async function cancelTransfer(deps: Deps, orderId: string): Promise<Trans
   return { ok: true, order: cancelled };
 }
 
-async function recordPayment(deps: Deps, orderId: string, paidAt: string): Promise<Order | null> {
+/**
+ * `afterHoldEnded`: the hold had run out, so payment takes the stock afresh and may sell something
+ * out. Paying a held order changes nothing a shopper sees (held → sold), so no rebuild then.
+ */
+async function recordPayment(deps: Deps, orderId: string, paidAt: string, afterHoldEnded: boolean): Promise<Order | null> {
   const result = await deps.store.markPaid(orderId, paidAt);
   if (!result) return null;
   if (result.changed) {
-    rebuildLater(deps, "paid");
+    if (afterHoldEnded) rebuildLater(deps, "paid after hold ended");
     const paid = result.order;
     deps.events?.writeDataPoint({ blobs: ["purchase", paid.number, paid.country ?? "", paid.city ?? ""], doubles: [paid.totals.total.amount], indexes: ["purchase"] });
     deps.waitUntil(alertOwner(deps, paid).catch((e: unknown) => deps.log("order alert failed", { order: paid.number, error: String(e) })));

@@ -9,6 +9,14 @@
 
 ## Phase 1 — MVP (in progress)
 
+- Sale-day hardening (2026-11-27): the bank-transfer page can no longer turn into an error page. Its status check
+  no longer reloads the page's data (one failed reload on a weak signal, often on return from the bank app, used to
+  swap the account details for "Something snagged"); the details are kept on the phone and shown even if a check or
+  reload fails; Track an order shows the account while a transfer is awaited. Error pages offer "Try again".
+  API: Firestore reads retry passing errors, one shared Google sign-in per isolate, settings cached for a minute,
+  one read per order check instead of three, the catalogue rebuilt only when an order sells something out, and
+  per-shopper limits raised for shared mobile addresses. Dashboard lists refresh less often to stay inside
+  Firestore's daily reads. New transfer-mode browser test (qa/playwright.transfer.config.ts).
 - Redesign (2026-11-26, owner's references: drop.code, OMÉ, Ameya): bold sentence-case headlines in Satoshi
   instead of Futura capitals; light header with the logo and a single-line menu; soft grey hero panel with the shop's
   seal; arched doors into each line; new arrivals as grey tiles with pill tabs and a round + to add; the promise as a

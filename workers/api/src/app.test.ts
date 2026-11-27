@@ -519,14 +519,16 @@ describe("bank transfer (PAYMENT_MODE transfer)", () => {
     expect(t.store.peekVariant("lace--gold")).toMatchObject({ reserved: 0 });
   });
 
-  it("shows the account to pay into on her own order page only, never to an email lookup", async () => {
+  it("shows the account to pay into while the transfer is awaited, on her order page and on Track an order", async () => {
     const t = setup({ transfer: true });
     const { order } = await placed(t);
     const own = (await (await t.app.request(`/orders/${order.number}?reference=${order.paystackRef}`)).json()) as Record<string, unknown>;
     expect(own).toMatchObject({ status: "pending", payment: "transfer", holdUntil: order.reservedUntil, payTo: { accountNumber: "0123456789" } });
     expect(t.paystack.verify).not.toHaveBeenCalled();
     const byEmail = (await (await t.app.request(`/orders/${order.number}?email=ada@example.com`)).json()) as Record<string, unknown>;
-    expect(byEmail.payTo).toBeUndefined();
+    expect(byEmail).toMatchObject({ payTo: { accountNumber: "0123456789" } });
+    const wrongEmail = await t.app.request(`/orders/${order.number}?email=someone@example.com`);
+    expect(wrongEmail.status).toBe(404);
     expect((await t.app.request("/settings")).headers.get("cache-control")).toContain("max-age");
     expect(((await (await t.app.request("/settings")).json()) as { payment: string }).payment).toBe("transfer");
   });

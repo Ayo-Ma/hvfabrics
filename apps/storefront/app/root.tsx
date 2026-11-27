@@ -81,18 +81,31 @@ export default function App() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   const notFound = isRouteErrorResponse(error) && error.status === 404;
+  // A page that couldn't load on a weak signal (common on phones): say so, and offer the same page again.
+  const dropped = !isRouteErrorResponse(error) && error instanceof TypeError;
   const details = import.meta.env.DEV && error instanceof Error ? error.stack : undefined;
   return (
     <>
-      <title>{notFound ? "Page not found · Harries Vogue" : "Something snagged · Harries Vogue"}</title>
+      <title>{notFound ? "Page not found · Harries Vogue" : "Please try again · Harries Vogue"}</title>
       <StateMessage
         illustration={notFound ? notFoundArt : errorArt}
-        title={notFound ? "This page has been cut from the collection" : "Something snagged on our side"}
-        action={<ButtonLink to="/" variant="ink">Back to the shop</ButtonLink>}
+        title={notFound ? "This page has been cut from the collection" : dropped ? "The connection dropped" : "That didn't load"}
+        action={
+          notFound ? (
+            <ButtonLink to="/" variant="ink">Back to the shop</ButtonLink>
+          ) : (
+            <div className="flex flex-wrap justify-center gap-3">
+              <button type="button" className="quick-add" onClick={() => window.location.reload()}>
+                Try again
+              </button>
+              <ButtonLink to="/" variant="ink">Back to the shop</ButtonLink>
+            </div>
+          )
+        }
       >
         {notFound
           ? "The link may be old, or the product may have sold out and been removed."
-          : "Please try again in a minute. Your bag is saved."}
+          : "Nothing is lost: your bag and any order you placed are saved. Tap Try again."}
       </StateMessage>
       {details && <pre className="mx-auto max-w-3xl overflow-x-auto p-4 text-xs">{details}</pre>}
     </>

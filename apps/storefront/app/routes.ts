@@ -11,6 +11,7 @@ export default [
   route("search", "routes/search.tsx"),
   route("checkout", "routes/checkout.tsx"),
   route("order/:number", "routes/order.tsx"),
+  route("order/:number/status", "routes/order-status.ts"),
   route("track", "routes/track.tsx"),
   route("about", "routes/about.tsx"),
   route("policies/:name", "routes/policy.tsx"),

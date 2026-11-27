@@ -117,3 +117,28 @@ describe("FirestoreStore transactions", () => {
     expect(commits).toBe(1);
   });
 });
+
+describe("FirestoreStore under load", () => {
+  it("retries a read that Google answers with a passing 503, and caches settings for a minute", async () => {
+    const auth = { accessToken: async () => "t" } as unknown as GoogleAuth;
+    let calls = 0;
+    const fetchMock = vi.fn(async () => {
+      calls++;
+      if (calls === 1) return new Response("unavailable", { status: 503 });
+      return Response.json([{ missing: "x" }]);
+    });
+    const store = new FirestoreStore("hv-test", auth, fetchMock as unknown as typeof fetch);
+    await expect(store.getSettings()).rejects.toThrow("settings/store is missing");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("shares one token exchange between simultaneous requests", async () => {
+    const { privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+    const pem = privateKey.export({ type: "pkcs8", format: "pem" }).toString();
+    const fetchMock = vi.fn(async () => Response.json({ access_token: "ya29.shared", expires_in: 3600 }));
+    const auth = new GoogleAuth({ project_id: "p", client_email: "w@p.iam.gserviceaccount.com", private_key: pem }, fetchMock as unknown as typeof fetch);
+    const tokens = await Promise.all([auth.accessToken(), auth.accessToken(), auth.accessToken()]);
+    expect(tokens).toEqual(["ya29.shared", "ya29.shared", "ya29.shared"]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});

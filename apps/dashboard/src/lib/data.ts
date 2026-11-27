@@ -24,13 +24,16 @@ function takingsSince(): string {
   return new Date(Date.now() - 40 * 86_400_000).toISOString();
 }
 
-export const useBoard = () => useQuery(keys.board, () => api<{ orders: Order[]; at: string }>("/admin/orders"), { every: 30_000 });
+// Refresh rates are set by Firestore's daily read allowance: every refresh reads each order it lists,
+// so a busy day's board read every 30 s could use the allowance up on its own. New orders and transfers
+// also arrive as phone alerts, and every list refreshes the moment the app is brought back to the front.
+export const useBoard = () => useQuery(keys.board, () => api<{ orders: Order[]; at: string }>("/admin/orders"), { every: 90_000 });
 /** Bank-transfer orders waiting for the money (owner and manager). */
 export const useAwaiting = (enabled: boolean) =>
-  useQuery(enabled ? keys.awaiting : null, () => api<{ orders: Order[]; at: string }>("/admin/orders/awaiting"), { every: 30_000 });
+  useQuery(enabled ? keys.awaiting : null, () => api<{ orders: Order[]; at: string }>("/admin/orders/awaiting"), { every: 60_000 });
 export const useOrder = (id: string) => useQuery(keys.order(id), () => api<Order>(`/admin/orders/${encodeURIComponent(id)}`));
 export const useTakings = (enabled: boolean) =>
-  useQuery(enabled ? keys.takings : null, () => api<{ orders: Order[]; at: string }>(`/admin/takings?since=${takingsSince()}`), { every: 60_000 });
+  useQuery(enabled ? keys.takings : null, () => api<{ orders: Order[]; at: string }>(`/admin/takings?since=${takingsSince()}`), { every: 600_000 });
 export const useProducts = (enabled = true) => useQuery(enabled ? keys.products : null, () => api<{ entries: Entry[] }>("/admin/products"));
 export const useProduct = (id: string | null) => useQuery(id ? keys.product(id) : null, () => api<Entry>(`/admin/products/${encodeURIComponent(id!)}`));
 

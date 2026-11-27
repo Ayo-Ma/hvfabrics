@@ -10,7 +10,8 @@ export interface VariantWithProduct {
   productStatus: Product["status"];
 }
 
-export type CreateOrderResult = { ok: true; order: Order } | { ok: false; problems: BagProblem[] };
+/** `soldOutNow`: the order left something sold out, so the public catalogue must be rebuilt. */
+export type CreateOrderResult = { ok: true; order: Order; soldOutNow?: boolean } | { ok: false; problems: BagProblem[] };
 
 export interface Entry {
   product: Product;
