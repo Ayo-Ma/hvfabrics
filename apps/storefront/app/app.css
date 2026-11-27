@@ -759,3 +759,15 @@ body { font-size: 1.0625rem; }
 /* Fields: soft rounded corners everywhere on the shop. */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]), textarea { border-radius: 14px; }
 input[type="search"] { border-radius: 9999px; }
+
+/* Footer photograph (2026-11-27): a wide band across the top of the footer, never under text. */
+.footer-photo {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .footer-photo { aspect-ratio: 2 / 1; }
+}
+@media (min-width: 1280px) {
+  .footer-photo { aspect-ratio: 16 / 7; }
+}

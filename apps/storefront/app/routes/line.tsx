@@ -163,7 +163,8 @@ export default function LinePage({ loaderData }: Route.ComponentProps) {
               ))}
             </ul>
           ) : (
-            <Shelf products={shown} cloth={isCloth(line)} initialYards={loaderData.yards} />
+            // "I need N yards" is for cut fabric; Ankara comes in whole 6-yard pieces.
+            <Shelf products={shown} cloth={line === "fabric"} initialYards={loaderData.yards} />
           )}
         </div>
       </div>

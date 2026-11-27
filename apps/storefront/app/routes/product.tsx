@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, data, useRevalidator } from "react-router";
-import { minQty, formatMoney, toMajorString, unitLabel, variantLabel, type CatalogueVariant } from "@hv/core";
+import { minQty, formatMoney, pieceNote, toMajorString, unitLabel, variantLabel, type CatalogueVariant } from "@hv/core";
 import { CheckIcon, MinusIcon, PlusIcon, RulerIcon, TruckIcon, cx } from "@hv/ui";
 import type { Route } from "./+types/product";
 import { getProduct, getSettings } from "~/lib/catalogue.server";
@@ -133,7 +133,12 @@ export default function ProductPage({ loaderData }: Route.ComponentProps) {
               </div>
             </div>
             {!isYard && (
-              <p className="tabular mt-3 text-xl font-semibold">{formatMoney(variant.price)}</p>
+              <p className="tabular mt-3 text-xl font-semibold">
+                {formatMoney(variant.price)}
+                {pieceNote(product.line, variant.unit) ? (
+                  <span className="text-base font-normal text-grey-600"> per piece of {pieceNote(product.line, variant.unit)}</span>
+                ) : null}
+              </p>
             )}
 
             {optionKind && product.variants.length > 1 && (

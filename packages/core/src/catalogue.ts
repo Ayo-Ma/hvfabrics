@@ -97,6 +97,14 @@ export function variantLabel(v: Pick<CatalogueVariant, "colour" | "size" | "unit
   return [v.colour, v.size].filter(Boolean).join(" / ") || unitLabel(v.unit, 1);
 }
 
+/** Ankara comes in whole pieces of 6 yards and is sold by the piece (owner, 2026-11-27). */
+export const ANKARA_PIECE_YARDS = 6;
+
+/** "6 yards" for an Ankara piece; null for anything else. Shown beside the price so a piece is never a mystery. */
+export function pieceNote(line: Line, unit: Unit | undefined): string | null {
+  return line === "ankara" && unit === "piece" ? `${ANKARA_PIECE_YARDS} yards` : null;
+}
+
 export function unitLabel(unit: Unit, qty: number): string {
   const one = { yard: "yard", bundle: "bundle", piece: "piece" }[unit];
   return qty === 1 ? one : `${one}s`;

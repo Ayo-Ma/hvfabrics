@@ -3,6 +3,7 @@ import { LINES } from "@hv/core";
 import { LINE_LABELS, LINE_PATHS } from "~/lib/lines";
 import { Wordmark } from "./Logo";
 import { SHOP, SHOP_CITIES } from "~/lib/shop";
+import { Media } from "./Media";
 
 /**
  * The footer: a plain ink ground (clear to read at any size), the name across the bottom at full
@@ -12,6 +13,16 @@ import { SHOP, SHOP_CITIES } from "~/lib/shop";
 export function Footer() {
   return (
     <footer className="relative isolate overflow-hidden bg-ink text-paper">
+      {/* The last picture: an aso-ebi party in coordinated gold and black. Text never sits on it. */}
+      <Media
+        slot="campaign/footer-owambe"
+        alt="A wedding party in matching gold lace and black agbada aso-ebi, laughing together on a rooftop at sunset"
+        sizes="100vw"
+        ratio="16 / 9"
+        tone="dark"
+        className="footer-photo"
+        imgClassName="object-[50%_12%]"
+      />
       <div className="mx-auto flex max-w-(--container-page) flex-col justify-between gap-20 px-(--spacing-gutter) pb-6 pt-16 lg:pt-20">
         <div className="grid gap-x-6 gap-y-10 text-base sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-3">

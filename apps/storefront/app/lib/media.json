@@ -1,4 +1,55 @@
 {
+  "home/category-ankara": {
+    "width": 1584,
+    "height": 990,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "home/category-fabrics": {
+    "width": 1120,
+    "height": 1400,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "home/category-rtw": {
+    "width": 1584,
+    "height": 990,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "home/hero": {
+    "width": 1120,
+    "height": 1400,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "home/story-hands": {
+    "width": 1120,
+    "height": 1400,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "home/wholesale-texture": {
+    "width": 1664,
+    "height": 936,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
   "campaign/buy-handoff": {
     "width": 1254,
     "height": 1254,
@@ -17,8 +68,8 @@
     ]
   },
   "campaign/footer-owambe": {
-    "width": 1672,
-    "height": 941,
+    "width": 1664,
+    "height": 936,
     "widths": [
       400,
       800,

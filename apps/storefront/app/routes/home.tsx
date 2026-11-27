@@ -85,7 +85,7 @@ function Hero() {
           <Media
             slot="home/hero"
             fallback="campaign/stage-02-bolt"
-            alt="Stacked bolts of colourful fabric on the shelves of the Harries Vogue showroom"
+            alt="Ankara prints stacked on showroom shelves, sheer ivory chiffon lifting in the light and a black ready-to-wear dress on a form"
             sizes="(min-width: 1024px) 48vw, 100vw"
             priority
             ratio="4 / 5"
@@ -101,7 +101,7 @@ function Hero() {
 
 /* ---------------- 2. Shop by category: arched doors ---------------- */
 
-type Door = { to: string; label: string; text: string; slot?: string; fallback?: string; alt: string; line?: Line };
+type Door = { to: string; label: string; text: string; slot?: string; fallback?: string; alt: string; line?: Line; focus?: string };
 
 const DOORS: Door[] = [
   {
@@ -119,7 +119,9 @@ const DOORS: Door[] = [
     text: LINE_INTROS.rtw,
     slot: "home/category-rtw",
     fallback: "campaign/line-rtw",
-    alt: "A woman in a tailored ready-to-wear outfit cut from Harries Vogue fabric",
+    alt: "A woman walking in a tailored emerald satin wrap top and wide-leg trousers",
+    // She walks on the right of a landscape photo: keep her inside the arch.
+    focus: "object-[68%_50%]",
   },
   {
     to: "/#wholesale",
@@ -145,7 +147,7 @@ function Doors() {
               <Link to={d.to} className="arch group block">
                 <div className="arch-frame">
                   {photo && d.slot ? (
-                    <Media slot={d.slot} {...(d.fallback ? { fallback: d.fallback } : {})} alt={d.alt} sizes="(min-width: 1024px) 24vw, 50vw" ratio="3 / 4" />
+                    <Media slot={d.slot} {...(d.fallback ? { fallback: d.fallback } : {})} {...(d.focus ? { imgClassName: d.focus } : {})} alt={d.alt} sizes="(min-width: 1024px) 24vw, 50vw" ratio="3 / 4" />
                   ) : (
                     // No photograph yet: the name set as a printed swatch, never a grey box.
                     <div className="arch-type" aria-hidden="true">

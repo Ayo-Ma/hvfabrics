@@ -9,6 +9,11 @@
 
 ## Phase 1 — MVP (in progress)
 
+- Ankara by the piece (2026-11-27, owner): Ankara comes in 6-yard pieces and is sold one piece at a time; prices
+  read "per piece (6 yards)"; new Ankara defaults to piece in the dashboard; the 34 live Ankara products were
+  switched from yard to piece (a mesh priced per yard stays by the yard). Homepage photography (hero, category doors,
+  the Harries Vogue standard, wholesale) and the aso-ebi footer photograph are in; the green ready-to-wear photo
+  uses the delivered alt1 (the other two were rejected for proportions).
 - Sale-day hardening (2026-11-27): the bank-transfer page can no longer turn into an error page. Its status check
   no longer reloads the page's data (one failed reload on a weak signal, often on return from the bank app, used to
   swap the account details for "Something snagged"); the details are kept on the phone and shown even if a check or

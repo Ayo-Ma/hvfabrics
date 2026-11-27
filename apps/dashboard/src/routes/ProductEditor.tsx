@@ -60,9 +60,9 @@ const UNIT_OPTIONS: ListboxOption<Unit>[] = [
   { value: "piece", label: "Piece" },
 ];
 
-/** Fabrics and Ankara are cut by the yard; ready-to-wear is sold by the piece. */
+/** Fabrics are cut by the yard; Ankara comes in pieces of 6 yards; ready-to-wear is sold by the piece. */
 const isCloth = (line: Line) => line !== "rtw";
-const defaultUnit = (line: Line): Unit => (isCloth(line) ? "yard" : "piece");
+const defaultUnit = (line: Line): Unit => (line === "fabric" ? "yard" : "piece");
 
 function blankOption(line: Line, key = "v1"): OptionRow {
   return { key, colour: "", size: "", unit: defaultUnit(line), price: "", stock: "", lowStockAt: "20", sku: "", held: 0 };
@@ -408,7 +408,7 @@ function Editor({ id, initial }: { id: string | null; initial: Form }) {
                       optionClassName="dash-option"
                     />
                   </Field>
-                  <Field label={`Price per ${o.unit} (₦)`} error={problems[`price-${i}`]}>
+                  <Field label={f.line === "ankara" && o.unit === "piece" ? "Price per piece of 6 yards (₦)" : `Price per ${o.unit} (₦)`} error={problems[`price-${i}`]}>
                     <input className={cx("field num", problems[`price-${i}`] && "border-neg")} inputMode="decimal" value={o.price} onChange={(e) => setOption(i, { price: e.target.value })} />
                   </Field>
                   <Field label="In stock" error={problems[`stock-${i}`]} hint={o.held ? `${o.held} held now` : undefined}>

@@ -135,3 +135,15 @@ HV-OG | assets/brand/social/og-default-1200x630.jpg | built-in image_gen | 2026-
 HV-OG | assets/brand/social/og-default-1200x630-alt1.jpg | built-in image_gen | 2026-11-18 | AI-generated | 1731 x 908 | UNDERSIZED: required 2400 x 1260
 HV-OG | assets/brand/social/og-default-1200x630-alt2.jpg | built-in image_gen | 2026-11-18 | AI-generated | 1731 x 909 | UNDERSIZED: required 2400 x 1260
 HV-OG export | assets/brand/social/og-default-1200x630-web.jpg | built-in image_gen; sharp downscale | 2026-11-18 | AI-generated | 1200 x 630 | downscaled share export
+
+## 2026-11-27: homepage (section 1A) and the aso-ebi footer, integrated
+
+| Slot | File | Tool | Date | Note |
+| --- | --- | --- | --- | --- |
+| HV-HOME-HERO | `home/hero.jpg` (+ alt1, alt2) | OpenAI ImageGen | 2026-11-27 | AI-generated |
+| HV-HOME-CATEGORY-FABRICS | `home/category-fabrics.jpg` (+ alts) | OpenAI ImageGen | 2026-11-27 | AI-generated |
+| HV-HOME-CATEGORY-ANKARA | `home/category-ankara.jpg` (+ alts) | OpenAI ImageGen | 2026-11-27 | AI-generated |
+| HV-HOME-CATEGORY-RTW | `home/category-rtw.jpg` | OpenAI ImageGen | 2026-11-27 | AI-generated; the delivered alt1 (best proportions). The delivered main and alt2 were rejected (owner: proportions). |
+| HV-HOME-STORY-HANDS | `home/story-hands.jpg` (+ alts) | OpenAI ImageGen | 2026-11-27 | AI-generated |
+| HV-HOME-WHOLESALE-TEXTURE | `home/wholesale-texture.jpg` (+ alts) | OpenAI ImageGen | 2026-11-27 | AI-generated |
+| HV-FOOTER | `campaign/footer-owambe.jpg` (+ alts) | OpenAI ImageGen | 2026-11-27 | AI-generated; replaces the earlier footer image |

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router";
-import { formatMoney, minQty, unitLabel, variantLabel, type CatalogueProduct } from "@hv/core";
+import { formatMoney, minQty, pieceNote, unitLabel, variantLabel, type CatalogueProduct } from "@hv/core";
 import { CheckIcon, PlusIcon, cx } from "@hv/ui";
 import { useBag } from "~/lib/bag";
 import { flyToBag } from "~/lib/fly-to-bag";
@@ -21,6 +21,8 @@ export function priceLine(product: CatalogueProduct): string {
 const fromWord = (p: CatalogueProduct) => (p.variants.length > 1 && p.variants.some((v) => v.price.amount !== p.fromPrice.amount) ? "From " : "");
 const perUnit = (p: CatalogueProduct) => {
   const unit = p.variants[0]?.unit ?? "piece";
+  const note = pieceNote(p.line, unit);
+  if (note) return ` per piece (${note})`;
   return unit !== "piece" ? ` per ${unitLabel(unit, 1)}` : "";
 };
 
